@@ -15,4 +15,8 @@ Follow the steps below to install and set up the SoaringTaskBrowser application:
 
 `git clone https://github.com/siglr/SoaringTaskBrowser.git`
 
-And do the other stuff :wink:
+# Set up the .env file (Copy from env.example, I might share it in the discord)
+
+# Localhosting time!
+
+Run `npm run dev` for the npm server, and `php artisan serve` for the web server. Both need to be hosted in a different terminal tab. phpMyAdmin is handy to manage the database.
