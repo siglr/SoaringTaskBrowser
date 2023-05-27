@@ -10,6 +10,6 @@
     
 {{--Task list--}}
 <div class=" p-8">
-    <h1>tasklist</h1>
+    <h1>New tasks</h1>
 </div>
 @endsection

@@ -8,15 +8,28 @@
     @vite('resources/css/app.css')
 </head>
 <body>
-    {{-- The navbar--}}
-    <div class="w-full h-8 bg-sky-700 my-auto px-2 flex">
-        <h1 class="text-xl font-bold text-sky-50"><a href="/">SoaringTaskBrowser</a></h1>
+    {{-- The navbar --}}
+    <div class="w-full h-12 bg-blue-600 my-auto px-2 flex items-center">
+        <h1 class="text-xl font-bold text-white"><a href="/" class="hover:text-blue-200">SoaringTaskBrowser</a></h1>
 
-        <p class="ml-auto text-sky-50 text-base"><a href="/dashboard">Dashboard</a></p>
+        <div class="ml-auto flex items-center">
+            <a href="/tasks" class="mr-4 text-white hover:text-blue-200">Tasks</a>
+            <div class="border-r border-blue-200 h-4"></div>
+            {{--Using the @guest tag to check if a user is not logged in and then displaying login and signup. Otherwise showing the dashboard button--}}
+            @guest
+            <a href="/login" class="ml-4 text-white hover:text-blue-200">Login</a>
+            <a href="/signup" class="ml-4 text-white hover:text-blue-200">Signup</a>
+                
+            @else
+            <a href="/dashboard" class="ml-4 text-white hover:text-blue-200">Dashboard</a>
+            @endguest 
+
+           
+        </div>
     </div>
 
 
-    {{-- The content of the page--}}
+    {{-- The content of the page --}}
     <div>
         @yield('content')
     </div>
