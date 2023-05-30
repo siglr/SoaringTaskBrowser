@@ -30,7 +30,7 @@
                 @enderror
 
                 @if (session('status'))
-                    {{session('status')}}
+                    <p class="text-red-500 font-semibold">{{session('status')}}</p>
                 @endif
             </form>
         </div>
