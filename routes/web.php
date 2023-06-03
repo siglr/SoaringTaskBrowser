@@ -18,8 +18,10 @@ use App\Http\Controllers\TaskController;
 |
 */
 
+
 Route::get('/', [IndexController::class, 'view']);
 
+//All the routes for tasks
 Route::get('/tasks', [TaskController::class, 'view']);
 
 // route::get('/task/{id}') Later for single tasks. 
@@ -28,6 +30,7 @@ route::get('/dashboard', [DashController::class, 'view'] )->middleware('auth');
 
 route::get('/tasks/upload', [TaskController::class, 'uploadview'])->middleware('auth');
 
+route::post('/tasks/uploadtask', [TaskController::class, 'uploadTask'])->middleware('auth');
 
 //The routes for handling authentication
 route::get('/login', [AuthController::class, 'login'])->name('login');
