@@ -46,16 +46,14 @@ class TaskController extends Controller
 
         //Save the DPHX
         $dphx_file = $request->file('dphx_file');
-        $path = $dphx_file->storeAs('public', $dphx_file->GetClientOriginalName());
 
-        //Extract data from the DPHX
-        $dphx = new zipArchive;
-        $dphx->open(public_path('storage/' .  basename($path)));
 
-        $wprFilePath = $extractPath . '/'.basename($path).'.wpr';
-        $plnFilePath = $extractPath . '/'.basename($path).'.pln';
-        $dphFilePath = $extractPath . '/'.basename($path).'.dph';
-        $tskFilePath = $extractPath . '/'.basename($path).'.tsk';
+        
+        //Steps to achieve the unzip of the dphx
+        //First, change to zip file
+        //Then unzip.
+        //Then when unzipped, open the files in the zip file
+        //Get the data and somewhere before this we should store the files.
         
         //All inputs from the form
         $task = new task;
