@@ -32,8 +32,6 @@ class TaskController extends Controller
             'creator' => 'required|min:3',
             'task_distance' => 'required',
             'total_distance' => 'required',
-            'min_time' => 'required',
-            'max_time' => 'required',
         ]);
 
         //Store the DPHX
@@ -77,6 +75,7 @@ class TaskController extends Controller
         $thermals = $xml->SoaringThermals;
         $ridge = $xml->SoaringRidge;
 
+
         $durationMin = $xml->DurationMin;
         $durationMax = $xml->DurationMax;
 
@@ -86,27 +85,44 @@ class TaskController extends Controller
         $ShortDescription = $xml->ShortDescription;
         $LongDescription = $xml->LongDescription;
         
+        //Soaringtype (Ugly I know..)
+        $soaringtype;
+        if ( $ridge & $thermals) {
+            $soaringtype = 'Ridge and Thermals';
+        } elseif ($ridge) {
+            $soaringtype = 'Ridge';
+        } elseif ($thermals) {
+            $soaringtype = 'Thermals';
+        } else {
+            $soaringtype = 'invalid entry';
+        }
 
+        //Description;
+        $desc = $ShortDescription . ' | ' . $LongDescription;
         
-        //Steps to achieve the unzip of the dphx
-        //First, change to zip file
-        //Then unzip.
-        //Then when unzipped, open the files in the zip file
-        //Get the data and somewhere before this we should store the files.
-        
-        //All inputs from the form
+        //Inputs from form
         $task = new task;
         $task->submitter = $request->input('submitter'); 
         $task->creator = $request->input('creator');
         $task->task_distance = $request->input('task_distance');
         $task->total_distance = $request->input('total_distance');
         
-        //Inputs from the DPHX (god help me)
+        //Inputs from the DPHX
         $task->title = $title;
         $task->date = $simDate;
         $task->poi = $POI;
         $task->departure = $departure;
         $task->arrival = $arrival;
+        $task->type = $soaringtype;
+        $task->min_time = $durationMin;
+        $task->max_time = $durationMax;
+        $task->glider_type = $glider;
+        $task->difficulty = $difficulty;
+        $task->desc = $desc;
+
+        $task->wpr_name = $dphName . '.WPR';
+        $task->dphx_name = $dphx_name;
+        $task->pln_name = $dphName . '.pln';
 
         //Upload to the DB
         $task->save();
