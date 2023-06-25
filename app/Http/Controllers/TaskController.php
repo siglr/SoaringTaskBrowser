@@ -48,6 +48,8 @@ class TaskController extends Controller
             $dphx_zip = Storage::disk('public')->path('dphx/'.$dphx_name);
             $extractTo = pathinfo($dphx_zip, PATHINFO_FILENAME); // Extract the file name without extension
             $extractPath = Storage::disk('public')->path('dphx/'.$extractTo);
+            global $folderName;
+            $folderName = $extractTo;
 
             $zip = new ZipArchive();
             if ($zip->open($dphx_zip) === true) {
@@ -56,7 +58,34 @@ class TaskController extends Controller
         } else {
             echo "Error: File not found, please contact us.";
         }
-    
+
+        //Get the data out of the file
+        $dphName = str_replace('_', ' ', $folderName);
+        $dphFile = Storage::disk('public')->get('dphx/'. $folderName . '/'. $dphName. ".dph");
+
+        //load the .dph using simplexml
+        $xml = simplexml_load_string($dphFile);
+
+        //Getting the data
+        
+        $title = $xml->Title;
+        $simDate = $xml->SimDate;
+        $POI = $xml->MainAreaPOI;
+        $departure = $xml->DepartureICAO;
+        $arrival = $xml->ArrivalICAO;
+
+        $thermals = $xml->SoaringThermals;
+        $ridge = $xml->SoaringRidge;
+
+        $durationMin = $xml->DurationMin;
+        $durationMax = $xml->DurationMax;
+
+        $glider = $xml->RecommendedGliders;
+        $difficulty = $xml->DifficultyRating;
+
+        $ShortDescription = $xml->ShortDescription;
+        $LongDescription = $xml->LongDescription;
+        
 
         
         //Steps to achieve the unzip of the dphx
@@ -71,10 +100,13 @@ class TaskController extends Controller
         $task->creator = $request->input('creator');
         $task->task_distance = $request->input('task_distance');
         $task->total_distance = $request->input('total_distance');
-        $task->min_time = $request->input('min_time');
-        $task->max_time = $request->input('max_time');
         
         //Inputs from the DPHX (god help me)
+        $task->title = $title;
+        $task->date = $simDate;
+        $task->poi = $POI;
+        $task->departure = $departure;
+        $task->arrival = $arrival;
 
         //Upload to the DB
         $task->save();

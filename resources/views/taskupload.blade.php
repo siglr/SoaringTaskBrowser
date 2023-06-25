@@ -36,18 +36,6 @@
                         </div>
                     </div>
 
-                    <div class="flex mb-4">
-                        <div class="w-1/2 pr-2">
-                            <label for="min_time" class="block mb-2">Minimum Time (Minutes):</label>
-                            <input type="text" name="min_time" id="min_time" class="w-full px-4 py-2 border-2 border-blue-500 rounded">
-                        </div>
-
-                        <div class="w-1/2 pl-2">
-                            <label for="max_time" class="block mb-2">Maximum Time (Minutes):</label>
-                            <input type="text" name="max_time" id="max_time" class="w-full px-4 py-2 border-2 border-blue-500 rounded">
-                        </div>
-                    </div>
-
                     <input type="submit" value="Upload" class="bg-blue-500 px-4 py-2 text-blue-50 rounded hover:opacity-90 duration-150 ease-in-out">
                 
                     @error('dphx_file')
