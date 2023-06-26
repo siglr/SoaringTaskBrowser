@@ -30,7 +30,7 @@
 
 
     {{-- The content of the page --}}
-    <div>
+    <div class=" min-h-screen">
         @yield('content')
     </div>
     

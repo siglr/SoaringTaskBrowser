@@ -22,6 +22,8 @@
                     Log in
                 </button>
 
+                <p class="mt-5">If you don't have an account yet, you can <a href="/signup" class=" text-blue-500 hover:opacity-75">sign up</a> for one.</p>
+
                 @error('email')
                     <p class="text-red-500 font-semibold">Email invalid, or missing.</p>
                 @enderror
@@ -30,7 +32,7 @@
                 @enderror
 
                 @if (session('status'))
-                    {{session('status')}}
+                    <p class="text-red-500 font-semibold">{{session('status')}}</p>
                 @endif
             </form>
         </div>

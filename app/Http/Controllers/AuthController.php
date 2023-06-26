@@ -25,6 +25,8 @@ class AuthController extends Controller
             $request->session()->regenerate();
  
             return redirect()->intended('dashboard');
+        } else {
+            return redirect()->back()->with('status', 'Invalid password username combination');
         }
     }
 
