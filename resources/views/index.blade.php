@@ -11,5 +11,11 @@
 {{--Task list--}}
 <div class=" p-8">
     <h1>New tasks</h1>
+
+    {{-- Task card --}}
+    <div class="w-full m-4 h-96 ">
+
+
+    </div>
 </div>
 @endsection

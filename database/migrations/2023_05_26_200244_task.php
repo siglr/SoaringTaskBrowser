@@ -21,7 +21,7 @@ return new class extends Migration
             $table->float('min_time')->nullable();
             $table->float('max_time')->nullable();
             $table->string('difficulty', 50)->nullable();
-            $table->float('likes')->nullable();
+            $table->float('likes')->nullable()->default(0);
             $table->text('desc')->nullable();
             $table->enum('type', ['ridge', 'thermal', 'ridge & thermal'])->nullable();
             $table->string('glider_type', 80)->nullable()->default('any');

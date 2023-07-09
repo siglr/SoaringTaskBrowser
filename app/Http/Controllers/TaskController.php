@@ -15,7 +15,10 @@ use ZipArchive;
 class TaskController extends Controller
 {
     public function view() {
-        return view('tasks');
+
+        return view('tasks', [
+            'tasks' => task::tasks()
+        ]);
     }
 
     public function uploadview() {
@@ -127,6 +130,7 @@ class TaskController extends Controller
         //Upload to the DB
         $task->save();
 
+        return  redirect('/tasks');
 
     }
 } }
