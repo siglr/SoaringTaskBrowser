@@ -15,7 +15,7 @@ class task extends Model
         $tasks = [];
 
         // //retrieve all the data
-        $tasks = DB::table('tasks')->select('title', 'creator', 'submitter', 'total_distance', 'likes', 'difficulty')->get();
+        $tasks = DB::table('tasks')->select('id', 'title', 'creator', 'submitter', 'total_distance', 'likes', 'difficulty')->get();
 
         foreach ($tasks as $task) {
             $difficulty = $task->difficulty;

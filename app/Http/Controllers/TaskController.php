@@ -132,5 +132,13 @@ class TaskController extends Controller
 
         return  redirect('/tasks');
 
+        }
     }
-} }
+
+    public function task($id) {
+        $task = task::findOrFail($id);
+        return view('task', [
+            'task' => $task
+        ]);
+    }
+} 

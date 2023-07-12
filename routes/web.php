@@ -24,7 +24,7 @@ Route::get('/', [IndexController::class, 'view']);
 //All the routes for tasks
 Route::get('/tasks', [TaskController::class, 'view']);
 
-// route::get('/task/{id}') Later for single tasks. 
+route::get('/task/{id}', [TaskController::class, 'task']);
 
 route::get('/dashboard', [DashController::class, 'view'] )->middleware('auth');
 
