@@ -6,6 +6,7 @@ use App\Http\Controllers\IndexController;
 use App\Http\Controllers\DashController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\DownloadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,3 +41,10 @@ route::get('/signup', [AuthController::class, 'signup'])->name('signup');
 route::post('/signup/signup', [AuthController::class, 'newuser']);
 
 route::get('/dashboard/logout', [AuthController::class, 'logout'])->middleware('auth');
+
+//Routes for handling downloads
+
+Route::get('/task/download/dphx/{id}', [DownloadController::class, 'dphx']);
+Route::get('/task/download/pln/{id}', [DownloadController::class, 'pln']);
+Route::get('/task/download/wpr/{id}', [DownloadController::class, 'wpr']);
+Route::get('/task/download/tsk/{id}', [DownloadController::class, 'tsk']);

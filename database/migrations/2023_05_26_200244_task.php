@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('dphx_name', 200)->nullable();
             $table->string('wpr_name', 200)->nullable();
             $table->string('pln_name', 200)->nullable();
+            $table->string('tsk_name', 200)->nullable();
 
             $table->timestamps();
         });

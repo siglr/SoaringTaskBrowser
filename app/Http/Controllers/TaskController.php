@@ -126,6 +126,7 @@ class TaskController extends Controller
         $task->wpr_name = $dphName . '.WPR';
         $task->dphx_name = $dphx_name;
         $task->pln_name = $dphName . '.pln';
+        $task->tsk_name = $dphName . '.tsk';
 
         //Upload to the DB
         $task->save();
