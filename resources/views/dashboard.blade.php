@@ -9,7 +9,7 @@
 
             <div class="mt-6">
                 <a href="/tasks/upload" class="bg-blue-500 p-2 rounded-md text-blue-50 mr-4 hover:opacity-90 duration-150 ease-in-out">Upload a task</a>
-                <a href="#" class="bg-blue-500 p-2 rounded-md text-blue-50 mr-4 hover:opacity-90 duration-150 ease-in-out">Edit a task</a>
+                <a href="/tasks/edit" class="bg-blue-500 p-2 rounded-md text-blue-50 mr-4 hover:opacity-90 duration-150 ease-in-out">Edit a task</a>
                 <a href="#" class="bg-blue-500 p-2 rounded-md text-blue-50 mr-4 hover:opacity-90 duration-150 ease-in-out">Account settings</a>
                 <a href="/dashboard/logout" class="bg-red-500 p-2 rounded-md text-blue-50 mr-4 hover:opacity-90 duration-150 ease-in-out">Log out</a>
             </div>

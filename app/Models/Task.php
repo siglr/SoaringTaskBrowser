@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Auth;
 
 class task extends Model
 {
@@ -51,5 +51,26 @@ class task extends Model
         }
         
         return $tasks;
+    }
+
+    public static function mytasks() {
+        $owner_id = Auth::id();
+        
+        $tasks = DB::table('tasks')->where('owner_id', $owner_id)->get();
+
+        return $tasks;
+    }
+
+    public static function Authorize($id) {
+        $task_id = $id;
+        $user_id = Auth::id();
+        $owner_id = DB::table('tasks')->where('id', $task_id)->value('owner_id');
+
+        if($owner_id == $user_id) {
+            $task = task::findOrFail($task_id);
+            return $task;
+        } else {
+            abort(403);
+        }
     }
 }

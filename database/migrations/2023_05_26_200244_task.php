@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title', 250)->nullable();
             $table->string('creator', 30)->nullable()->default('Joe Johnson');
             $table->string('submitter', 30)->nullable()->default('Spongebob');
+            $table->float('owner_id');
             $table->float('task_distance')->nullable();
             $table->float('total_distance')->nullable();
             $table->float('min_time')->nullable();

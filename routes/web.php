@@ -48,3 +48,7 @@ Route::get('/task/download/dphx/{id}', [DownloadController::class, 'dphx']);
 Route::get('/task/download/pln/{id}', [DownloadController::class, 'pln']);
 Route::get('/task/download/wpr/{id}', [DownloadController::class, 'wpr']);
 Route::get('/task/download/tsk/{id}', [DownloadController::class, 'tsk']);
+
+//Routes for editing tasks
+Route::get('/tasks/edit', [TaskController::class, 'editList']);
+Route::get('/task/edit/{id}', [TaskController::class, 'editTask']);

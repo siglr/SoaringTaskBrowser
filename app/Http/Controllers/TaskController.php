@@ -107,6 +107,7 @@ class TaskController extends Controller
         $task = new task;
         $task->submitter = $request->input('submitter'); 
         $task->creator = $request->input('creator');
+        $task->owner_id = Auth::id();
         $task->task_distance = $request->input('task_distance');
         $task->total_distance = $request->input('total_distance');
         
@@ -141,5 +142,20 @@ class TaskController extends Controller
         return view('task', [
             'task' => $task
         ]);
+    }
+
+    public function editList() {
+        $tasks = task::mytasks();
+        return view('tasksedit' , [
+            'tasks' => $tasks
+        ]);
+    }
+
+    public function editTask($id) {
+        $task = task::Authorize($id);
+        return view('task', [
+            'task' => $task
+        ]);
+        
     }
 } 
