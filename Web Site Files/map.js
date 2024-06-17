@@ -4,9 +4,33 @@ document.addEventListener("DOMContentLoaded", function () {
     const hoverWeight = 7;
     const selWeight = 8;
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    // Define different map layers
+    const layers = {
+        "OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }),
+        "Google Terrain": L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
+            attribution: 'Map data © <a href="https://maps.google.com">Google</a>',
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            maxZoom: 20,
+            tileSize: 256,
+        }),
+        "TopoMap": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © <a href="https://opentopomap.org">OpenTopoMap</a>'
+        }),
+        "Satellite": L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            attribution: 'Map data © <a href="https://maps.google.com">Google</a>',
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            maxZoom: 20,
+            tileSize: 256,
+        })
+    };
+
+    // Add the default layer to the map
+    layers["OpenStreetMap"].addTo(map);
+
+    // Add layer control to the map
+    L.control.layers(layers).addTo(map);
 
     let runningInApp = false;
     const urlParams = new URLSearchParams(window.location.search);
