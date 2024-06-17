@@ -9,14 +9,12 @@ try {
     // Define the query to retrieve the records
     $query = "
         SELECT 
-            w.EntrySeqID, 
-            w.TaskID, 
-            t.Title,
-            w.PLNXML
+            EntrySeqID, 
+            TaskID, 
+            Title,
+            PLNXML
         FROM 
-            WorldMapInfo w
-        INNER JOIN 
-            Tasks t ON w.TaskID = t.TaskID
+            Tasks
     ";
 
     // Prepare and execute the query
