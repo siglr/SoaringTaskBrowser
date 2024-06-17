@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         opacity: 0.7,
                         className: 'task-polyline'
                     }).addTo(map)
-                        .bindPopup(`<strong>EntrySeqID:</strong> ${task.EntrySeqID}<br>
+                        .bindPopup(`<strong>Task #</strong> ${task.EntrySeqID}<br>
                                     <strong>Title:</strong> ${task.Title}`);
 
                     polylines[task.EntrySeqID] = polyline;
@@ -121,4 +121,32 @@ document.addEventListener("DOMContentLoaded", function () {
             window.chrome.webview.postMessage({ action: 'selectTask', entrySeqID: entrySeqID });
         }
     }
+
+    // Function to filter tasks based on a list of EntrySeqIDs
+    window.filterTasks = function (entrySeqIDs) {
+
+        // Hide all polylines first
+        Object.values(polylines).forEach(polyline => {
+            map.removeLayer(polyline);
+        });
+
+        // Show only the polylines whose EntrySeqID is in the entrySeqIDs list
+        entrySeqIDs.forEach(id => {
+            if (polylines[id]) {
+                polylines[id].addTo(map);
+            } else {
+                console.warn("Polyline not found for EntrySeqID:", id);
+            }
+        });
+    };
+
+    // Function to clear all filters and show all tasks
+    window.clearFilter = function () {
+
+        // Add all polylines to the map
+        Object.values(polylines).forEach(polyline => {
+            polyline.addTo(map);
+        });
+    };
+
 });
