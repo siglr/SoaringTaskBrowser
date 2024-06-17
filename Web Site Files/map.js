@@ -1,9 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
     const map = L.map('map').setView([20, 0], 2);
+    const defWeight = 6;
+    const hoverWeight = 7;
+    const selWeight = 8;
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
     }).addTo(map);
+
+    let runningInApp = false;
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('appContext')) {
+        runningInApp = true;
+    } else {
+        runningInApp = false;
+    }
 
     const polylines = {};
     let currentPolyline = null; // Track the currently selected polyline
@@ -26,37 +37,40 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (coordinates.length > 0) {
                     const polyline = L.polyline(coordinates, {
                         color: "#ff7800",
-                        weight: 5,
+                        weight: defWeight,
                         opacity: 0.7,
                         className: 'task-polyline'
-                    }).addTo(map)
-                        .bindPopup(`<strong>Task #</strong> ${task.EntrySeqID}<br>
-                                    <strong>Title:</strong> ${task.Title}`);
+                    });
+                    polyline.addTo(map);
+                    if (!runningInApp) {
+                        polyline.bindPopup(`<strong>Task #</strong> ${task.EntrySeqID}<br>
+                                        <strong>Title:</strong> ${task.Title}`);
+                    }
 
                     polylines[task.EntrySeqID] = polyline;
 
                     polyline.on('mouseover', function () {
                         if (!this.options.selected) {
-                            this.setStyle({ color: '#0000CD', weight: 5 });
+                            this.setStyle({ color: '#9900cc', weight: hoverWeight });
                         }
                     });
 
                     polyline.on('mouseout', function () {
                         if (!this.options.selected) {
-                            this.setStyle({ color: '#ff7800', weight: 5 });
+                            this.setStyle({ color: '#ff7800', weight: defWeight });
                         }
                     });
 
                     polyline.on('click', function () {
                         resetPolylines();
-                        this.setStyle({ color: '#0000ff', weight: 7 });
+                        this.setStyle({ color: '#0000ff', weight: selWeight });
                         this.options.selected = true;
                         currentPolyline = this; // Set the current polyline
                         postSelectedTask(task.EntrySeqID); // Notify the app
                     });
 
                     polyline.on('popupclose', function () {
-                        this.setStyle({ color: '#ff7800', weight: 5 });
+                        this.setStyle({ color: '#ff7800', weight: defWeight });
                         this.options.selected = false;
                         currentPolyline = null; // Clear the current polyline
                     });
@@ -86,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function resetPolylines() {
         Object.values(polylines).forEach(polyline => {
             if (polyline.options.selected) {
-                polyline.setStyle({ color: '#ff7800', weight: 5 });
+                polyline.setStyle({ color: '#ff7800', weight: defWeight });
                 polyline.options.selected = false;
             }
         });
@@ -97,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (polylines[entrySeqID]) {
             resetPolylines();
             const polyline = polylines[entrySeqID];
-            polyline.setStyle({ color: '#0000ff', weight: 7 });
+            polyline.setStyle({ color: '#0000ff', weight: selWeight });
             polyline.options.selected = true;
             polyline.openPopup();
             currentPolyline = polyline; // Set the current polyline
