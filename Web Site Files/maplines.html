@@ -8,25 +8,44 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         #map {
-            height: 100vh;
+            height: 90vh; /* Adjust height to leave space for the button */
         }
-        /* Full height */
+
         .leaflet-popup-content-wrapper {
-            background-color: #fff; /* Background color for popups */
-            color: #333; /* Text color for popups */
+            background-color: #fff;
+            color: #333;
         }
 
         .leaflet-interactive:hover {
             cursor: pointer;
         }
+
+        #zoomButton {
+            position: absolute;
+            top: 10px;
+            left: 70px; /* Adjusted to move the button to the right */
+            z-index: 1000;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+            #zoomButton:hover {
+                background-color: #0056b3;
+            }
     </style>
 </head>
 <body>
     <div id="map"></div>
+    <button id="zoomButton" onclick="zoomToTask()">Zoom to Task</button>
 
     <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <!-- Include the external JavaScript file -->
+    <!-- External JavaScript file -->
     <script src="map.js"></script>
 </body>
 </html>
