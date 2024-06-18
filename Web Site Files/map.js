@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // Add the default layer to the map
-    layers["OpenStreetMap"].addTo(map);
+    layers["Google Terrain"].addTo(map);
 
     // Add layer control to the map
     L.control.layers(layers).addTo(map);
@@ -42,68 +42,124 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const polylines = {};
     let currentPolyline = null; // Track the currently selected polyline
+    let currentEntrySeqID = null; // Track the EntrySeqID of the selected polyline
 
-    fetch('GetTasksForMap.php')
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(task => {
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(task.PLNXML, "text/xml");
-                const waypoints = xmlDoc.getElementsByTagName("ATCWaypoint");
+    function fetchTasks(bounds) {
+        const { _southWest: sw, _northEast: ne } = bounds;
 
-                const coordinates = [];
-                for (let i = 0; i < waypoints.length; i++) {
-                    const worldPosition = waypoints[i].getElementsByTagName("WorldPosition")[0].textContent;
-                    const [lat, lon] = parseWorldPosition(worldPosition);
-                    coordinates.push([lat, lon]);
+        const bufferKm = 1;
+        const bufferLat = bufferKm / 110.574; // Approximate conversion from km to latitude
+        const bufferLng = bufferKm / (111.320 * Math.cos((sw.lat + ne.lat) / 2 * Math.PI / 180)); // Approx conversion from km to longitude
+
+        const latMin = sw.lat - bufferLat;
+        const latMax = ne.lat + bufferLat;
+        const lngMin = sw.lng - bufferLng;
+        const lngMax = ne.lng + bufferLng;
+
+        fetch(`GetTasksForMap.php?latMin=${latMin}&latMax=${latMax}&lngMin=${lngMin}&lngMax=${lngMax}`)
+            .then(response => response.json())
+            .then(data => {
+                // console.log(`Number of tasks fetched: ${data.length}`);
+
+                // Making sure to keep the currently selected task because it will get set to null by removing all polylines
+                let preventEntrySeqIDlost = currentEntrySeqID;
+
+                // Clear existing polylines
+                Object.values(polylines).forEach(polyline => {
+                    map.removeLayer(polyline);
+                });
+
+                // Clear the polylines object
+                for (const key in polylines) {
+                    delete polylines[key];
                 }
 
-                if (coordinates.length > 0) {
-                    const polyline = L.polyline(coordinates, {
-                        color: "#ff7800",
-                        weight: defWeight,
-                        opacity: 0.7,
-                        className: 'task-polyline'
-                    });
-                    polyline.addTo(map);
-                    if (!runningInApp) {
-                        polyline.bindPopup(`<strong>Task #</strong> ${task.EntrySeqID}<br>
-                                        <strong>Title:</strong> ${task.Title}`);
+                // Resetting the current selected task after clearing all polylines
+                currentEntrySeqID = preventEntrySeqIDlost;
+
+                data.forEach(task => {
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(task.PLNXML, "text/xml");
+                    const waypoints = xmlDoc.getElementsByTagName("ATCWaypoint");
+
+                    const coordinates = [];
+                    for (let i = 0; i < waypoints.length; i++) {
+                        const worldPosition = waypoints[i].getElementsByTagName("WorldPosition")[0].textContent;
+                        const [lat, lon] = parseWorldPosition(worldPosition);
+                        coordinates.push([lat, lon]);
                     }
 
-                    polylines[task.EntrySeqID] = polyline;
-
-                    polyline.on('mouseover', function () {
-                        if (!this.options.selected) {
-                            this.setStyle({ color: '#9900cc', weight: hoverWeight });
+                    if (coordinates.length > 0) {
+                        const polyline = L.polyline(coordinates, {
+                            color: "#ff7800",
+                            weight: defWeight,
+                            opacity: 0.7,
+                            className: 'task-polyline'
+                        });
+                        polyline.addTo(map);
+                        if (!runningInApp) {
+                            polyline.bindPopup(`<strong>Task #</strong> ${task.EntrySeqID}<br>
+                                        <strong>Title:</strong> ${task.Title}`);
                         }
-                    });
 
-                    polyline.on('mouseout', function () {
-                        if (!this.options.selected) {
-                            this.setStyle({ color: '#ff7800', weight: defWeight });
+                        polylines[task.EntrySeqID] = polyline;
+
+                        polyline.on('mouseover', function () {
+                            if (!this.options.selected) {
+                                this.setStyle({ color: '#9900cc', weight: hoverWeight });
+                            }
+                        });
+
+                        polyline.on('mouseout', function () {
+                            if (!this.options.selected) {
+                                this.setStyle({ color: '#ff7800', weight: defWeight });
+                            }
+                        });
+
+                        polyline.on('click', function () {
+                            resetPolylines();
+                            this.setStyle({ color: '#0000ff', weight: selWeight });
+                            this.options.selected = true;
+                            currentPolyline = this; // Set the current polyline
+                            currentEntrySeqID = task.EntrySeqID; // Track the EntrySeqID
+                            postSelectedTask(task.EntrySeqID); // Notify the app
+                        });
+
+                        // Ensure this event only triggers if not in app context
+                        if (!runningInApp) {
+                            polyline.on('popupclose', function () {
+                                this.setStyle({ color: '#ff7800', weight: defWeight });
+                                this.options.selected = false;
+                                currentPolyline = null; // Clear the current polyline
+                                currentEntrySeqID = null; // Clear the current EntrySeqID
+                            });
                         }
-                    });
+                    }
+                });
 
-                    polyline.on('click', function () {
-                        resetPolylines();
-                        this.setStyle({ color: '#0000ff', weight: selWeight });
-                        this.options.selected = true;
-                        currentPolyline = this; // Set the current polyline
-                        postSelectedTask(task.EntrySeqID); // Notify the app
-                    });
-
-                    polyline.on('popupclose', function () {
-                        this.setStyle({ color: '#ff7800', weight: defWeight });
-                        this.options.selected = false;
-                        currentPolyline = null; // Clear the current polyline
-                    });
+                // Restore the selected task if any
+                if (currentEntrySeqID && polylines[currentEntrySeqID]) {
+                    const polyline = polylines[currentEntrySeqID];
+                    polyline.setStyle({ color: '#0000ff', weight: selWeight });
+                    polyline.options.selected = true;
+                    if (!runningInApp) {
+                        polyline.openPopup();
+                    }
+                    currentPolyline = polyline; // Set the current polyline
                 }
+            })
+            .catch(error => {
+                console.error('Error fetching tasks:', error);
             });
-        })
-        .catch(error => {
-            console.error('Error fetching task boundaries:', error);
-        });
+    }
+
+    // Initial task fetch
+    fetchTasks(map.getBounds());
+
+    // Fetch tasks when the map view changes
+    map.on('moveend', function () {
+        fetchTasks(map.getBounds());
+    });
 
     function parseWorldPosition(worldPosition) {
         const regex = /([NS])(\d+)° (\d+)' ([\d.]+)",([EW])(\d+)° (\d+)' ([\d.]+)"/;
@@ -137,8 +193,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const polyline = polylines[entrySeqID];
             polyline.setStyle({ color: '#0000ff', weight: selWeight });
             polyline.options.selected = true;
-            polyline.openPopup();
+            if (!runningInApp) {
+                polyline.openPopup();
+            }
             currentPolyline = polyline; // Set the current polyline
+            currentEntrySeqID = entrySeqID; // Track the EntrySeqID
         } else {
             console.warn('Task not found:', entrySeqID);
         }
