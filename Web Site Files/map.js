@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	const polylines = {};
 	let currentPolyline = null; // Track the currently selected polyline
 	let currentEntrySeqID = null; // Track the EntrySeqID of the selected polyline
+	let filteredEntrySeqIDs = null; // Track the filtered tasks
 
 	function fetchTasks(bounds) {
 		const { _southWest: sw, _northEast: ne } = bounds;
@@ -134,6 +135,9 @@ document.addEventListener("DOMContentLoaded", function () {
 					}
 				});
 
+				// Manager filtered tasks
+				manageFilteredTasks();
+
 				// Restore the selected task if any
 				if (currentEntrySeqID && polylines[currentEntrySeqID]) {
 					const polyline = polylines[currentEntrySeqID];
@@ -207,6 +211,25 @@ document.addEventListener("DOMContentLoaded", function () {
 			});
 	}
 
+	function manageFilteredTasks() {
+
+		// Check if filtered tasks are active or not (filteredEntrySeqIDs is null or not)
+		if (filteredEntrySeqIDs === null) {
+			return;
+		}
+		// Hide all polylines first
+		Object.values(polylines).forEach(polyline => {
+			map.removeLayer(polyline);
+		});
+
+		// Show only the polylines whose EntrySeqID is in the filteredEntrySeqIDs list
+		filteredEntrySeqIDs.forEach(id => {
+			if (polylines[id]) {
+				polylines[id].addTo(map);
+			}
+		});
+	}
+
 	// Function to select a task on the map
 	window.selectTask = function (entrySeqID, forceBoundsUpdate = false) {
 		if (polylines[entrySeqID]) {
@@ -226,7 +249,6 @@ document.addEventListener("DOMContentLoaded", function () {
 				map.fitBounds(polylineBounds);
 			}
 		} else {
-			console.warn('Task not found:', entrySeqID);
 			fetchTaskBounds(entrySeqID).then(bounds => {
 				if (bounds) {
 					const southWest = L.latLng(bounds.latMin, bounds.lngMin);
@@ -260,23 +282,17 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Function to filter tasks based on a list of EntrySeqIDs
 	window.filterTasks = function (entrySeqIDs) {
 
-		// Hide all polylines first
-		Object.values(polylines).forEach(polyline => {
-			map.removeLayer(polyline);
-		});
+		// Save the list of tasks
+		filteredEntrySeqIDs = entrySeqIDs;
 
-		// Show only the polylines whose EntrySeqID is in the entrySeqIDs list
-		entrySeqIDs.forEach(id => {
-			if (polylines[id]) {
-				polylines[id].addTo(map);
-			} else {
-				console.warn("Polyline not found for EntrySeqID:", id);
-			}
-		});
+		manageFilteredTasks();
+
 	};
 
 	// Function to clear all filters and show all tasks
 	window.clearFilter = function () {
+
+		filteredEntrySeqIDs = null;
 
 		// Add all polylines to the map
 		Object.values(polylines).forEach(polyline => {
