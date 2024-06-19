@@ -45,6 +45,14 @@ document.addEventListener("DOMContentLoaded", function () {
 	let currentEntrySeqID = null; // Track the EntrySeqID of the selected polyline
 	let filteredEntrySeqIDs = null; // Track the filtered tasks
 
+	// Initial task fetch
+	fetchTasks(map.getBounds());
+
+	// Fetch tasks when the map view changes
+	map.on('moveend', function () {
+		fetchTasks(map.getBounds());
+	});
+
 	function fetchTasks(bounds) {
 		const { _southWest: sw, _northEast: ne } = bounds;
 
@@ -157,14 +165,6 @@ document.addEventListener("DOMContentLoaded", function () {
 			});
 	}
 
-	// Initial task fetch
-	fetchTasks(map.getBounds());
-
-	// Fetch tasks when the map view changes
-	map.on('moveend', function () {
-		fetchTasks(map.getBounds());
-	});
-
 	function parseWorldPosition(worldPosition) {
 		const regex = /([NS])(\d+)° (\d+)' ([\d.]+)",([EW])(\d+)° (\d+)' ([\d.]+)"/;
 		const match = regex.exec(worldPosition);
@@ -230,8 +230,15 @@ document.addEventListener("DOMContentLoaded", function () {
 		});
 	}
 
-	// Function to select a task on the map
+	function postSelectedTask(entrySeqID) {
+		// Function to post a selected task ID to the app
+		if (window.chrome && window.chrome.webview) {
+			window.chrome.webview.postMessage({ action: 'selectTask', entrySeqID: entrySeqID });
+		}
+	}
+
 	window.selectTask = function (entrySeqID, forceBoundsUpdate = false) {
+		// Function to select a task on the map
 		if (polylines[entrySeqID]) {
 			resetPolylines();
 			const polyline = polylines[entrySeqID];
@@ -263,8 +270,8 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	};
 
-	// Function to zoom to the selected task
 	window.zoomToTask = function () {
+		// Function to zoom to the selected task
 		if (currentPolyline) {
 			map.fitBounds(currentPolyline.getBounds());
 		} else {
@@ -272,15 +279,8 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	};
 
-	// Function to post a selected task ID to the app
-	function postSelectedTask(entrySeqID) {
-		if (window.chrome && window.chrome.webview) {
-			window.chrome.webview.postMessage({ action: 'selectTask', entrySeqID: entrySeqID });
-		}
-	}
-
-	// Function to filter tasks based on a list of EntrySeqIDs
 	window.filterTasks = function (entrySeqIDs) {
+		// Function to filter tasks based on a list of EntrySeqIDs
 
 		// Save the list of tasks
 		filteredEntrySeqIDs = entrySeqIDs;
@@ -289,8 +289,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	};
 
-	// Function to clear all filters and show all tasks
 	window.clearFilter = function () {
+		// Function to clear all filters and show all tasks
 
 		filteredEntrySeqIDs = null;
 
