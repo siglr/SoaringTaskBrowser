@@ -270,6 +270,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	};
 
+	window.resetToFullWorld = function () {
+		// Full world button function
+		map.setView([20, 0], 2); // Set the default view with the entire world
+	};
+
 	window.zoomToTask = function () {
 		// Function to zoom to the selected task
 		if (currentPolyline) {
