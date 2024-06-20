@@ -1,3 +1,14 @@
+// Add an event listener to capture the ESC key press
+document.addEventListener('keydown', function (event) {
+	if (event.key === 'Escape') {
+		// Send a message to the VB.Net app
+		if (window.chrome && window.chrome.webview) {
+			window.chrome.webview.postMessage({ action: 'escapeKeyPressed' });
+		}
+	}
+});
+
+// Main event handling the loading of the page
 document.addEventListener("DOMContentLoaded", function () {
 	const map = L.map('map').setView([20, 0], 2);
 	const defWeight = 6;
