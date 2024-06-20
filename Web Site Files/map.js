@@ -64,6 +64,8 @@ document.addEventListener("DOMContentLoaded", function () {
 		fetchTasks(map.getBounds());
 	});
 
+
+	// Common functions for the map
 	function fetchTasks(bounds) {
 		const { _southWest: sw, _northEast: ne } = bounds;
 
@@ -248,6 +250,22 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	}
 
+	// Buttons on the map
+	window.resetToFullWorld = function () {
+		// Full world button function
+		map.setView([20, 0], 2); // Set the default view with the entire world
+	};
+
+	window.zoomToTask = function () {
+		// Function to zoom to the selected task
+		if (currentPolyline) {
+			map.fitBounds(currentPolyline.getBounds());
+		} else {
+			alert("No task selected");
+		}
+	};
+
+	// Commands received by the task browser app
 	window.selectTask = function (entrySeqID, forceBoundsUpdate = false) {
 		// Function to select a task on the map
 		if (polylines[entrySeqID]) {
@@ -278,20 +296,6 @@ document.addEventListener("DOMContentLoaded", function () {
 			}).catch(error => {
 				console.error('Error fetching task bounds:', error);
 			});
-		}
-	};
-
-	window.resetToFullWorld = function () {
-		// Full world button function
-		map.setView([20, 0], 2); // Set the default view with the entire world
-	};
-
-	window.zoomToTask = function () {
-		// Function to zoom to the selected task
-		if (currentPolyline) {
-			map.fitBounds(currentPolyline.getBounds());
-		} else {
-			alert("No task selected");
 		}
 	};
 
