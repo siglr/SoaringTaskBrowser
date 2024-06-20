@@ -64,8 +64,9 @@ document.addEventListener("DOMContentLoaded", function () {
 		fetchTasks(map.getBounds());
 	});
 
-
+	//
 	// Common functions for the map
+	//
 	function fetchTasks(bounds) {
 		const { _southWest: sw, _northEast: ne } = bounds;
 
@@ -243,6 +244,9 @@ document.addEventListener("DOMContentLoaded", function () {
 		});
 	}
 
+	//
+	// Functions that send messages to the task browser app
+	//
 	function postSelectedTask(entrySeqID) {
 		// Function to post a selected task ID to the app
 		if (window.chrome && window.chrome.webview) {
@@ -250,7 +254,9 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	}
 
+	//
 	// Buttons on the map
+	//
 	window.resetToFullWorld = function () {
 		// Full world button function
 		map.setView([20, 0], 2); // Set the default view with the entire world
@@ -265,7 +271,9 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	};
 
+	//
 	// Commands received by the task browser app
+	//
 	window.selectTask = function (entrySeqID, forceBoundsUpdate = false) {
 		// Function to select a task on the map
 		if (polylines[entrySeqID]) {

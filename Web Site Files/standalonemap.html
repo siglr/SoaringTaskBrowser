@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standalone Task Routes Map</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        #taskListContainer {
+            width: 20%; /* 1/5 of the horizontal space */
+            height: 100%;
+            padding: 10px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            border-right: 1px solid #ccc;
+        }
+
+        #mapContainer {
+            width: 60%; /* 3/5 of the horizontal space */
+            height: 100%;
+            position: relative; /* Allow buttons to be positioned absolutely within this container */
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        #taskDetailContainer {
+            width: 20%; /* 1/5 of the horizontal space */
+            height: 100%;
+            padding: 10px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            border-left: 1px solid #ccc;
+        }
+
+        .leaflet-popup-content-wrapper {
+            background-color: #fff;
+            color: #333;
+        }
+
+        .leaflet-interactive:hover {
+            cursor: pointer;
+        }
+
+        #zoomButton,
+        #fullWorldButton {
+            position: absolute;
+            top: 10px;
+            z-index: 1000;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #zoomButton {
+            left: 45px;
+        }
+
+        #fullWorldButton {
+            left: 185px;
+        }
+
+            #zoomButton:hover,
+            #fullWorldButton:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <div id="taskListContainer">
+        <!-- Task list content will go here -->
+    </div>
+    <div id="mapContainer">
+        <div id="map"></div>
+        <button id="zoomButton" onclick="zoomToTask()">Zoom to Task</button>
+        <button id="fullWorldButton" onclick="resetToFullWorld()">Full World</button>
+    </div>
+    <div id="taskDetailContainer">
+        <!-- Task details content will go here -->
+    </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Main map JavaScript -->
+    <script src="map.js"></script>
+    <!-- Standalone-specific JavaScript -->
+    <script src="standalone.js"></script>
+</body>
+</html>
