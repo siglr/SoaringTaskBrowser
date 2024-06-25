@@ -1,68 +1,44 @@
-document.addEventListener("DOMContentLoaded", function () {
-    if (window.chrome && window.chrome.webview) {
-        // Exit if running inside WebView2
-        return;
-    }
-
-    // Initialize standalone features
-    initializeStandaloneFeatures();
-});
-
-function initializeStandaloneFeatures() {
-    addTaskList();
-    addTaskDetailDisplay();
-    updateTaskList();
-}
-
-// Add task list display
-function addTaskList() {
-    const taskListContainer = document.getElementById('taskListContainer');
-    // Additional styling and structure if needed
-}
-
-// Add task detail display
-function addTaskDetailDisplay() {
-    const taskDetailContainer = document.getElementById('taskDetailContainer');
-    // Additional styling and structure if needed
-}
-
-// Update task list
-function updateTaskList() {
-    const taskListContainer = document.getElementById('taskListContainer');
-    taskListContainer.innerHTML = ''; // Clear existing list
-
-    Object.keys(polylines).forEach(entrySeqID => {
-        const task = polylines[entrySeqID];
-
-        const taskItem = document.createElement('div');
-        taskItem.textContent = `Task #${entrySeqID}`;
-        taskItem.style.cursor = 'pointer';
-        taskItem.addEventListener('click', () => {
-            selectTask(entrySeqID, true); // Select and zoom to task
+function showTaskDetailsStandalone(entrySeqID) {
+    fetch(`GetTaskDetails.php?entrySeqID=${entrySeqID}`)
+        .then(response => response.json())
+        .then(task => {
+            const taskDetailContainer = document.getElementById("taskDetailContainer");
+            taskDetailContainer.innerHTML = `
+                <div class="task-details">
+                    <h2>${task.Title} ${addCountryFlags(task.Countries)}</h2>
+                    <p>${task.ShortDescription}</p>
+                    <p>🗺 ${task.MainAreaPOI}</p>
+                    <p>🛫 ${task.DepartureICAO} ${task.DepartureName} ${task.DepartureExtra}</p>
+                    <p>🛬 ${task.ArrivalICAO} ${task.ArrivalName} ${task.ArrivalExtra}</p>
+                    <p>⌚ ${task.SimDateTime} ${task.SimDateTimeExtraInfo}</p>
+                    <p>↗️ ${task.SoaringRidge ? 'Ridge' : ''}${task.SoaringThermals ? ' Thermals' : ''}${task.SoaringWaves ? ' Waves' : ''}${task.SoaringDynamic ? ' Dynamic' : ''}</p>
+                    <p>📏 ${task.TaskDistance} km total (${task.TotalDistance} mi total)</p>
+                    <p>⏳ ${task.DurationMin} to ${task.DurationMax} minutes</p>
+                    <p>✈️ ${task.RecommendedGliders}</p>
+                    <p>🎚 ${task.DifficultyRating}</p>
+                    <p>${task.Credits}</p>
+                </div>`;
+        })
+        .catch(error => {
+            console.error('Error fetching task details:', error);
         });
-
-        taskListContainer.appendChild(taskItem);
-    });
 }
 
-// Update task details
-function updateTaskDetails() {
-    const taskDetailContainer = document.getElementById('taskDetailContainer');
-    taskDetailContainer.innerHTML = ''; // Clear existing details
-
-    if (currentEntrySeqID) {
-        const taskDetail = polylines[currentEntrySeqID];
-
-        const detail = document.createElement('div');
-        detail.textContent = `Task Details for #${currentEntrySeqID}`;
-        // Populate with actual task details
-        taskDetailContainer.appendChild(detail);
-    }
+function showTaskListStandalone(tasks) {
+    const taskListContainer = document.getElementById("taskListContainer");
+    taskListContainer.innerHTML = tasks.map(task => `
+        <div class="task-list-item" onclick="selectTask(${task.EntrySeqID})">
+            <h4>${task.Title}</h4>
+            <p>${task.ShortDescription}</p>
+        </div>
+    `).join('');
 }
 
-// Hook to update the task list whenever tasks are fetched
-document.addEventListener('tasksFetched', () => {
-    if (!window.chrome || !window.chrome.webview) {
-        updateTaskList();
-    }
-});
+function addCountryFlags(countries) {
+    const flagMap = {
+        "Russia": "🇷🇺",
+        "Azerbaijan": "🇦🇿",
+        // Add other country flags as needed
+    };
+    return countries.split(',').map(country => flagMap[country.trim()] || '').join(' ');
+}
