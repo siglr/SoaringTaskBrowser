@@ -18,19 +18,19 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Define different map layers
 	const layers = {
 		"OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+			attribution: 'Map data Â© <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
 		}),
 		"Google Terrain": L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
-			attribution: 'Map data © <a href="https://maps.google.com">Google</a>',
+			attribution: 'Map data Â© <a href="https://maps.google.com">Google</a>',
 			subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
 			maxZoom: 20,
 			tileSize: 256,
 		}),
 		"TopoMap": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-			attribution: 'Map data © <a href="https://opentopomap.org">OpenTopoMap</a>'
+			attribution: 'Map data Â© <a href="https://opentopomap.org">OpenTopoMap</a>'
 		}),
 		"Satellite": L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-			attribution: 'Map data © <a href="https://maps.google.com">Google</a>',
+			attribution: 'Map data Â© <a href="https://maps.google.com">Google</a>',
 			subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
 			maxZoom: 20,
 			tileSize: 256,
@@ -142,7 +142,12 @@ document.addEventListener("DOMContentLoaded", function () {
 							this.options.selected = true;
 							currentPolyline = this; // Set the current polyline
 							currentEntrySeqID = task.EntrySeqID; // Track the EntrySeqID
-							postSelectedTask(task.EntrySeqID); // Notify the app
+                            if (!runningInApp) {
+                                polyline.openPopup();
+                                showTaskDetailsStandalone(task.EntrySeqID); // Call standalone.js function
+                            } else {
+                                postSelectedTask(task.EntrySeqID); // Notify the app
+                            }
 						});
 
 						// Ensure this event only triggers if not in app context
@@ -180,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 
 	function parseWorldPosition(worldPosition) {
-		const regex = /([NS])(\d+)° (\d+)' ([\d.]+)",([EW])(\d+)° (\d+)' ([\d.]+)"/;
+		const regex = /([NS])(\d+)Â° (\d+)' ([\d.]+)",([EW])(\d+)Â° (\d+)' ([\d.]+)"/;
 		const match = regex.exec(worldPosition);
 		if (!match) return [0, 0];
 
