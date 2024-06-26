@@ -28,6 +28,7 @@ try {
             ArrivalExtra,
             SimDateTime,
             SimDateTimeExtraInfo,
+            IncludeYear,
             SoaringRidge,
             SoaringThermals,
             SoaringWaves,
