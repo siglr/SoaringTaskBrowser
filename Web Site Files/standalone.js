@@ -10,11 +10,20 @@ fetch('https://flagcdn.com/en/codes.json')
         console.error('Error fetching country codes:', error);
     });
 
+// Mapping of country names in your app to the corresponding names used by the flag service
+const countryNameMapping = {
+    'Czech Republic': 'Czechia',
+    'Virgin Islands U.S.': 'United States Virgin Islands',
+    'Virgin Islands British': 'British Virgin Islands'
+};
+
 function addCountryFlags(countries) {
-    const baseUrl = 'https://flagcdn.com/w40/';
+    const baseUrl = 'https://flagcdn.com/h24/';
     return countries.split(',').map(country => {
         const countryName = country.trim();
-        const code = Object.keys(countryCodes).find(key => countryCodes[key].toLowerCase() === countryName.toLowerCase());
+        // Use the mapping if it exists, otherwise use the original name
+        const mappedCountryName = countryNameMapping[countryName] || countryName;
+        const code = Object.keys(countryCodes).find(key => countryCodes[key].toLowerCase() === mappedCountryName.toLowerCase());
         return code ? `<img src="${baseUrl}${code}.webp" alt="${countryName}" title="${countryName}" style="margin-right: 5px;">` : countryName;
     }).join(' ');
 }
@@ -60,11 +69,16 @@ function convertToMarkdown(text) {
 
     //console.log(text)
     // Step 4: Render markdown
+    //console.log(md.render(text))
     return md.render(text);
 }
 
-function addDetailLinePlusBreak(label, value) {
-    return value ? `${label} ${value}<br>` : '';
+function addDetailLineWithoutBreak(label, value) {
+    return value ? `${label} ${value}` : '';
+}
+
+function addDetailLineWithBreak(label, value) {
+    return value ? `${label} ${value} <br>` : '';
 }
 
 function addDetailWithinBrackets(value) {
@@ -121,10 +135,13 @@ function showTaskDetailsStandalone(entrySeqID) {
             const taskDetailContainer = document.getElementById("taskDetailContainer");
             taskDetailContainer.innerHTML = `
                 <div class="task-details markdown-content">
-                    #${entrySeqID}
-                    <h1>${task.Title}<br>${addCountryFlags(task.Countries)}</h1>
-                    ${addDetailLinePlusBreak('',convertToMarkdown(task.ShortDescription))}
-                    ${addDetailLinePlusBreak('🗺', task.MainAreaPOI)}
+                    <div class="task-header">
+                        <span class="task-number">#${entrySeqID}</span>
+                        <span class="task-flags">${addCountryFlags(task.Countries)}</span>
+                    </div>
+                    <h1>${task.Title}</h1>
+                    ${addDetailLineWithoutBreak('',convertToMarkdown(task.ShortDescription))}
+                    ${addDetailLineWithBreak('🗺', task.MainAreaPOI)}
                     🛫 ${task.DepartureICAO} ${task.DepartureName} ${addDetailWithinBrackets(task.DepartureExtra)}<br>
                     🛬 ${task.ArrivalICAO} ${task.ArrivalName} ${addDetailWithinBrackets(task.ArrivalExtra)}<br>
                     ⌚ ${formatSimDateTime(task.SimDateTime, task.IncludeYear)} ${addDetailWithinBrackets(task.SimDateTimeExtraInfo)}<br>
@@ -132,9 +149,10 @@ function showTaskDetailsStandalone(entrySeqID) {
                     📏 ${task.TaskDistance} km task (${task.TotalDistance} km total)<br>
                     ⏳ ${formatDuration(task.DurationMin, task.DurationMax)} ${addDetailWithinBrackets(task.DurationExtraInfo)}<br>
                     ✈️ ${task.RecommendedGliders}<br>
-                    🎚 ${formatDifficultyRating(task.DifficultyRating, task.DifficultyExtraInfo)}<br><br>
-                    <p>${task.Credits}</p><br>
-                    ${addDetailLinePlusBreak('',convertToMarkdown(task.LongDescription))}
+                    🎚 ${formatDifficultyRating(task.DifficultyRating, task.DifficultyExtraInfo)}
+                    <p>${task.Credits}</p>
+                    <h2>📖 Full Description</h2>
+                    ${addDetailLineWithoutBreak('',convertToMarkdown(task.LongDescription))}
                 </div>`;
         })
         .catch(error => {
@@ -150,4 +168,48 @@ function showTaskListStandalone(tasks) {
             <p>${task.ShortDescription}</p>
         </div>
     `).join('');
+}
+
+// Function to adjust the map size
+function resizeMap() {
+    if (window.mapInstance) {
+        window.mapInstance.invalidateSize();
+    }
+}
+
+// Add event listeners for resizing
+window.addEventListener('resize', resizeMap);
+
+// Call resizeMap initially to ensure correct sizing on load
+resizeMap();
+
+// Add resizer functionality
+let isResizing = false;
+const resizer = document.getElementById('resizer');
+const tabsContainer = document.getElementById('tabsContainer');
+const taskDetailContainer = document.getElementById('taskDetailContainer');
+
+resizer.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    document.addEventListener('mousemove', resize);
+    document.addEventListener('mouseup', stopResize);
+});
+
+function resize(e) {
+    if (isResizing) {
+        const containerWidth = tabsContainer.offsetWidth + taskDetailContainer.offsetWidth;
+        const newTabsWidth = e.clientX / containerWidth * 100;
+        const newTaskDetailWidth = 100 - newTabsWidth;
+
+        tabsContainer.style.width = `${newTabsWidth}%`;
+        taskDetailContainer.style.width = `${newTaskDetailWidth}%`;
+
+        resizeMap(); // Ensure map is resized
+    }
+}
+
+function stopResize() {
+    isResizing = false;
+    document.removeEventListener('mousemove', resize);
+    document.removeEventListener('mouseup', stopResize);
 }
