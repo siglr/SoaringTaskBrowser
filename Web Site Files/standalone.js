@@ -63,13 +63,6 @@ function convertToMarkdown(text) {
     return md.render(text);
 }
 
-// Example usage:
-const boldText = "**Recommended Winch height:** 2000ft($*$)**Recommended Aerotow height:** 3000ft($*$)**Recommended Self Launch height:** 3000ft";
-console.log(convertToMarkdown(boldText));
-
-const plainText = "Recommended Winch height: 2000ft($*$)Recommended Aerotow height: 3000ft($*$)Recommended Self Launch height: 3000ft";
-console.log(convertToMarkdown(plainText));
-
 function addDetailLinePlusBreak(label, value) {
     return value ? `${label} ${value}<br>` : '';
 }
