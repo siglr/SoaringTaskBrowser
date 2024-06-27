@@ -8,9 +8,12 @@ document.addEventListener('keydown', function (event) {
     }
 });
 
+let mapElement;
+
 // Main event handling the loading of the page
 document.addEventListener("DOMContentLoaded", function () {
     const map = L.map('map').setView([20, 0], 2);
+    window.mapInstance = map;
     const defWeight = 6;
     const hoverWeight = 7;
     const selWeight = 8;
@@ -251,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.zoomToTask = function () {
         // Function to zoom to the selected task
         if (currentPolyline) {
-            map.fitBounds(currentPolyline.getBounds());
+             map.fitBounds(currentPolyline.getBounds());
         } else {
             alert("No task selected");
         }
