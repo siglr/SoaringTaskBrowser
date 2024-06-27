@@ -12,16 +12,29 @@
     <link rel="stylesheet" href="styles-dark.css" id="theme-style">
 </head>
 <body>
-    <div id="taskListContainer">
-        <!-- Task list content will go here -->
-    </div>
-    <div id="mapContainer">
-        <div id="map"></div>
-        <button id="zoomButton" onclick="zoomToTask()">Zoom to Task</button>
-        <button id="fullWorldButton" onclick="resetToFullWorld()">Full World</button>
-    </div>
-    <div id="taskDetailContainer">
-        <!-- Task details content will go here -->
+    <div id="container">
+        <div id="tabsContainer">
+            <div id="tabButtons">
+                <button class="tabButton active" onclick="switchTab('mapTab')">Map</button>
+                <button class="tabButton" onclick="switchTab('listTab')">List</button>
+                <button class="tabButton" onclick="switchTab('settingsTab')">Settings</button>
+            </div>
+            <div id="mapTab" class="tabContent active">
+                <div id="map"></div>
+                <button id="zoomButton" onclick="zoomToTask()">Zoom to Task</button>
+                <button id="fullWorldButton" onclick="resetToFullWorld()">Full World</button>
+            </div>
+            <div id="listTab" class="tabContent">
+                <!-- List content will go here -->
+            </div>
+            <div id="settingsTab" class="tabContent">
+                <!-- Settings content will go here -->
+            </div>
+        </div>
+        <div id="resizer"></div>
+        <div id="taskDetailContainer">
+            <!-- Task details content will go here -->
+        </div>
     </div>
 
     <!-- Leaflet JavaScript -->
@@ -34,6 +47,13 @@
         function switchTheme(theme) {
             const themeStyle = document.getElementById('theme-style');
             themeStyle.href = theme === 'dark' ? 'styles-dark.css' : 'styles-light.css';
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tabButton').forEach(button => button.classList.remove('active'));
+            document.querySelectorAll('.tabContent').forEach(content => content.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
         }
 
         // Example: Switching to light theme
