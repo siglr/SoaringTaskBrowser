@@ -7,6 +7,7 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -121,6 +122,15 @@
 
         .task-details img {
             vertical-align: middle;
+        }
+
+        .task-details ul, .task-details ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .task-details ul li, .task-details ol li {
+            margin-bottom: 5px;
         }
     </style>
 </head>
