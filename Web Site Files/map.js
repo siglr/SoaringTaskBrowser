@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const lngMin = sw.lng - bufferLng;
         const lngMax = ne.lng + bufferLng;
 
-        return fetch(`GetTasksForMap.php?latMin=${latMin}&latMax=${latMax}&lngMin=${lngMin}&lngMax=${lngMax}`)
+        return fetch(`php/GetTasksForMap.php?latMin=${latMin}&latMax=${latMax}&lngMin=${lngMin}&lngMax=${lngMax}`)
             .then(response => response.json())
             .then(data => {
                 let preventEntrySeqIDlost = currentEntrySeqID;
@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function fetchTaskBounds(entrySeqID) {
-        return fetch(`GetTaskBounds.php?entrySeqID=${entrySeqID}`)
+        return fetch(`php/GetTaskBounds.php?entrySeqID=${entrySeqID}`)
             .then(response => response.json())
             .then(bounds => {
                 if (bounds && bounds.LatMin !== undefined && bounds.LatMax !== undefined && bounds.LongMin !== undefined && bounds.LongMax !== undefined) {
