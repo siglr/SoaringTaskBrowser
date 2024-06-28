@@ -3,76 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tasks Data Table</title>
-    <!-- Include DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-    <!-- Include jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Include DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <title>WeSimGlide Tasks World Map</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js"></script>
+    <!-- Add the dark theme CSS file -->
+    <link rel="stylesheet" href="styles-dark.css" id="theme-style">
 </head>
 <body>
-    <div class="container">
-        <h2>Tasks Data Table</h2>
-        <table id="tasksTable" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th>No.</th>
-                    <th>Title</th>
-                    <th>Updated (UTC)</th>
-                    <th>Main Area / POI</th>
-                    <th>DepartureInfo</th>
-                    <th>ArrivalInfo</th>
-                    <th>Distances (KM)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data will be inserted here by JavaScript -->
-            </tbody>
-        </table>
+    <div id="container">
+        <div id="tabsContainer">
+            <div id="tabButtons">
+                <button class="tabButton active" onclick="switchTab('mapTab')">Map</button>
+                <button class="tabButton" onclick="switchTab('listTab')">List</button>
+                <button class="tabButton" onclick="switchTab('settingsTab')">Settings</button>
+            </div>
+            <div id="mapTab" class="tabContent active">
+                <div id="map"></div>
+                <button id="zoomButton" onclick="zoomToTask()">Zoom to Task</button>
+                <button id="fullWorldButton" onclick="resetToFullWorld()">Full World</button>
+            </div>
+            <div id="listTab" class="tabContent">
+                <!-- List content will go here -->
+            </div>
+            <div id="settingsTab" class="tabContent">
+                <!-- Settings content will go here -->
+            </div>
+        </div>
+        <div id="resizer"></div>
+        <div id="taskDetailContainer">
+            <!-- Task details content will go here -->
+        </div>
     </div>
 
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Main map JavaScript -->
+    <script src="map.js"></script>
+    <!-- Standalone-specific JavaScript -->
+    <script src="task_browser.js"></script>
     <script>
-        $(document).ready(function() {
-            // Fetch data from the PHP script
-            $.ajax({
-                url: 'GetTasks.php',
-                type: 'GET',
-                dataType: 'json',
-                success: function(tasks) {
-                    console.log('Data fetched successfully:', tasks);
+        function switchTheme(theme) {
+            const themeStyle = document.getElementById('theme-style');
+            themeStyle.href = theme === 'dark' ? 'styles-dark.css' : 'styles-light.css';
+        }
 
-                    // Validate the response
-                    if (!Array.isArray(tasks)) {
-                        console.error('Data is not an array:', tasks);
-                        return;
-                    }
+        function switchTab(tabId) {
+            document.querySelectorAll('.tabButton').forEach(button => button.classList.remove('active'));
+            document.querySelectorAll('.tabContent').forEach(content => content.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
 
-                    // Initialize the DataTable
-                    $('#tasksTable').DataTable({
-                        data: tasks,
-                        columns: [
-                            { data: 'EntrySeqID' },
-                            { data: 'Title' },
-                            { data: 'LastUpdate' },
-                            { data: 'MainAreaPOI' },
-                            { data: 'DepartureInfo' },
-                            { data: 'ArrivalInfo' },
-                            { data: 'DistanceInfo' }
-                        ],
-                        responsive: true,
-                        paging: true,
-                        searching: true,
-                        ordering: true,
-                        scrollX: true,
-                        info: true
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching data:', status, error);
-                }
-            });
-        });
+        // Example: Switching to light theme
+        // switchTheme('light');
     </script>
 </body>
 </html>
