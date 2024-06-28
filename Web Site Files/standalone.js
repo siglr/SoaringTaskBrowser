@@ -64,21 +64,21 @@ function convertToMarkdown(text) {
         typographer: true
     });
 
-    console.log(text)
+    //console.log(text)
     // Step 1: Replace custom line break placeholder with a temporary placeholder
     text = replaceLineBreaks(text);
 
-    console.log(text)
+    //console.log(text)
     // Step 2: Remove spaces before closing * or **
     text = removeSpacesBeforeClosingAsterisks(text);
 
-    console.log(text)
+    //console.log(text)
     // Step 3: Replace the temporary placeholder with actual line breaks
     text = restoreLineBreaks(text);
 
-    console.log(text)
+    //console.log(text)
     // Step 4: Render markdown
-    console.log(md.render(text))
+    //console.log(md.render(text))
     return md.render(text);
 }
 
