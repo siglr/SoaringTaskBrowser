@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks Data Table</title>
+    <!-- Include DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Tasks Data Table</h2>
+        <table id="tasksTable" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Title</th>
+                    <th>Updated (UTC)</th>
+                    <th>Main Area / POI</th>
+                    <th>DepartureInfo</th>
+                    <th>ArrivalInfo</th>
+                    <th>Distances (KM)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Fetch data from the PHP script
+            $.ajax({
+                url: 'GetTasks.php',
+                type: 'GET',
+                dataType: 'json',
+                success: function(tasks) {
+                    console.log('Data fetched successfully:', tasks);
+
+                    // Validate the response
+                    if (!Array.isArray(tasks)) {
+                        console.error('Data is not an array:', tasks);
+                        return;
+                    }
+
+                    // Initialize the DataTable
+                    $('#tasksTable').DataTable({
+                        data: tasks,
+                        columns: [
+                            { data: 'EntrySeqID' },
+                            { data: 'Title' },
+                            { data: 'LastUpdate' },
+                            { data: 'MainAreaPOI' },
+                            { data: 'DepartureInfo' },
+                            { data: 'ArrivalInfo' },
+                            { data: 'DistanceInfo' }
+                        ],
+                        responsive: true,
+                        paging: true,
+                        searching: true,
+                        ordering: true,
+                        scrollX: true,
+                        info: true
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching data:', status, error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
