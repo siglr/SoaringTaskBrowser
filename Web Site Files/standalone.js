@@ -34,12 +34,21 @@ function replaceLineBreaks(text) {
 }
 
 function removeSpacesBeforeClosingAsterisks(text) {
-    // Remove spaces before closing * or **
-    return text.replace(/(\*\*|__)(.*?)\s+(\*\*|__)/g, (match, p1, p2, p3) => {
-        return `${p1}${p2.trim()}${p3}`;
-    }).replace(/(\*|_)(.*?)\s+(\*|_)/g, (match, p1, p2, p3) => {
-        return `${p1}${p2.trim()}${p3}`;
-    });
+    const removeSpaces = (text, delimiter) => {
+        const parts = text.split(delimiter);
+        for (let i = 1; i < parts.length; i += 2) {
+            parts[i] = parts[i].trimEnd();
+        }
+        return parts.join(delimiter);
+    };
+
+    // Handle bold and italic separately to avoid interference
+    text = removeSpaces(text, '**'); // Bold using **
+    text = removeSpaces(text, '__'); // Bold using __
+    text = removeSpaces(text, '*');  // Italic using *
+    text = removeSpaces(text, '_');  // Italic using _
+
+    return text;
 }
 
 function restoreLineBreaks(text) {
@@ -55,21 +64,21 @@ function convertToMarkdown(text) {
         typographer: true
     });
 
-    //console.log(text)
+    console.log(text)
     // Step 1: Replace custom line break placeholder with a temporary placeholder
     text = replaceLineBreaks(text);
 
-    //console.log(text)
+    console.log(text)
     // Step 2: Remove spaces before closing * or **
     text = removeSpacesBeforeClosingAsterisks(text);
 
-    //console.log(text)
+    console.log(text)
     // Step 3: Replace the temporary placeholder with actual line breaks
     text = restoreLineBreaks(text);
 
-    //console.log(text)
+    console.log(text)
     // Step 4: Render markdown
-    //console.log(md.render(text))
+    console.log(md.render(text))
     return md.render(text);
 }
 
@@ -172,16 +181,13 @@ function showTaskListStandalone(tasks) {
 
 // Function to adjust the map size
 function resizeMap() {
-    if (window.mapInstance) {
+    if (window.mapInstance && document.getElementById('mapTab').classList.contains('active')) {
         window.mapInstance.invalidateSize();
     }
 }
 
 // Add event listeners for resizing
 window.addEventListener('resize', resizeMap);
-
-// Call resizeMap initially to ensure correct sizing on load
-resizeMap();
 
 // Add resizer functionality
 let isResizing = false;
@@ -212,4 +218,20 @@ function stopResize() {
     isResizing = false;
     document.removeEventListener('mousemove', resize);
     document.removeEventListener('mouseup', stopResize);
+}
+
+// Call resizeMap initially to ensure correct sizing on load
+resizeMap();
+
+// Switch tab function
+function switchTab(tabId) {
+    document.querySelectorAll('.tabButton').forEach(button => button.classList.remove('active'));
+    document.querySelectorAll('.tabContent').forEach(content => content.classList.remove('active'));
+    document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+
+    // Force invalidate size when switching back to the Map tab
+    if (tabId === 'mapTab') {
+        resizeMap();
+    }
 }
