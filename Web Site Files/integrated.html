@@ -48,12 +48,40 @@
 </head>
 <body>
     <div id="map"></div>
-    <button id="zoomButton" class="map-button" onclick="zoomToTask()">Zoom to Task</button>
-    <button id="fullWorldButton" class="map-button" onclick="resetToFullWorld()">Full World</button>
+    <button id="zoomButton" class="map-button" onclick="ITB.zoomToTask()">Zoom to Task</button>
+    <button id="fullWorldButton" class="map-button" onclick="ITB.resetToFullWorld()">Full World</button>
 
     <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <!-- External JavaScript file -->
-    <script src="map.js"></script>
+    <script src="integrated.js"></script>
+    <script src="map2.js"></script>
+    <script>var DEBUG_LOCAL=false;</script>
+    <script>
+        var ITB = new IntegratedTB();
+
+        window.selectTask = function (entrySeqID, forceBoundsUpdate = false) {
+            ITB.selectTask(entrySeqID, forceBoundsUpdate);
+        };
+
+        window.filterTasks = function (entrySeqIDs) {
+            ITB.filterTasks(entrySeqIDs);
+        };
+
+        window.clearFilter = function () {
+            ITB.clearFilter();
+        };
+
+        // Add an event listener to capture the ESC key press
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                // Send a message to the VB.Net app
+                if (window.chrome && window.chrome.webview) {
+                    window.chrome.webview.postMessage({ action: 'escapeKeyPressed' });
+                }
+            }
+        });
+
+    </script>
 </body>
 </html>
