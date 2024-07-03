@@ -199,3 +199,18 @@ body {
     .task-details a:hover {
         text-decoration: underline; /* Underline on hover */
     }
+
+#aboutTab button {
+    background-color: #7289da;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+    #aboutTab button:hover {
+        background-color: #0056b3;
+    }
