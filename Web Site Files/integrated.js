@@ -13,22 +13,6 @@ class IntegratedTB {
     }
 
     //
-    // Buttons on the map
-    //
-    
-    // Function to zoom to the selected task
-    zoomToTask() {
-        let itb = this;
-        itb.tbm.zoomToTask();
-    }
-
-    // Full world button function
-    resetToFullWorld() {
-        let itb = this;
-        itb.tbm.resetToFullWorld();
-    }
-
-    //
     // Commands received by the task browser app
     //
 
