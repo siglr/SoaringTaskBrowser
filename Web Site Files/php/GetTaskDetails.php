@@ -46,7 +46,11 @@ try {
             LongDescription,
             WeatherSummary,
             Credits,
-            Countries
+            Countries,
+            PLNFilename,
+            PLNXML,
+            WPRFilename,
+            WPRXML
         FROM Tasks
         WHERE EntrySeqID = :entrySeqID
     ";

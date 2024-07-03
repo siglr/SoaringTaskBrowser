@@ -207,6 +207,7 @@ class TaskBrowser {
             .then(response => response.json())
             .then(task => {
                 const taskDetailContainer = document.getElementById("taskDetailContainer");
+                tb.currentTask = task; // Save the current task for download use
                 taskDetailContainer.innerHTML = `
                     <div class="task-details markdown-content">
                         <div class="task-header">
@@ -233,11 +234,70 @@ class TaskBrowser {
                             <li><a href="discord://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank">Link to this task's thread on Discord app</a></li>
                             <li><a href="https://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank">Link to this task's thread on Discord (web version)</a></li>
                         </ul>
+                        <h2>📁 Files</h2>
+                        <p><strong>Option 1:</strong> Download the single package DPHX file for use with the <a href="https://flightsim.to/file/62573/msfs-soaring-task-tools-dphx-unpack-load" target="_blank">DPHX Unpack & Load tool</a></p>
+                        <p><a href="#" onclick="TB.downloadDPHXFile('https://siglr.com/DiscordPostHelper/TaskBrowser/Tasks/${task.TaskID}.dphx', '${task.Title}.dphx')">${task.Title}.dphx</a></p>
+                        <p><strong>Option 2:</strong> Download individual files and install them yourself</p>
+                        <ul>
+                            <li><a href="#" onclick="TB.downloadPLNFile()">Flight plan file (PLN): ${tb.getFileNameFromPath(tb.currentTask.PLNFilename)}</a></li>
+                            <li><a href="#" onclick="TB.downloadWPRFile()">Weather file (WPR): ${tb.getFileNameFromPath(tb.currentTask.WPRFilename)}</a></li>
+                        </ul>                        
                     </div>`;
             })
             .catch(error => {
                 console.error('Error fetching task details:', error);
             });
+    }
+
+    downloadDPHXFile(url, filename) {
+        fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            })
+            .catch(err => console.error('Error downloading file:', err));
+    }
+
+    escapeXML(xml) {
+        return xml.replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    downloadTextFile(content, filename) {
+        const blob = new Blob([content], { type: 'text/xml' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    getFileNameFromPath(filePath) {
+        return filePath.split('\\').pop().split('/').pop();
+    }
+
+    downloadPLNFile() {
+        let tb = this;
+        const fileName = tb.getFileNameFromPath(tb.currentTask.PLNFilename);
+        tb.downloadTextFile(tb.escapeXML(tb.currentTask.PLNXML), fileName);
+    }
+
+    downloadWPRFile() {
+        let tb = this;
+        const fileName = tb.getFileNameFromPath(tb.currentTask.WPRFilename);
+        tb.downloadTextFile(tb.escapeXML(tb.currentTask.WPRXML), fileName);
     }
 
     showTaskListStandalone(tasks) {
