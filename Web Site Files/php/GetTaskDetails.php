@@ -15,7 +15,8 @@ try {
 
     // Define the query to retrieve the task details
     $query = "
-        SELECT 
+        SELECT
+            TaskID,
             EntrySeqID, 
             Title,
             ShortDescription,

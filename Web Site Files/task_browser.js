@@ -58,6 +58,32 @@ class TaskBrowser {
         window.history.replaceState({}, document.title, url.toString());
     }
 
+    copyTextToClipboard(text) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => {
+                console.log('Text copied to clipboard');
+                alert("Link copied to your clipboard!");
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        } else {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                console.log('Text copied to clipboard');
+                alert("Link copied to your clipboard!");
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+            document.body.removeChild(textArea);
+        }
+    }
+
     resizeMap() {
         let tb = this;
         if (tb.tbm.map && document.getElementById('mapTab').classList.contains('active')) {
@@ -201,6 +227,12 @@ class TaskBrowser {
                         <p>${task.Credits}</p>
                         <h2>📖 Full Description</h2>
                         ${tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.LongDescription))}
+                        <h2>🔗 Links</h2>
+                        <ul>
+                            <li><a href="#" onclick="TB.copyTextToClipboard('https://wesimglide.org/index.html?task=${entrySeqID}')">Share this task (copy link to clipboard)</a></li>
+                            <li><a href="discord://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank">Link to this task's thread on Discord app</a></li>
+                            <li><a href="https://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank">Link to this task's thread on Discord (web version)</a></li>
+                        </ul>
                     </div>`;
             })
             .catch(error => {
