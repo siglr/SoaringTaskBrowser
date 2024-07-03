@@ -1,38 +1,87 @@
-"use strict"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soaring Tasks World Map - App</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 98vh; /* Adjust height to leave space for the button */
+        }
 
-class IntegratedTB {
+        .leaflet-popup-content-wrapper {
+            background-color: #fff;
+            color: #333;
+        }
 
-    constructor() {
-        let itb = this;
-        itb.tbm = new TaskBrowserMap(itb);
-    }
+        .leaflet-interactive:hover {
+            cursor: pointer;
+        }
 
-    init() {
-        let itb = this;
-        console.log("Integrated.init()");
-    }
+        .map-button {
+            position: absolute;
+            top: 10px;
+            z-index: 1000;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
 
-    //
-    // Commands received by the task browser app
-    //
+        #zoomButton {
+            left: 70px; /* Adjusted to move the button to the right */
+        }
 
-    // Function to select a task on the map
-    selectTask(entrySeqID, forceBoundsUpdate = false) {
-        let itb = this;
-        itb.tbm.selectTask(entrySeqID, forceBoundsUpdate);
-    };
+        #fullWorldButton {
+            left: 220px; /* Adjusted to position next to zoomButton */
+        }
 
-    // Function to filter tasks based on a list of EntrySeqIDs
-    filterTasks(entrySeqIDs) {
-        let itb = this;
-        // Save the list of tasks
-        itb.tbm.filterTasks(entrySeqIDs);
-    };
+        .map-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <button id="zoomButton" class="map-button" onclick="ITB.tbm.zoomToTask()">Zoom to Task</button>
+    <button id="fullWorldButton" class="map-button" onclick="ITB.tbm.resetToFullWorld()">Full World</button>
 
-    // Function to clear all filters and show all tasks
-    clearFilter() {
-        let itb = this;
-        itb.tbm.clearFilter();
-    };
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- External JavaScript file -->
+    <script src="integrated.js"></script>
+    <script src="map2.js"></script>
+    <script>var DEBUG_LOCAL=false;</script>
+    <script>
+        var ITB = new IntegratedTB();
 
-} // end class IntegratedTB
+        window.selectTask = function (entrySeqID, forceBoundsUpdate = false) {
+            ITB.selectTask(entrySeqID, forceBoundsUpdate);
+        };
+
+        window.filterTasks = function (entrySeqIDs) {
+            ITB.filterTasks(entrySeqIDs);
+        };
+
+        window.clearFilter = function () {
+            ITB.clearFilter();
+        };
+
+        // Add an event listener to capture the ESC key press
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                // Send a message to the VB.Net app
+                if (window.chrome && window.chrome.webview) {
+                    window.chrome.webview.postMessage({ action: 'escapeKeyPressed' });
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
