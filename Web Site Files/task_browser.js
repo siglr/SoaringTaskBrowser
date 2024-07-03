@@ -10,13 +10,19 @@ class TaskBrowser {
         });
         tb.tbm = new TaskBrowserMap(tb);
         tb.initCountryCodes();
-        
+
         // Mapping of country names in your app to the corresponding names used by the flag service
         tb.countryNameMapping = {
             'Czech Republic': 'Czechia',
             'Virgin Islands - U.S.': 'United States Virgin Islands',
             'Virgin Islands - British': 'British Virgin Islands'
         };
+        // Check for task parameter in URL
+        const taskID = tb.getParameterByName('task');
+        if (taskID) {
+            tb.selectTask(taskID, true);
+            tb.clearUrlParameter('task');
+        }
     }
 
     init() {
@@ -34,6 +40,22 @@ class TaskBrowser {
             .catch(error => {
                 console.error('Error fetching country codes:', error);
             });
+    }
+
+    getParameterByName(name, url = window.location.href) {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
+        const results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    // Function to clear a specific parameter from the URL
+    clearUrlParameter(param) {
+        const url = new URL(window.location);
+        url.searchParams.delete(param);
+        window.history.replaceState({}, document.title, url.toString());
     }
 
     resizeMap() {
@@ -199,6 +221,7 @@ class TaskBrowser {
     selectTask(entrySeqID, forceBoundsUpdate = false) {
         let tb = this;
         tb.tbm.selectTask(entrySeqID, forceBoundsUpdate);
+        tb.showTaskDetailsStandalone(entrySeqID);
     }
 
 }
