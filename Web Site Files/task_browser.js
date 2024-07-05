@@ -10,7 +10,7 @@ class TaskBrowser {
         });
         tb.tbm = new TaskBrowserMap(tb);
         tb.initCountryCodes();
-
+        
         // Mapping of country names in your app to the corresponding names used by the flag service
         tb.countryNameMapping = {
             'Czech Republic': 'Czechia',
@@ -281,14 +281,6 @@ class TaskBrowser {
             .catch(err => console.error('Error downloading file:', err));
     }
 
-    escapeXML(xml) {
-        return xml.replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    }
-
     downloadTextFile(content, filename) {
         const blob = new Blob([content], { type: 'text/xml' });
         const link = document.createElement('a');
@@ -306,13 +298,13 @@ class TaskBrowser {
     downloadPLNFile() {
         let tb = this;
         const fileName = tb.getFileNameFromPath(tb.currentTask.PLNFilename);
-        tb.downloadTextFile(tb.escapeXML(tb.currentTask.PLNXML), fileName);
+        tb.downloadTextFile(tb.currentTask.PLNXML, fileName);
     }
 
     downloadWPRFile() {
         let tb = this;
         const fileName = tb.getFileNameFromPath(tb.currentTask.WPRFilename);
-        tb.downloadTextFile(tb.escapeXML(tb.currentTask.WPRXML), fileName);
+        tb.downloadTextFile(tb.currentTask.WPRXML, fileName);
     }
 
     showTaskListStandalone(tasks) {
