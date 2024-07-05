@@ -10,7 +10,7 @@ class TaskBrowser {
         });
         tb.tbm = new TaskBrowserMap(tb);
         tb.initCountryCodes();
-        
+
         // Mapping of country names in your app to the corresponding names used by the flag service
         tb.countryNameMapping = {
             'Czech Republic': 'Czechia',
@@ -190,12 +190,18 @@ class TaskBrowser {
         }
     }
 
-    formatSimDateTime(simDateTime, includeYear) {
+    formatSimDateTime(simDateTime, includeYear, appendLocalInMSFS = true, convertToLocal = false) {
         const options = includeYear
             ? { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }
             : { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
-        const date = new Date(simDateTime);
-        return new Intl.DateTimeFormat('en-US', options).format(date) + ' local in MSFS';
+
+        let date = new Date(simDateTime);
+        if (convertToLocal) {
+            date = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)); // Convert to local time
+        }
+
+        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
+        return appendLocalInMSFS ? formattedDate + ' local in MSFS' : formattedDate;
     }
 
     formatDifficultyRating(difficultyRating, difficultyExtraInfo) {
@@ -222,6 +228,13 @@ class TaskBrowser {
             .then(task => {
                 const taskDetailContainer = document.getElementById("taskDetailContainer");
                 tb.currentTask = task; // Save the current task for download use
+
+                // Format the last update date/time and description if present
+                let lastUpdateInfo = "";
+                const lastUpdateFormatted = tb.formatSimDateTime(task.LastUpdate, true, false, true);
+                const lastUpdateDescription = task.LastUpdateDescription ? ` (${task.LastUpdateDescription})` : "";
+                lastUpdateInfo = `Last update: ${lastUpdateFormatted}${lastUpdateDescription}`;
+
                 taskDetailContainer.innerHTML = `
                     <div class="task-details markdown-content">
                         <div class="task-header">
@@ -240,7 +253,8 @@ class TaskBrowser {
                         ✈️ ${task.RecommendedGliders}<br>
                         🎚 ${tb.formatDifficultyRating(task.DifficultyRating, task.DifficultyExtraInfo)}
                         <p>${task.Credits}</p>
-                        ${tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.RepostText))}
+                        ${task.RepostText ? tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.RepostText)) : ''}
+                        <p>${lastUpdateInfo}</p>
                         <h2>📖 Full Description</h2>
                         ${tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.LongDescription))}
                         <h2>🔗 Links</h2>
@@ -281,6 +295,14 @@ class TaskBrowser {
             .catch(err => console.error('Error downloading file:', err));
     }
 
+    escapeXML(xml) {
+        return xml.replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     downloadTextFile(content, filename) {
         const blob = new Blob([content], { type: 'text/xml' });
         const link = document.createElement('a');
@@ -298,13 +320,13 @@ class TaskBrowser {
     downloadPLNFile() {
         let tb = this;
         const fileName = tb.getFileNameFromPath(tb.currentTask.PLNFilename);
-        tb.downloadTextFile(tb.currentTask.PLNXML, fileName);
+        tb.downloadTextFile(tb.escapeXML(tb.currentTask.PLNXML), fileName);
     }
 
     downloadWPRFile() {
         let tb = this;
         const fileName = tb.getFileNameFromPath(tb.currentTask.WPRFilename);
-        tb.downloadTextFile(tb.currentTask.WPRXML, fileName);
+        tb.downloadTextFile(tb.escapeXML(tb.currentTask.WPRXML), fileName);
     }
 
     showTaskListStandalone(tasks) {

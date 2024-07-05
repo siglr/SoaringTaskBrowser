@@ -51,7 +51,9 @@ try {
             PLNXML,
             WPRFilename,
             WPRXML,
-            RepostText
+            RepostText,
+            LastUpdate,
+            LastUpdateDescription
         FROM Tasks
         WHERE EntrySeqID = :entrySeqID
     ";
