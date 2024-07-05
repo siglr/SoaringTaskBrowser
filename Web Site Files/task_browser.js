@@ -140,10 +140,24 @@ class TaskBrowser {
 
     convertToMarkdown(text) {
         let tb = this;
+
+        // Function to add target="_blank" to all href links
+        function addTargetBlank(html) {
+            return html.replace(/<a /g, '<a target="_blank" ');
+        }
+
+        // Function to replace http:// or https:// with discord:// for Discord links
+        function convertDiscordLinks(html) {
+            return html.replace(/href="https?:\/\/discord\.com/g, 'href="discord://discord.com');
+        }
+
         text = tb.replaceLineBreaks(text);
         text = tb.removeSpacesBeforeClosingAsterisks(text);
         text = tb.restoreLineBreaks(text);
-        return tb.md.render(text);
+
+        let renderedMarkdown = tb.md.render(text);
+        renderedMarkdown = addTargetBlank(renderedMarkdown);
+        return convertDiscordLinks(renderedMarkdown);
     }
 
     addDetailLineWithoutBreak(label, value) {
@@ -226,6 +240,7 @@ class TaskBrowser {
                         ✈️ ${task.RecommendedGliders}<br>
                         🎚 ${tb.formatDifficultyRating(task.DifficultyRating, task.DifficultyExtraInfo)}
                         <p>${task.Credits}</p>
+                        ${tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.RepostText))}
                         <h2>📖 Full Description</h2>
                         ${tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.LongDescription))}
                         <h2>🔗 Links</h2>

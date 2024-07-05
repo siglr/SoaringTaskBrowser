@@ -50,7 +50,8 @@ try {
             PLNFilename,
             PLNXML,
             WPRFilename,
-            WPRXML
+            WPRXML,
+            RepostText
         FROM Tasks
         WHERE EntrySeqID = :entrySeqID
     ";
