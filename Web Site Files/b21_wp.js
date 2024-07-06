@@ -73,17 +73,17 @@ class B21_WP {
             autoPan: true,
             bubblingMouseEvents: false
         });
-        marker.on("dragstart", function(e) {
+        marker.on("dragstart", function (e) {
             wp.planner.map.closePopup();
         });
-        marker.on("drag", function(e) {
+        marker.on("drag", function (e) {
             let marker = e.target;
             wp.position = marker.getLatLng();
             wp.planner.b21_task.update_waypoints();
             wp.planner.b21_task.draw();
             wp.planner.b21_task.display_task_info();
         });
-        marker.on("dragend", function(e) {
+        marker.on("dragend", function (e) {
             wp.planner.b21_task.set_current_wp(wp.index);
             console.log("WP dragend");
             let marker = e.target;
@@ -93,11 +93,11 @@ class B21_WP {
         // POPUP
         //console.log("creating WP popup",wp.get_name());
         var popup = L.popup({
-                offset: [20, 10],
-                className: "wp_popup",
-                autoClose: false,
-                bubblingMouseEvents: false
-            })
+            offset: [20, 10],
+            className: "wp_popup",
+            autoClose: false,
+            bubblingMouseEvents: false
+        })
             .setContent("no WP content yet");
 
         marker.bindPopup(popup);
@@ -185,7 +185,7 @@ class B21_WP {
             if (wp.index == 0) {
                 return "Origin";
             } else {
-                return "WP " + (wp.index-1);
+                return "WP " + (wp.index - 1);
             }
         }
         return wp.name;
@@ -284,25 +284,14 @@ class B21_WP {
     display_menu(wp) {
         console.log(`wp.display_menu() ${wp.get_name()}`);
         // NAME
-        let form_str = 'Name: <input id="wp_name" class="wp_name" value="' + wp.get_name() +
-            '"</input>';
+        let form_str = 'Name: ' + wp.get_name();
 
         // ICAO
-        form_str += '<br/>ICAO: <input class="wp_icao" value="' + wp.get_icao() +
-            '"</input> ';
+        form_str += '<br/>ICAO: ' + wp.get_icao();
 
         // RUNWAY
         form_str +=
-            ' Runway: <input id="wp_runway" class="wp_runway" value="' +
-            wp.get_runway() + '"</input> ';
-        if (wp.runways != null) {
-            form_str += '<select class="wp_runway_select" value="">';
-            for (let i = 0; i < wp.runways.length; i++) {
-                form_str += '<option>' + wp.runways[i] + '</option>';
-            }
-            form_str += '<option></option>'; // Add 'blank' option for no runway selected
-            form_str += '</select>';
-        }
+            ' Runway: ' + wp.get_runway();
 
         // ELEVATION
         let alt_str = wp.alt_m.toFixed(0);
@@ -312,8 +301,7 @@ class B21_WP {
             alt_units_str = "feet.";
         }
 
-        form_str += '<br/>Elevation: <input class="wp_alt" value="' +
-            alt_str + '"</input> ' + alt_units_str;
+        form_str += '<br/>Elevation: ' + alt_str + ' ' + alt_units_str;
 
         // settings.soaring_task == true . It's a placeholder in case we want planner for non-soaring.
         if (wp.index != 0) {
