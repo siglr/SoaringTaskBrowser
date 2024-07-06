@@ -69,7 +69,7 @@ class B21_WP {
 
         let marker = L.marker(wp.position, {
             icon: wp.get_icon(wp),
-            draggable: true,
+            draggable: false, // ** Waypoints are all fixed on WeSimGlide.org **
             autoPan: true,
             bubblingMouseEvents: false
         });
