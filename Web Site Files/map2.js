@@ -2,14 +2,27 @@ class TaskBrowserMap {
     constructor(tb) {
         let tbm = this;
         tbm.tb = tb;
+
+        // B21 update, these are used by B21_Task / B21_WP
+        tbm.settings = {
+            altitude_units: "feet",
+            wp_radius_units: "m",
+            task_line_color_1: "red",
+            task_line_color_2: "none"
+        }
+
         tbm.M_TO_FEET = 3.28084;
         tbm.defWeight = 6;
         tbm.hoverWeight = 7;
         tbm.selWeight = 8;
 
-        tbm.b21_task = null; // Will hold parsed 'current' task
+        //B21 update
+        tbm.fetchBounds = null; // Keep track of the GetTasksForMap bounds
+        tbm.api_tasks = {};     // Will hold all tasks from GetTasksForMap.php
+        tbm.b21_task = null;    // Will hold parsed 'current' task
 
-        tbm.map = L.map('map').setView([20, 0], 2);
+        tbm.map = L.map('map').setView([50, 10], 5); // B21 update better for testing zoom in/out fetch
+
         // Define different map layers
         tbm.layers = {
             "OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -46,7 +59,6 @@ class TaskBrowserMap {
             tbm.runningInApp = false;
         }
 
-        tbm.polylines = {};
         tbm.currentPolyline = null; // Track the currently selected polyline
         tbm.currentEntrySeqID = null; // Track the EntrySeqID of the selected polyline
         tbm.filteredEntrySeqIDs = null; // Track the filtered tasks
@@ -56,16 +68,30 @@ class TaskBrowserMap {
 
         // Fetch tasks when the map view changes
         tbm.map.on('moveend', function () {
-            tbm.fetchTasks(tbm.map.getBounds());
+            // B21 update - only fetch if bounds have moved outside previous fetch bounds
+            let new_bounds = tbm.map.getBounds();
+            if (tbm.mapExpanded(new_bounds)) {
+                tbm.fetchTasks(new_bounds);
+            }
         });
 
     }
 
+    //B21 update
+    mapExpanded(new_bounds) {
+        let tbm = this;
+        if (tbm.fetchBounds == null) {
+            return true;
+        }
+        return !tbm.fetchBounds.contains(new_bounds);
+    }
     //
     // Common functions for the map
     //
 	fetchTasks(bounds) {
         let tbm = this;
+        console.log("fetchTasks()",bounds);
+
 		const { _southWest: sw, _northEast: ne } = bounds;
 
 		const bufferKm = 0.5;
@@ -86,78 +112,30 @@ class TaskBrowserMap {
         fetch_promise
 			.then(response => response.json())
 			.then(data => {
+                tbm.fetchBounds = bounds; // B21 update, keep track of current map bounds so we don't re-fetch unnecessarily
 				let preventEntrySeqIDlost = tbm.currentEntrySeqID;
 
-				// Clear existing polylines
-				Object.values(tbm.polylines).forEach(polyline => {
-					tbm.map.removeLayer(polyline);
-				});
+                tbm.clearPolylines();
 
 				// Clear the polylines object
-				for (const key in tbm.polylines) {
-					delete tbm.polylines[key];
-				}
+				//for (const key in tbm.polylines) {
+				//	delete tbm.polylines[key];
+				//}
 
 				// Resetting the current selected task after clearing all polylines
 				tbm.currentEntrySeqID = preventEntrySeqIDlost;
 
-				data.forEach(task => {
-
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(task.PLNXML, "text/xml");
-                    const waypoints = xmlDoc.getElementsByTagName("ATCWaypoint");
-
-                    const coordinates = [];
-                    for (let i = 0; i < waypoints.length; i++) {
-                        const worldPosition = waypoints[i].getElementsByTagName("WorldPosition")[0].textContent;
-                        const [lat, lon] = tbm.parseWorldPosition(worldPosition);
-                        coordinates.push([lat, lon]);
-                    }
-
-                    if (coordinates.length > 0) {
-                        const polyline = L.polyline(coordinates, {
-                            color: "#ff7800",
-                            weight: tbm.defWeight,
-                            opacity: 0.7,
-                            className: 'task-polyline'
-                        });
-                        polyline.addTo(tbm.map);
-
-                        tbm.polylines[task.EntrySeqID] = polyline;
-
-                        polyline.on('mouseover', function () {
-                            if (!this.options.selected) {
-                                this.setStyle({ color: '#9900cc', weight: tbm.hoverWeight });
-                            }
-                        });
-
-                        polyline.on('mouseout', function () {
-                            if (!this.options.selected) {
-                                this.setStyle({ color: '#ff7800', weight: tbm.defWeight });
-                            }
-                        });
-
-                        polyline.on('click', function () {
-                            tbm.resetPolylines();
-                            this.setStyle({ color: '#0000ff', weight: tbm.selWeight });
-                            this.options.selected = true;
-                            tbm.currentPolyline = this; // Set the current polyline
-                            tbm.currentEntrySeqID = task.EntrySeqID; // Track the EntrySeqID
-                            if (!tbm.runningInApp) {
-                                tbm.tb.showTaskDetailsStandalone(task.EntrySeqID); // Call standalone.js function
-                            } else {
-                                tbm.postSelectedTask(task.EntrySeqID); // Notify the app
-                            }
-                        });
-					}
+				data.forEach(api_task => {
+                    // B21_update - moved this code into a method
+                    tbm.loadTask(api_task);
 				});
 
 				// Manager filtered tasks
 				tbm.manageFilteredTasks();
 
 				// Restore the selected task if any
-				if (tbm.currentEntrySeqID && tbm.polylines[tbm.currentEntrySeqID]) {
-					const polyline = tbm.polylines[tbm.currentEntrySeqID];
+				if (tbm.currentEntrySeqID && tbm.api_tasks[tbm.currentEntrySeqID].polyline) {
+					const polyline = tbm.api_tasks[tbm.currentEntrySeqID].polyline;
 					polyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
 					polyline.options.selected = true;
 					if (!tbm.runningInApp) {
@@ -173,6 +151,114 @@ class TaskBrowserMap {
 				return Promise.reject(error);
 			});
 	}
+
+    // B21 update - each polyline now stored in api_task object
+    clearPolylines() {
+        let tbm = this;
+        for (const entrySeqID in tbm.api_tasks) {
+            tbm.map.removeLayer(tbm.api_tasks[entrySeqID].polyline);
+        }
+    }
+
+    // B21 update - tbm.api_tasks[entrySeqID].polyline
+	resetPolylines() {
+        let tbm = this;
+        for (const entrySeqID in tbm.api_tasks) {
+            let polyline = tbm.api_tasks[entrySeqID].polyline;
+			if (polyline.options.selected) {
+				polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
+				polyline.options.selected = false;
+			}
+        }
+	}
+
+    drawPolylines() {
+        // Add all polylines to the map
+        for (const entrySeqID in tbm.api_tasks) {
+            let polyline = tbm.api_tasks[entrySeqID].polyline;
+            polyline.addTo(tbm.map);
+        }
+    }
+
+    //B21_update
+    loadTask(api_task) {
+        let tbm = this;
+
+        tbm.api_tasks[api_task.EntrySeqID] = api_task; // cache the download
+
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(api_task.PLNXML, "text/xml");
+        const waypoints = xmlDoc.getElementsByTagName("ATCWaypoint");
+
+        const coordinates = [];
+        for (let i = 0; i < waypoints.length; i++) {
+            const worldPosition = waypoints[i].getElementsByTagName("WorldPosition")[0].textContent;
+            const [lat, lon] = tbm.parseWorldPosition(worldPosition);
+            coordinates.push([lat, lon]);
+        }
+
+        if (coordinates.length > 0) {
+            const polyline = L.polyline(coordinates, {
+                color: "#ff7800",
+                weight: tbm.defWeight,
+                opacity: 0.7,
+                className: 'task-polyline'
+            });
+            polyline.addTo(tbm.map);
+
+            tbm.api_tasks[api_task.EntrySeqID].bounds = polyline.getBounds(); // B21 update - add .bounds to each api_task
+
+            tbm.api_tasks[api_task.EntrySeqID].polyline = polyline; // b21 update - add polyline to api_tasks entry
+
+            polyline.on('mouseover', function () {
+                if (!this.options.selected) {
+                    this.setStyle({ color: '#9900cc', weight: tbm.hoverWeight });
+                }
+            });
+
+            polyline.on('mouseout', function () {
+                if (!this.options.selected) {
+                    this.setStyle({ color: '#ff7800', weight: tbm.defWeight });
+                }
+            });
+
+            polyline.on('click', function () {
+                tbm.resetPolylines();
+                this.setStyle({ color: '#0000ff', weight: tbm.selWeight });
+                this.options.selected = true;
+                tbm.currentPolyline = this; // Set the current polyline
+                tbm.taskClicked(api_task.EntrySeqID); //
+            });
+        }
+    }
+
+    // B21 update
+    taskClicked(entrySeqID) {
+        let tbm = this;
+        console.log(`taskClicked ${entrySeqID}`);
+
+        tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
+        let api_task = tbm.api_tasks[entrySeqID];
+
+        // Remove the previous task map_elements
+        if (tbm.b21_task != null) {
+            tbm.map.removeLayer(tbm.b21_task.map_elements);
+        }
+
+        tbm.b21_task = new B21_Task(tbm);   // B21 update here's where we parse the XML into a B21_Task
+        tbm.b21_task.load_pln_str(api_task.PLNXML, api_task.Title);
+        tbm.b21_task.update_waypoints();
+        tbm.b21_task.update_waypoint_icons();
+
+        tbm.b21_task.draw();
+
+        if (tbm.runningInApp) {
+            tbm.postSelectedTask(entrySeqID); // Notify the app
+        } else {
+            tbm.map.fitBounds(api_task.bounds);
+            tbm.tb.showTaskDetailsStandalone(entrySeqID); // Call standalone.js function
+        }
+    }
 
     parseWorldPosition(worldPosition) {
         let tbm = this;
@@ -192,16 +278,7 @@ class TaskBrowserMap {
         return decimal;
     }
 
-	resetPolylines() {
-        let tbm = this;
-		Object.values(tbm.polylines).forEach(polyline => {
-			if (polyline.options.selected) {
-				polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
-				polyline.options.selected = false;
-			}
-		});
-	}
-
+    //B21 update - this no longer needed as tbm.api_tasks[entrySeqID].bounds now contains leaflet bounds for given task, added when loaded
 	fetchTaskBounds(entrySeqID) {
         let tbm = this;
 		return fetch(`php/GetTaskBounds.php?entrySeqID=${entrySeqID}`)
@@ -231,14 +308,12 @@ class TaskBrowserMap {
 			return;
 		}
 		// Hide all polylines first
-		Object.values(tbm.polylines).forEach(polyline => {
-			tbm.map.removeLayer(polyline);
-		});
+        tbm.clearPolylines();
 
 		// Show only the polylines whose EntrySeqID is in the filteredEntrySeqIDs list
-		tbm.filteredEntrySeqIDs.forEach(id => {
-			if (tbm.polylines[id]) {
-				tbm.polylines[id].addTo(tbm.map);
+		tbm.filteredEntrySeqIDs.forEach(entrySeqID => {
+			if (tbm.api_tasks[entrySeqID]) {
+				tbm.api_tasks[entrySeqID].polyline.addTo(tbm.map);
 			}
 		});
 	}
@@ -277,13 +352,14 @@ class TaskBrowserMap {
     //
     // Commands received by the task browser app
     //
-    
+
     // Function to select a task on the map
     selectTask(entrySeqID, forceBoundsUpdate = false) {
         let tbm = this;
-        if (tbm.polylines[entrySeqID]) {
+        console.log("selectTask()", entrySeqID);
+        if (tbm.api_tasks[entrySeqID].polyline) {
             tbm.resetPolylines();
-            const polyline = tbm.polylines[entrySeqID];
+            const polyline = tbm.api_tasks[entrySeqID].polyline;
             polyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
             polyline.options.selected = true;
             if (!tbm.runningInApp) {
@@ -327,9 +403,6 @@ class TaskBrowserMap {
         let tbm = this;
         tbm.filteredEntrySeqIDs = null;
 
-        // Add all polylines to the map
-        Object.values(tbm.polylines).forEach(polyline => {
-            polyline.addTo(tbm.map);
-        });
+        tbm.drawPolylines();
     }
 }

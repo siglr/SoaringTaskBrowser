@@ -223,7 +223,13 @@ class TaskBrowser {
 
     showTaskDetailsStandalone(entrySeqID) {
         let tb = this;
-        fetch(`php/GetTaskDetails.php?entrySeqID=${entrySeqID}`)
+        let fetch_promise;
+        if (DEBUG_LOCAL) {
+		    fetch_promise = test_fetch_task_details(entrySeqID);
+        } else {
+		    fetch_promise = fetch(`php/GetTaskDetails.php?entrySeqID=${entrySeqID}`);
+        }
+        fetch_promise
             .then(response => response.json())
             .then(task => {
                 const taskDetailContainer = document.getElementById("taskDetailContainer");
@@ -270,7 +276,7 @@ class TaskBrowser {
                         <ul>
                             <li><a href="#" onclick="TB.downloadPLNFile()">Flight plan file (PLN): ${tb.getFileNameFromPath(tb.currentTask.PLNFilename)}</a></li>
                             <li><a href="#" onclick="TB.downloadWPRFile()">Weather file (WPR): ${tb.getFileNameFromPath(tb.currentTask.WPRFilename)}</a></li>
-                        </ul>                        
+                        </ul>
                     </div>`;
             })
             .catch(error => {
