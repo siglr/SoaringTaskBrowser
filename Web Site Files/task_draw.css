@@ -1,0 +1,123 @@
+/* *************************************************** */
+/* ******* Leaflet                ******************** */
+/* *************************************************** */
+
+.leaflet-popup-content-wrapper, .leaflet-popup.tip {
+    /* background-color: lightgrey; */
+  }
+
+  .leaflet-container {
+      cursor: auto;
+  }
+
+  .leaflet-popup-content input {
+      border-style: solid;
+      border-width: 1px;
+      margin: 1px;
+  }
+
+  .leaflet-grab {
+      cursor: crosshair;
+  }
+
+  .leaflet-dragging .leaflet-grab {
+     cursor: move;
+  }
+
+  /* This is the tracklog info details for the current tracklog point */
+  .tracklog_popup .leaflet-popup-content-wrapper,
+  .tracklog_popup .leaflet-popup-tip
+  {
+      background: transparent;
+      text-align: center;
+      color: blue;
+      box-shadow: none;
+  }
+
+  /* these popups appear when mouse hovers over any airport/poi on map*/
+  .airport_popup .leaflet-popup-content-wrapper,
+  .airport_popup .leaflet-popup-tip
+  {
+      background-color: lightgrey;
+  }
+
+  /* This is the 'task waypoint' menu */
+  .wp_popup .leaflet-popup-content-wrapper,
+  .wp_popup .leaflet-popup-tip
+  {
+      background-color: lightgreen;
+  }
+
+.wp_icon {
+    background-color: red;
+}
+
+.wp_icon_html_current {
+    position: absolute;
+    display: inline-block;
+    font-size: 16px;
+    border: 1px solid black;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgba(255,255,0,0.6);
+    color: black;
+}
+
+.wp_icon_html {
+    position: absolute;
+    display: inline-block;
+    font-size: 16px;
+    border: 1px solid black;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgba(255,255,255,0.6);
+    color: black;
+}
+
+.wp_name {
+    width: 16em;
+}
+
+.wp_icao {
+    width: 60px;
+}
+
+.wp_runway {
+    width:45px;
+}
+
+.wp_alt {
+    width: 50px;
+}
+
+.wp_radius {
+    width: 50px;
+}
+
+.wp_start {
+    display: inline-flex;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding-left: 4px;
+    padding-right: 2px;
+}
+
+.wp_finish {
+    display: inline-flex;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding-left: 4px;
+    padding-right: 2px;
+}
+
+.wp_aat {
+    display: inline-flex;
+    border: 1px solid black;
+    border-radius: 4px;
+    margin-left: 10px;
+    padding-left: 4px;
+    padding-right: 2px;
+}
+

@@ -423,7 +423,6 @@ class B21_Task {
         task.draw();
         let wp = task.current_wp();
         wp.display_menu(wp);
-        task.planner.show_task_info();
     }
 
     reset() {

@@ -284,19 +284,19 @@ class B21_WP {
     display_menu(wp) {
         console.log(`wp.display_menu() ${wp.get_name()}`);
         // NAME
-        let form_str = 'Name: <input id="wp_name" class="wp_name" onchange="b21_task_planner.change_wp_name(this.value)" value="' + wp.get_name() +
+        let form_str = 'Name: <input id="wp_name" class="wp_name" value="' + wp.get_name() +
             '"</input>';
 
         // ICAO
-        form_str += '<br/>ICAO: <input class="wp_icao" onchange="b21_task_planner.change_wp_icao(this.value)" value="' + wp.get_icao() +
+        form_str += '<br/>ICAO: <input class="wp_icao" value="' + wp.get_icao() +
             '"</input> ';
 
         // RUNWAY
         form_str +=
-            ' Runway: <input id="wp_runway" class="wp_runway" onchange="b21_task_planner.change_wp_runway(this.value)" value="' +
+            ' Runway: <input id="wp_runway" class="wp_runway" value="' +
             wp.get_runway() + '"</input> ';
         if (wp.runways != null) {
-            form_str += '<select class="wp_runway_select" onclick="b21_task_planner.select_wp_runway(this.value)" value="">';
+            form_str += '<select class="wp_runway_select" value="">';
             for (let i = 0; i < wp.runways.length; i++) {
                 form_str += '<option>' + wp.runways[i] + '</option>';
             }
@@ -312,23 +312,23 @@ class B21_WP {
             alt_units_str = "feet.";
         }
 
-        form_str += '<br/>Elevation: <input class="wp_alt" onchange="b21_task_planner.change_wp_alt(this.value)" value="' +
+        form_str += '<br/>Elevation: <input class="wp_alt" value="' +
             alt_str + '"</input> ' + alt_units_str;
 
         // settings.soaring_task == true . It's a placeholder in case we want planner for non-soaring.
         if (wp.index != 0) {
             // AAT checkbox
-            form_str += '<div class="wp_aat">AAT: <input onclick="b21_task_planner.click_wp_aat(event)" type="checkbox"' + (wp.isAAT() ? " checked" :
+            form_str += '<div class="wp_aat">AAT: <input type="checkbox"' + (wp.isAAT() ? " checked" :
                 "") + '/></div> ';
 
             // START checkbox
             let start = wp.index == wp.planner.b21_task.start_index;
-            form_str += '<br/><div class="wp_start">Start: <input onclick="b21_task_planner.click_wp_start(event)" type="checkbox"' + (start ? " checked" :
+            form_str += '<br/><div class="wp_start">Start: <input type="checkbox"' + (start ? " checked" :
                 "") + '/></div> ';
 
             // FINISH checkbox
             let finish = wp.index == wp.planner.b21_task.finish_index;
-            form_str += '<div class="wp_finish">Finish: <input  onclick="b21_task_planner.click_wp_finish(event)" type="checkbox"' + (finish ? " checked" :
+            form_str += '<div class="wp_finish">Finish: <input type="checkbox"' + (finish ? " checked" :
                 "") + '/></div>';
 
             // RADIUS
@@ -344,7 +344,7 @@ class B21_WP {
                     radius_str = (wp.radius_m * wp.planner.M_TO_FEET).toFixed(0);
                 }
             }
-            form_str += ' Radius: <input class="wp_radius" onchange="b21_task_planner.change_wp_radius(this.value)" value="' +
+            form_str += ' Radius: <input class="wp_radius" value="' +
                 radius_str + '"</input> ' + radius_units_str;
 
             // MAX ALT LIMIT
@@ -356,7 +356,7 @@ class B21_WP {
                     max_alt_str = (wp.max_alt_m * wp.planner.M_TO_FEET).toFixed(0);
                 }
             }
-            form_str += '<br/>Max Alt: <input class="wp_alt" onchange="b21_task_planner.change_wp_max_alt(this.value)" value="' +
+            form_str += '<br/>Max Alt: <input class="wp_alt" value="' +
                 max_alt_str + '"</input> ';
 
             // MIN ALT LIMIT
@@ -368,15 +368,15 @@ class B21_WP {
                     min_alt_str = (wp.min_alt_m * wp.planner.M_TO_FEET).toFixed(0);
                 }
             }
-            form_str += ' Min Alt: <input class="wp_alt" onchange="b21_task_planner.change_wp_min_alt(this.value)" value="' +
+            form_str += ' Min Alt: <input class="wp_alt" value="' +
                 min_alt_str + '"</input> ' + alt_units_str;
         }
 
         // MENU items
         form_str += '<div class="wp_menu">';
-        form_str += wp.planner.menuitem("Append to task", "duplicate_wp_to_task");
-        form_str += wp.planner.menuitem("Update elevation", "update_wp_elevation");
-        form_str += wp.planner.menuitem('<img src="https://xp-soaring.github.io/tasks/b21_task_planner/images/delete.png"/>', "remove_wp_from_task");
+        //form_str += wp.planner.menuitem("Append to task", "duplicate_wp_to_task");
+        //form_str += wp.planner.menuitem("Update elevation", "update_wp_elevation");
+        //form_str += wp.planner.menuitem('<img src="https://xp-soaring.github.io/tasks/b21_task_planner/images/delete.png"/>', "remove_wp_from_task");
         form_str += '</div>';
 
         // POPUP
