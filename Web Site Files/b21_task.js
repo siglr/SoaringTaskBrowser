@@ -407,14 +407,6 @@ class B21_Task {
         task.map_elements.addTo(task.planner.map);
     }
 
-    remove_aat_lines() {
-        let task = this;
-        for (let wp_index = task.start_index+1; wp_index < task.waypoints.length; wp_index++) {
-            let wp = task.waypoints[wp_index];
-            wp.remove_aat_line(wp);
-        }
-    }
-
     set_current_wp(index) {
         let task = this;
         console.log("Task.set_current_wp index=", index);
@@ -428,14 +420,7 @@ class B21_Task {
     reset() {
         let task = this;
         console.log("task.reset()");
-        let length = task.waypoints.length;
-        //console.log(task.toString());
-        for (let i = 0; i < task.waypoints.length; i++) {
-            let wp = task.waypoints[i];
-            if (wp.task_line != null) {
-                wp.remove_line(wp);
-            }
-        }
+        task.planner.map.removeLayer(task.map_elements);
         task.planner.map.closePopup();
     }
 

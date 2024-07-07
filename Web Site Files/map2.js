@@ -242,7 +242,7 @@ class TaskBrowserMap {
 
         // Remove the previous task map_elements
         if (tbm.b21_task != null) {
-            tbm.map.removeLayer(tbm.b21_task.map_elements);
+            tbm.b21_task.reset();
         }
 
         tbm.b21_task = new B21_Task(tbm);   // B21 update here's where we parse the XML into a B21_Task

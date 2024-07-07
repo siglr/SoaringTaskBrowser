@@ -21,7 +21,7 @@ class B21_WP {
     constructor(planner) {
         let wp = this;
         wp.planner = planner; // reference to B21TaskPlanner instance
-
+        wp.task = planner.b21_task;
         wp.DEFAULT_RADIUS_M = 500;
         wp.DEFAULT_START_RADIUS_M = 2500;
         wp.DEFAULT_FINISH_RADIUS_M = 2000;
@@ -55,6 +55,11 @@ class B21_WP {
         wp.marker = wp.create_marker();
     }
 
+    reset() {
+        let wp = this;
+
+    }
+
     // isAAT() returns true if this is an AAT waypoint, or can be SET by passing true/false
     isAAT(set_value) {
         let wp = this;
@@ -73,22 +78,6 @@ class B21_WP {
             autoPan: true,
             bubblingMouseEvents: false
         });
-        marker.on("dragstart", function (e) {
-            wp.planner.map.closePopup();
-        });
-        marker.on("drag", function (e) {
-            let marker = e.target;
-            wp.position = marker.getLatLng();
-            wp.planner.b21_task.update_waypoints();
-            wp.planner.b21_task.draw();
-            wp.planner.b21_task.display_task_info();
-        });
-        marker.on("dragend", function (e) {
-            wp.planner.b21_task.set_current_wp(wp.index);
-            console.log("WP dragend");
-            let marker = e.target;
-            wp.planner.request_alt_m(wp, wp.position, wp.request_alt_m_ok, wp.request_alt_m_fail);
-        });
 
         // POPUP
         //console.log("creating WP popup",wp.get_name());
@@ -104,26 +93,17 @@ class B21_WP {
 
         marker.on('popupopen', () => {
             console.log(`wp.marker event on popupopen ${wp.get_name()}`);
-            wp.planner.b21_task.set_current_wp(wp.index);
+            wp.task.set_current_wp(wp.index);
         });
 
-        marker.addTo(wp.planner.map);
+        wp.task.map_elements.addLayer(marker);
 
         return marker;
     }
 
-    set_edit_mode(wp) {
-        wp.marker.dragging.enable();
-    }
-
-    reset_edit_mode(wp) {
-        //console.log("WP.reset_edit_mode "+wp.name);
-        wp.marker.dragging.disable();
-    }
-
     wp_click(wp, e) {
         //console.log("wp_click");
-        wp.planner.b21_task.set_current_wp(wp.index);
+        wp.task.set_current_wp(wp.index);
     }
 
     // The ap "icon" is the permanently displayed div containing the name
@@ -132,7 +112,7 @@ class B21_WP {
         //let icon_str = ((1 + wp.index) + "." + wp.get_name()).replaceAll(" ", "&nbsp;");
         let icon_str = (wp.get_name()).replaceAll(" ", "&nbsp;");
         //icon_str += "</div>";
-        let class_name = (wp.planner.b21_task.index == wp.index) ? "wp_icon_html_current" : "wp_icon_html";
+        let class_name = (wp.task.index == wp.index) ? "wp_icon_html_current" : "wp_icon_html";
         let icon_html = '<div class="' + class_name + '">' + icon_str + "</div>";
         let wp_icon = L.divIcon({
             className: "wp_icon",
@@ -144,39 +124,14 @@ class B21_WP {
         return wp_icon;
     }
 
-    // remove the AAT line drawn to this waypoint
-    remove_aat_line(wp) {
-        if (wp.aat_line != null) {
-            for (let i = 0; i < wp.aat_line.length; i++) {
-                wp.aat_line[i].remove(wp.planner.map);
-            }
-            wp.aat_line = null;
-        }
-    }
-
-    request_alt_m_ok(wp, position, alt_m) {
-        console.log("wp.request_alt_m_ok elevation(m):", position, alt_m);
-        wp.alt_m = alt_m;
-        wp.alt_m_updated = true;
-        // If this is the current waypoint, popup the wp menu
-        if (wp.index == wp.planner.b21_task.index) {
-            wp.display_menu(wp);
-        }
-        wp.planner.b21_task.display_task_info();
-    }
-
-    request_alt_m_fail(wp, position, error_str, error) {
-        console.log("WP alt_m fetch error", error_str, error);
-    }
-
     is_task_start() {
         let wp = this;
-        return wp.index == wp.planner.b21_task.start_index;
+        return wp.index == wp.task.start_index;
     }
 
     is_task_finish() {
         let wp = this;
-        return wp.index == wp.planner.b21_task.finish_index;
+        return wp.index == wp.task.finish_index;
     }
 
     get_name() {
@@ -310,12 +265,12 @@ class B21_WP {
                 "") + '/></div> ';
 
             // START checkbox
-            let start = wp.index == wp.planner.b21_task.start_index;
+            let start = wp.index == wp.task.start_index;
             form_str += '<br/><div class="wp_start">Start: <input type="checkbox"' + (start ? " checked" :
                 "") + '/></div> ';
 
             // FINISH checkbox
-            let finish = wp.index == wp.planner.b21_task.finish_index;
+            let finish = wp.index == wp.task.finish_index;
             form_str += '<div class="wp_finish">Finish: <input type="checkbox"' + (finish ? " checked" :
                 "") + '/></div>';
 
@@ -489,24 +444,6 @@ class B21_WP {
         }
         //console.log("wp is_wp() false");
         return false;
-    }
-
-    in_sector(p) {
-        let wp = this;
-        //console.log("in_wp_sector");
-        if (wp.max_alt_m != null && p.alt_m > wp.max_alt_m) {
-            //console.log("in_wp_sector false max_alt_m="+wp.max_alt_m+" vs "+p.alt_m);
-            return false;
-        }
-        if (wp.min_alt_m != null && p.alt_m < wp.min_alt_m) {
-            //console.log("in_wp_sector false min_alt_m="+wp.min_alt_m+" vs "+p.alt_m);
-            return false;
-        }
-        let radius_m = wp.radius_m == null ? wp.DEFAULT_RADIUS_M : wp.radius_m;
-        let distance_m = Geo.get_distance_m(p, wp.position);
-        let in_sector = distance_m < radius_m;
-        //console.log("in_wp_sector "+in_sector+" radius_m="+radius_m+" vs "+distance_m.toFixed(1));
-        return in_sector;
     }
 
     // ********************************************
