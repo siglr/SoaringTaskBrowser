@@ -319,16 +319,16 @@ class TaskBrowser {
         tb.downloadTextFile(tb.currentTask.WPRXML, fileName);
     }
 
-    showTaskListStandalone(tasks) {
-        let tb = this;
-        const taskListContainer = document.getElementById("taskListContainer");
-        taskListContainer.innerHTML = tasks.map(task => `
-            <div class="task-list-item" onclick="TB.selectTask(${task.EntrySeqID})">
-                <h4>${task.Title}</h4>
-                <p>${task.ShortDescription}</p>
-            </div>
-        `).join('');
-    }
+    //showTaskListStandalone(tasks) {
+    //    let tb = this;
+    //    const taskListContainer = document.getElementById("taskListContainer");
+    //    taskListContainer.innerHTML = tasks.map(task => `
+    //        <div class="task-list-item" onclick="TB.selectTask(${task.EntrySeqID})">
+    //            <h4>${task.Title}</h4>
+    //            <p>${task.ShortDescription}</p>
+    //        </div>
+    //    `).join('');
+    //}
 
     getTaskDetails(entrySeqID) {
         let tb = this;
@@ -353,11 +353,11 @@ class TaskBrowser {
         tb.showTaskDetailsStandalone(task_details);
     }
 
-    selectTask(entrySeqID, forceBoundsUpdate = false) {
-        let tb = this;
-        tb.tbm.selectTask(entrySeqID, forceBoundsUpdate);
-        tb.tbm.taskClicked(entrySeqID);
-        tb.tbm.zoomToTask();
-        tb.getTaskDetails(entrySeqID);
-    }
+//    selectTask(entrySeqID, forceBoundsUpdate = false) {
+//        let tb = this;
+//        tb.tbm.selectTask(entrySeqID, forceBoundsUpdate);
+//        tb.tbm.taskClicked(entrySeqID);
+//        tb.tbm.zoomToTask();
+//        tb.getTaskDetails(entrySeqID);
+//    }
 }

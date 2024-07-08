@@ -295,6 +295,36 @@ class TaskBrowserMap {
 		});
 	}
 
+    // Function to select a task on the map
+    selectTask(entrySeqID, forceBoundsUpdate = false) {
+        let tbm = this;
+        console.log("selectTask()", entrySeqID);
+        if (tbm.api_tasks[entrySeqID]) {
+            tbm.updateSelectedTask(entrySeqID);
+        } else {
+            console.warn('Error selecting task:', error);
+        }
+    }
+
+    updateSelectedTask(entrySeqID) {
+        let tbm = this;
+        tbm.resetPolylines();
+        const polyline = tbm.api_tasks[entrySeqID].polyline;
+        polyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
+        polyline.options.selected = true;
+        if (!tbm.runningInApp) {
+            polyline.openPopup();
+        }
+        tbm.currentPolyline = polyline; // Set the current polyline
+        tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
+
+        // Set map bounds to the polyline bounds if forceBoundsUpdate is true
+        if (forceBoundsUpdate) {
+            const polylineBounds = polyline.getBounds();
+            tbm.map.fitBounds(polylineBounds);
+        }
+    }
+
     //
     // Buttons on the map
     //
@@ -331,37 +361,16 @@ class TaskBrowserMap {
     //
 
     // Function to select a task on the map
-    selectTask(entrySeqID, forceBoundsUpdate = false) {
+    selectTaskFromApp(entrySeqID, forceBoundsUpdate = false) {
         let tbm = this;
-        console.log("selectTask()", entrySeqID);
-        if (tbm.api_tasks[entrySeqID]) {
-            tbm.updateSelectedTask(entrySeqID);
-        } else {
-            console.warn('Error selecting task:', error);
-        }
-    }
-
-    updateSelectedTask(entrySeqID) {
-        let tbm = this;
-        tbm.resetPolylines();
-        const polyline = tbm.api_tasks[entrySeqID].polyline;
-        polyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
-        polyline.options.selected = true;
-        if (!tbm.runningInApp) {
-            polyline.openPopup();
-        }
-        tbm.currentPolyline = polyline; // Set the current polyline
-        tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
-
-        // Set map bounds to the polyline bounds if forceBoundsUpdate is true
-        if (forceBoundsUpdate) {
-            const polylineBounds = polyline.getBounds();
-            tbm.map.fitBounds(polylineBounds);
-        }
+        console.log("selectTaskFromApp()", entrySeqID);
+        tbm.selectTask(entrySeqID, forceBoundsUpdate)
+        //tbm.taskClicked(entrySeqID);
+        //tbm.zoomToTask();
     }
 
     // Function to filter tasks based on a list of EntrySeqIDs
-    filterTasks(entrySeqIDs) {
+    filterTasksFromApp(entrySeqIDs) {
         let tbm = this;
         // Save the list of tasks
         tbm.filteredEntrySeqIDs = entrySeqIDs;
@@ -371,7 +380,7 @@ class TaskBrowserMap {
     }
 
     // Function to clear all filters and show all tasks
-    clearFilter() {
+    clearFilterFromApp() {
         let tbm = this;
         tbm.filteredEntrySeqIDs = null;
 

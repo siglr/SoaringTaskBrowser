@@ -17,24 +17,22 @@ class IntegratedTB {
     //
 
     // Function to select a task on the map
-    selectTask(entrySeqID, forceBoundsUpdate = false) {
+    selectTaskFromApp(entrySeqID, forceBoundsUpdate = false) {
         let itb = this;
-        itb.tbm.selectTask(entrySeqID, forceBoundsUpdate);
-        itb.tbm.taskClicked(entrySeqID); 
-        itb.tbm.zoomToTask();
+        itb.tbm.selectTaskFromApp(entrySeqID, forceBoundsUpdate);
     };
 
     // Function to filter tasks based on a list of EntrySeqIDs
-    filterTasks(entrySeqIDs) {
+    filterTasksFromApp(entrySeqIDs) {
         let itb = this;
         // Save the list of tasks
-        itb.tbm.filterTasks(entrySeqIDs);
+        itb.tbm.filterTasksFromApp(entrySeqIDs);
     };
 
     // Function to clear all filters and show all tasks
-    clearFilter() {
+    clearFilterFromApp() {
         let itb = this;
-        itb.tbm.clearFilter();
+        itb.tbm.clearFilterFromApp();
     };
 
 } // end class IntegratedTB

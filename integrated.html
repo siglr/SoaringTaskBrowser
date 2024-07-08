@@ -66,22 +66,22 @@
     <script src="b21_server_shim/test_api.js"></script>
     <script>
         var DEBUG_LOCAL = false;
-        var VERSION = "0.0.0_B21";
+        var VERSION = "0.0.1_MD";
     </script>
     <script>
         var ITB = new IntegratedTB();
         ITB.init();
 
         window.selectTask = function (entrySeqID, forceBoundsUpdate = false) {
-            ITB.selectTask(entrySeqID, forceBoundsUpdate);
+            ITB.selectTaskFromApp(entrySeqID, forceBoundsUpdate);
         };
 
         window.filterTasks = function (entrySeqIDs) {
-            ITB.filterTasks(entrySeqIDs);
+            ITB.filterTasksFromApp(entrySeqIDs);
         };
 
         window.clearFilter = function () {
-            ITB.clearFilter();
+            ITB.clearFilterFromApp();
         };
 
         // Add an event listener to capture the ESC key press
