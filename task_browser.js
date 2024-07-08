@@ -28,6 +28,7 @@ class TaskBrowser {
         // Check for task parameter in URL
         const entrySeqID = tb.getParameterByName('task');
         if (entrySeqID) {
+            console.log('Calling taskClicked with parameter task',entrySeqID)
             tb.tbm.taskClicked(entrySeqID);
             tb.clearUrlParameter('task');
         }
