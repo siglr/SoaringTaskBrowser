@@ -340,6 +340,8 @@ class TaskBrowser {
     selectTask(entrySeqID, forceBoundsUpdate = false) {
         let tb = this;
         tb.tbm.selectTask(entrySeqID, forceBoundsUpdate);
+        itb.tbm.taskClicked(entrySeqID);
+        itb.tbm.zoomToTask();
         tb.showTaskDetailsStandalone(entrySeqID);
     }
 
