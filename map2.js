@@ -370,6 +370,7 @@ class TaskBrowserMap {
         let tbm = this;
         console.log("selectTaskFromApp()", entrySeqID);
         tbm.selectTask(entrySeqID, forceBoundsUpdate)
+        tbm.map.fitBounds(tbm.b21_task.get_bounds());
         //tbm.taskClicked(entrySeqID);
         //tbm.zoomToTask();
     }
