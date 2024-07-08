@@ -242,7 +242,9 @@ class TaskBrowserMap {
             tbm.postSelectedTask(entrySeqID); // Notify the app
         } else {
             tbm.map.fitBounds(api_task.bounds);
-            tbm.tb.getTaskDetails(entrySeqID); // Call standalone.js function
+            if (!tbm.runningInApp) {
+                tbm.tb.getTaskDetails(entrySeqID);
+            }
         }
     }
 
