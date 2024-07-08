@@ -6,6 +6,7 @@
 .ftpquota
 .htaccess
 .htaccess.no_htaccess.phpupgrader
+update.sh
 
 # User-specific files
 *.rsuser
