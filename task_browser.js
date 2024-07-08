@@ -348,7 +348,8 @@ class TaskBrowser {
 
     handleTaskDetails(task_details) {
         let tb = this;
-        tb.tbm.setB21Task(task_details);
+        console.log('handleTaskDetails', task_details.entrySeqID)
+        //tb.tbm.setB21Task(task_details);
         tb.tbm.map.fitBounds(tb.tbm.b21_task.get_bounds());
         tb.showTaskDetailsStandalone(task_details);
     }
