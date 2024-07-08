@@ -250,6 +250,7 @@ class TaskBrowserMap {
 
     setB21Task(api_task) {
         let tbm = this;
+        console.log('setB21Task',api_task.entrySeqID)
         // Remove the previous task map_elements
         if (tbm.b21_task != null) {
             tbm.b21_task.reset();
