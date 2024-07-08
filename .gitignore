@@ -7,6 +7,7 @@
 .htaccess
 .htaccess.no_htaccess.phpupgrader
 update.sh
+webhook.php
 
 # User-specific files
 *.rsuser
