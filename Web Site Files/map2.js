@@ -21,7 +21,7 @@ class TaskBrowserMap {
         tbm.api_tasks = {};     // Will hold all tasks from GetTasksForMap.php
         tbm.b21_task = null;    // Will hold parsed 'current' task
 
-        tbm.map = L.map('map').setView([50, 10], 5); // B21 update better for testing zoom in/out fetch
+        tbm.map = L.map('map').setView([20, 0], 2); // B21 update better for testing zoom in/out fetch
 
         // Define different map layers
         tbm.layers = {
