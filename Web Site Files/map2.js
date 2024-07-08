@@ -21,7 +21,7 @@ class TaskBrowserMap {
         tbm.api_tasks = {};     // Will hold all tasks from GetTasksForMap.php
         tbm.b21_task = null;    // Will hold parsed 'current' task
 
-        tbm.map = L.map('map').setView([20, 0], 2); // B21 update better for testing zoom in/out fetch
+        tbm.map = L.map('map').setView([20, 0], 2);
 
         // Define different map layers
         tbm.layers = {
@@ -116,11 +116,6 @@ class TaskBrowserMap {
 				let preventEntrySeqIDlost = tbm.currentEntrySeqID;
 
                 tbm.clearPolylines();
-
-				// Clear the polylines object
-				//for (const key in tbm.polylines) {
-				//	delete tbm.polylines[key];
-				//}
 
 				// Resetting the current selected task after clearing all polylines
 				tbm.currentEntrySeqID = preventEntrySeqIDlost;

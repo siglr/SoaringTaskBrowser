@@ -20,6 +20,8 @@ class IntegratedTB {
     selectTask(entrySeqID, forceBoundsUpdate = false) {
         let itb = this;
         itb.tbm.selectTask(entrySeqID, forceBoundsUpdate);
+        itb.tbm.taskClicked(entrySeqID); 
+        itb.tbm.zoomToTask();
     };
 
     // Function to filter tasks based on a list of EntrySeqIDs
