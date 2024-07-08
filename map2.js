@@ -218,10 +218,6 @@ class TaskBrowserMap {
             });
 
             polyline.on('click', function () {
-                tbm.resetPolylines();
-                this.setStyle({ color: '#0000ff', weight: tbm.selWeight });
-                this.options.selected = true;
-                tbm.currentPolyline = this; // Set the current polyline
                 tbm.taskClicked(api_task.EntrySeqID); //
             });
         }
@@ -234,6 +230,11 @@ class TaskBrowserMap {
 
         tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
         let api_task = tbm.api_tasks[entrySeqID];
+
+        tbm.resetPolylines();
+        tbm.currentPolyline = api_task.polyline; // Set the current polyline
+        tbm.currentPolyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
+        tbm.currentPolyline.options.selected = true;
 
         tbm.setB21Task(api_task);
 
@@ -308,6 +309,7 @@ class TaskBrowserMap {
 
     updateSelectedTask(entrySeqID) {
         let tbm = this;
+        console.log('updateSelectedTask()', entrySeqID)
         tbm.resetPolylines();
         const polyline = tbm.api_tasks[entrySeqID].polyline;
         polyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
