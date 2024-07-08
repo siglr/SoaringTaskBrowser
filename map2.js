@@ -304,7 +304,7 @@ class TaskBrowserMap {
         let tbm = this;
         console.log("selectTask()", entrySeqID);
         if (tbm.api_tasks[entrySeqID]) {
-            tbm.updateSelectedTask(entrySeqID);
+            tbm.taskClicked(entrySeqID);
         } else {
             console.warn('Error selecting task:', error);
         }
