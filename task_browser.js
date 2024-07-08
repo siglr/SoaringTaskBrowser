@@ -28,7 +28,7 @@ class TaskBrowser {
         // Check for task parameter in URL
         const entrySeqID = tb.getParameterByName('task');
         if (entrySeqID) {
-            tb.getTaskDetails(entrySeqID);
+            tb.tbm.taskClicked(entrySeqID);
             tb.clearUrlParameter('task');
         }
         tb.initCountryCodes();
