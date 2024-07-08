@@ -89,7 +89,7 @@ class B21_WP {
         })
             .setContent("no WP content yet");
 
-        marker.bindPopup(popup);
+        //marker.bindPopup(popup); // WeSimGlide.org : no popup for now
 
         marker.on('popupopen', () => {
             console.log(`wp.marker event on popupopen ${wp.get_name()}`);
