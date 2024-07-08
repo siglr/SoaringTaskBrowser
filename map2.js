@@ -229,9 +229,9 @@ class TaskBrowserMap {
         console.log('taskClicked', entrySeqID);
 
         tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
-        let api_task = tbm.api_tasks[entrySeqID];
+        console.log('The api_task entrySeqID: ', tbm.api_tasks[entrySeqID].entrySeqID)
 
-        console.log('The api_task entrySeqID: ', api_task.entrySeqID)
+        let api_task = tbm.api_tasks[entrySeqID];
 
         tbm.resetPolylines();
         tbm.currentPolyline = api_task.polyline; // Set the current polyline
