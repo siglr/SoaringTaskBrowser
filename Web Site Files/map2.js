@@ -235,6 +235,18 @@ class TaskBrowserMap {
         tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
         let api_task = tbm.api_tasks[entrySeqID];
 
+        tbm.setB21Task(api_task);
+
+        if (tbm.runningInApp) {
+            tbm.postSelectedTask(entrySeqID); // Notify the app
+        } else {
+            tbm.map.fitBounds(api_task.bounds);
+            tbm.tb.getTaskDetails(entrySeqID); // Call standalone.js function
+        }
+    }
+
+    setB21Task(api_task) {
+        let tbm = this;
         // Remove the previous task map_elements
         if (tbm.b21_task != null) {
             tbm.b21_task.reset();
@@ -246,13 +258,6 @@ class TaskBrowserMap {
         tbm.b21_task.update_waypoint_icons();
 
         tbm.b21_task.draw();
-
-        if (tbm.runningInApp) {
-            tbm.postSelectedTask(entrySeqID); // Notify the app
-        } else {
-            tbm.map.fitBounds(api_task.bounds);
-            tbm.tb.showTaskDetailsStandalone(entrySeqID); // Call standalone.js function
-        }
     }
 
     parseWorldPosition(worldPosition) {
@@ -272,29 +277,6 @@ class TaskBrowserMap {
         if (direction === 'S' || direction === 'W') decimal = -decimal;
         return decimal;
     }
-
-    //B21 update - this no longer needed as tbm.api_tasks[entrySeqID].bounds now contains leaflet bounds for given task, added when loaded
-	fetchTaskBounds(entrySeqID) {
-        let tbm = this;
-		return fetch(`php/GetTaskBounds.php?entrySeqID=${entrySeqID}`)
-			.then(response => response.json())
-			.then(bounds => {
-				if (bounds && bounds.LatMin !== undefined && bounds.LatMax !== undefined && bounds.LongMin !== undefined && bounds.LongMax !== undefined) {
-					return {
-						latMin: bounds.LatMin,
-						latMax: bounds.LatMax,
-						lngMin: bounds.LongMin,
-						lngMax: bounds.LongMax
-					};
-				} else {
-					throw new Error('Invalid bounds data');
-				}
-			})
-			.catch(error => {
-				console.error('Error fetching task bounds:', error);
-				throw error;
-			});
-	}
 
 	manageFilteredTasks() {
         let tbm = this;
@@ -352,34 +334,29 @@ class TaskBrowserMap {
     selectTask(entrySeqID, forceBoundsUpdate = false) {
         let tbm = this;
         console.log("selectTask()", entrySeqID);
-        if (tbm.api_tasks[entrySeqID].polyline) {
-            tbm.resetPolylines();
-            const polyline = tbm.api_tasks[entrySeqID].polyline;
-            polyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
-            polyline.options.selected = true;
-            if (!tbm.runningInApp) {
-                polyline.openPopup();
-            }
-            tbm.currentPolyline = polyline; // Set the current polyline
-            tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
-
-            // Set map bounds to the polyline bounds if forceBoundsUpdate is true
-            if (forceBoundsUpdate) {
-                const polylineBounds = polyline.getBounds();
-                tbm.map.fitBounds(polylineBounds);
-            }
+        if (tbm.api_tasks[entrySeqID]) {
+            tbm.updateSelectedTask(entrySeqID);
         } else {
-            tbm.fetchTaskBounds(entrySeqID).then(bounds => {
-                if (bounds) {
-                    const southWest = L.latLng(bounds.latMin, bounds.lngMin);
-                    const northEast = L.latLng(bounds.latMax, bounds.lngMax);
-                    const newBounds = L.latLngBounds(southWest, northEast);
-                    tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
-                    tbm.map.fitBounds(newBounds);
-                }
-            }).catch(error => {
-                console.error('Error fetching task bounds:', error);
-            });
+            console.warn('Error selecting task:', error);
+        }
+    }
+
+    updateSelectedTask(entrySeqID) {
+        let tbm = this;
+        tbm.resetPolylines();
+        const polyline = tbm.api_tasks[entrySeqID].polyline;
+        polyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
+        polyline.options.selected = true;
+        if (!tbm.runningInApp) {
+            polyline.openPopup();
+        }
+        tbm.currentPolyline = polyline; // Set the current polyline
+        tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
+
+        // Set map bounds to the polyline bounds if forceBoundsUpdate is true
+        if (forceBoundsUpdate) {
+            const polylineBounds = polyline.getBounds();
+            tbm.map.fitBounds(polylineBounds);
         }
     }
 

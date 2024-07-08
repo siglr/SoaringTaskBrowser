@@ -1,6 +1,14 @@
+"use strict"
+
 class TaskBrowser {
     constructor() {
         let tb = this;
+        console.log("new TaskBrowser()");
+    }
+
+    init() {
+        let tb = this;
+        console.log("TaskBrowser.init()");
         tb.countryCodes = {};
         tb.md = window.markdownit({
             html: false,
@@ -18,15 +26,11 @@ class TaskBrowser {
             'Virgin Islands - British': 'British Virgin Islands'
         };
         // Check for task parameter in URL
-        const taskID = tb.getParameterByName('task');
-        if (taskID) {
-            tb.selectTask(taskID, true);
+        const entrySeqID = tb.getParameterByName('task');
+        if (entrySeqID) {
+            tb.getTaskDetails(entrySeqID);
             tb.clearUrlParameter('task');
         }
-    }
-
-    init() {
-        let tb = this;
         tb.initCountryCodes();
     }
 
@@ -221,67 +225,55 @@ class TaskBrowser {
         }
     }
 
-    showTaskDetailsStandalone(entrySeqID) {
+    showTaskDetailsStandalone(task) {
         let tb = this;
-        let fetch_promise;
-        if (DEBUG_LOCAL) {
-		    fetch_promise = test_fetch_task_details(entrySeqID);
-        } else {
-		    fetch_promise = fetch(`php/GetTaskDetails.php?entrySeqID=${entrySeqID}`);
-        }
-        fetch_promise
-            .then(response => response.json())
-            .then(task => {
-                const taskDetailContainer = document.getElementById("taskDetailContainer");
-                tb.currentTask = task; // Save the current task for download use
+        console.log("showTaskDetailsStandalone", task);
+        const taskDetailContainer = document.getElementById("taskDetailContainer");
+        tb.currentTask = task; // Save the current task for download use
 
-                // Format the last update date/time and description if present
-                let lastUpdateInfo = "";
-                const lastUpdateFormatted = tb.formatSimDateTime(task.LastUpdate, true, false, true);
-                const lastUpdateDescription = task.LastUpdateDescription ? ` (${task.LastUpdateDescription})` : "";
-                lastUpdateInfo = `Last update: ${lastUpdateFormatted}${lastUpdateDescription}`;
+        // Format the last update date/time and description if present
+        let lastUpdateInfo = "";
+        const lastUpdateFormatted = tb.formatSimDateTime(task.LastUpdate, true, false, true);
+        const lastUpdateDescription = task.LastUpdateDescription ? ` (${task.LastUpdateDescription})` : "";
+        lastUpdateInfo = `Last update: ${lastUpdateFormatted}${lastUpdateDescription}`;
 
-                taskDetailContainer.innerHTML = `
-                    <div class="task-details markdown-content">
-                        <div class="task-header">
-                            <span class="task-number">#${entrySeqID}</span>
-                            <span class="task-flags">${this.addCountryFlags(task.Countries)}</span>
-                        </div>
-                        <h1>${task.Title}</h1>
-                        ${tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.ShortDescription))}
-                        ${tb.addDetailLineWithBreak('🗺', task.MainAreaPOI)}
-                        🛫 ${task.DepartureICAO} ${task.DepartureName} ${tb}<br>
-                        🛬 ${task.ArrivalICAO} ${task.ArrivalName} ${this.addDetailWithinBrackets(task.ArrivalExtra)}<br>
-                        ⌚ ${tb.formatSimDateTime(task.SimDateTime, task.IncludeYear)} ${tb.addDetailWithinBrackets(task.SimDateTimeExtraInfo)}<br>
-                        ↗️ ${task.SoaringRidge ? 'Ridge' : ''}${task.SoaringThermals ? ' Thermals' : ''}${task.SoaringWaves ? ' Waves' : ''}${task.SoaringDynamic ? ' Dynamic' : ''} ${tb.addDetailWithinBrackets(task.SoaringExtraInfo)}<br>
-                        📏 ${task.TaskDistance} km task (${task.TotalDistance} km total)<br>
-                        ⏳ ${tb.formatDuration(task.DurationMin, task.DurationMax)} ${tb.addDetailWithinBrackets(task.DurationExtraInfo)}<br>
-                        ✈️ ${task.RecommendedGliders}<br>
-                        🎚 ${tb.formatDifficultyRating(task.DifficultyRating, task.DifficultyExtraInfo)}
-                        <p>${task.Credits}</p>
-                        ${task.RepostText ? tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.RepostText)) : ''}
-                        <p>${lastUpdateInfo}</p>
-                        <h2>📖 Full Description</h2>
-                        ${tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.LongDescription))}
-                        <h2>🔗 Links</h2>
-                        <ul>
-                            <li><a href="#" onclick="TB.copyTextToClipboard('https://wesimglide.org/index.html?task=${entrySeqID}')">Share this task (copy link to clipboard)</a></li>
-                            <li><a href="discord://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank">Link to this task's thread on Discord app</a></li>
-                            <li><a href="https://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank">Link to this task's thread on Discord (web version)</a></li>
-                        </ul>
-                        <h2>📁 Files</h2>
-                        <p><strong>Option 1:</strong> Download the single package DPHX file for use with the <a href="https://flightsim.to/file/62573/msfs-soaring-task-tools-dphx-unpack-load" target="_blank">DPHX Unpack & Load tool</a></p>
-                        <p><a href="#" onclick="TB.downloadDPHXFile('https://siglr.com/DiscordPostHelper/TaskBrowser/Tasks/${task.TaskID}.dphx', '${task.Title}.dphx')">${task.Title}.dphx</a></p>
-                        <p><strong>Option 2:</strong> Download individual files and install them yourself</p>
-                        <ul>
-                            <li><a href="#" onclick="TB.downloadPLNFile()">Flight plan file (PLN): ${tb.getFileNameFromPath(tb.currentTask.PLNFilename)}</a></li>
-                            <li><a href="#" onclick="TB.downloadWPRFile()">Weather file (WPR): ${tb.getFileNameFromPath(tb.currentTask.WPRFilename)}</a></li>
-                        </ul>
-                    </div>`;
-            })
-            .catch(error => {
-                console.error('Error fetching task details:', error);
-            });
+        taskDetailContainer.innerHTML = `
+            <div class="task-details markdown-content">
+                <div class="task-header">
+                    <span class="task-number">#${task.EntrySeqID}</span>
+                    <span class="task-flags">${this.addCountryFlags(task.Countries)}</span>
+                </div>
+                <h1>${task.Title}</h1>
+                ${tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.ShortDescription))}
+                ${tb.addDetailLineWithBreak('🗺', task.MainAreaPOI)}
+                🛫 ${task.DepartureICAO} ${task.DepartureName} ${tb}<br>
+                🛬 ${task.ArrivalICAO} ${task.ArrivalName} ${this.addDetailWithinBrackets(task.ArrivalExtra)}<br>
+                ⌚ ${tb.formatSimDateTime(task.SimDateTime, task.IncludeYear)} ${tb.addDetailWithinBrackets(task.SimDateTimeExtraInfo)}<br>
+                ↗️ ${task.SoaringRidge ? 'Ridge' : ''}${task.SoaringThermals ? ' Thermals' : ''}${task.SoaringWaves ? ' Waves' : ''}${task.SoaringDynamic ? ' Dynamic' : ''} ${tb.addDetailWithinBrackets(task.SoaringExtraInfo)}<br>
+                📏 ${task.TaskDistance} km task (${task.TotalDistance} km total)<br>
+                ⏳ ${tb.formatDuration(task.DurationMin, task.DurationMax)} ${tb.addDetailWithinBrackets(task.DurationExtraInfo)}<br>
+                ✈️ ${task.RecommendedGliders}<br>
+                🎚 ${tb.formatDifficultyRating(task.DifficultyRating, task.DifficultyExtraInfo)}
+                <p>${task.Credits}</p>
+                ${task.RepostText ? tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.RepostText)) : ''}
+                <p>${lastUpdateInfo}</p>
+                <h2>📖 Full Description</h2>
+                ${tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.LongDescription))}
+                <h2>🔗 Links</h2>
+                <ul>
+                    <li><a href="#" onclick="TB.copyTextToClipboard('https://wesimglide.org/index.html?task=${task.EntrySeqID}')">Share this task (copy link to clipboard)</a></li>
+                    <li><a href="discord://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank">Link to this task's thread on Discord app</a></li>
+                    <li><a href="https://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank">Link to this task's thread on Discord (web version)</a></li>
+                </ul>
+                <h2>📁 Files</h2>
+                <p><strong>Option 1:</strong> Download the single package DPHX file for use with the <a href="https://flightsim.to/file/62573/msfs-soaring-task-tools-dphx-unpack-load" target="_blank">DPHX Unpack & Load tool</a></p>
+                <p><a href="#" onclick="TB.downloadDPHXFile('https://siglr.com/DiscordPostHelper/TaskBrowser/Tasks/${task.TaskID}.dphx', '${task.Title}.dphx')">${task.Title}.dphx</a></p>
+                <p><strong>Option 2:</strong> Download individual files and install them yourself</p>
+                <ul>
+                    <li><a href="#" onclick="TB.downloadPLNFile()">Flight plan file (PLN): ${tb.getFileNameFromPath(tb.currentTask.PLNFilename)}</a></li>
+                    <li><a href="#" onclick="TB.downloadWPRFile()">Weather file (WPR): ${tb.getFileNameFromPath(tb.currentTask.WPRFilename)}</a></li>
+                </ul>
+            </div>`;
     }
 
     downloadDPHXFile(url, filename) {
@@ -328,6 +320,7 @@ class TaskBrowser {
     }
 
     showTaskListStandalone(tasks) {
+        let tb = this;
         const taskListContainer = document.getElementById("taskListContainer");
         taskListContainer.innerHTML = tasks.map(task => `
             <div class="task-list-item" onclick="TB.selectTask(${task.EntrySeqID})">
@@ -337,12 +330,34 @@ class TaskBrowser {
         `).join('');
     }
 
+    getTaskDetails(entrySeqID) {
+        let tb = this;
+        let fetch_promise;
+        if (DEBUG_LOCAL) {
+		    fetch_promise = test_fetch_task_details(entrySeqID);
+        } else {
+		    fetch_promise = fetch(`php/GetTaskDetails.php?entrySeqID=${entrySeqID}`);
+        }
+        fetch_promise
+            .then(response => response.json())
+            .then(task_details => { tb.handleTaskDetails(task_details); })
+            .catch(error => {
+                console.error('Error fetching task details:', error);
+            });
+    }
+
+    handleTaskDetails(task_details) {
+        let tb = this;
+        tb.tbm.setB21Task(task_details);
+        tb.tbm.map.fitBounds(tb.tbm.b21_task.get_bounds());
+        tb.showTaskDetailsStandalone(task_details);
+    }
+
     selectTask(entrySeqID, forceBoundsUpdate = false) {
         let tb = this;
         tb.tbm.selectTask(entrySeqID, forceBoundsUpdate);
-        itb.tbm.taskClicked(entrySeqID);
-        itb.tbm.zoomToTask();
-        tb.showTaskDetailsStandalone(entrySeqID);
+        tb.tbm.taskClicked(entrySeqID);
+        tb.tbm.zoomToTask();
+        tb.getTaskDetails(entrySeqID);
     }
-
 }

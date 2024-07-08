@@ -66,6 +66,7 @@ class B21_Task {
         console.log(">>>>>>>loaded PLN, start_index=", task.start_index);
         task.fix_start_finish();
         //task.update_display();
+        task.update_bounds();
     }
 
     fix_start_finish() {
@@ -301,6 +302,11 @@ class B21_Task {
             }
         }
         console.log("new map bounds ", task.min_lat, task.min_lng, task.max_lat, task.max_lng);
+    }
+
+    get_bounds() {
+        let task = this;
+        return L.latLngBounds([task.min_lat, task.min_lng],[task.max_lat, task.max_lng]);
     }
 
     // Add a straight line between wp1 and wp2
