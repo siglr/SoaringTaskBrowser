@@ -383,8 +383,8 @@ class TaskBrowserMap {
     // Function to zoom to the selected task
     zoomToTask() {
         let tbm = this;
-        if (tbm.currentPolyline) {
-            tbm.map.fitBounds(tbm.currentPolyline.getBounds());
+        if (tbm.b21_task) {
+            tbm.map.fitBounds(tbm.b21_task.get_bounds());
         } else {
             alert("No task selected");
         }
