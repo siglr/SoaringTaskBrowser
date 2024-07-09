@@ -196,11 +196,15 @@ class TaskBrowserMap {
     }
 
     highlightTask(tbm, entrySeqID) {
-        tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#9900cc', weight: tbm.hoverWeight });
+        if (tbm.currentEntrySeqID !== entrySeqID) {
+            tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#9900cc', weight: tbm.hoverWeight });
+        }
     }
 
     unhighlightTask(tbm, entrySeqID) {
-        tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
+        if (tbm.currentEntrySeqID !== entrySeqID) {
+            tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
+        }
     }
 
     highlightCurrentTask() {
