@@ -21,7 +21,7 @@ class TaskBrowserMap {
         tbm.api_tasks = {};     // Will hold all tasks from GetTasksForMap.php
         tbm.b21_task = null;    // Will hold parsed 'current' task
 
-        tbm.map = L.map('map').setView([20, 0], 2);
+        tbm.map = L.map('map').setView([50, 10], 5);
 
         // Define different map layers
         tbm.layers = {
