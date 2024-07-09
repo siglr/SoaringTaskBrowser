@@ -152,6 +152,12 @@ class TaskBrowserMap {
         // Manager filtered tasks to remove tasks from the display !!! NEED TO FIX !!!
         tbm.manageFilteredTasks();
 
+        // Restore selected task
+        if (tbm.currentEntrySeqID > 0) {
+            let api_task = tbm.api_tasks[tbm.currentEntrySeqID];
+            tbm.setB21Task(api_task);
+        }
+
     }
 
     //B21_update
@@ -161,10 +167,9 @@ class TaskBrowserMap {
         // Check if the task is already in the cache
         if (tbm.api_tasks[api_task.EntrySeqID]) {
             console.log('Task ${api_task.EntrySeqID} is already in cache.');
-            return; // Exit if the task is already cached
+        } else {
+            tbm.api_tasks[api_task.EntrySeqID] = api_task; // cache the download
         }
-
-        tbm.api_tasks[api_task.EntrySeqID] = api_task; // cache the download
 
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(api_task.PLNXML, "text/xml");
