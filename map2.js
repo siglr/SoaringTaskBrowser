@@ -405,10 +405,6 @@ class TaskBrowserMap {
         let taskBounds = tbm.b21_task.get_bounds();
         let mapBounds = tbm.map.getBounds();
         let containsBounds = mapBounds.contains(taskBounds);
-        console.log('forceZoomToTask:', forceZoomToTask);
-        console.log('taskBounds:', taskBounds);
-        console.log('mapBounds:', mapBounds);
-        console.log('mapBounds.contains(taskBounds):', containsBounds);
 
         if (forceZoomToTask || !containsBounds) {
             tbm.zoomToTask();
