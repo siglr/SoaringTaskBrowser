@@ -255,33 +255,6 @@ class TaskBrowserMap {
         }
     }
 
-    // B21 update
-    taskClicked(entrySeqID) {
-        let tbm = this;
-        console.log('taskClicked', entrySeqID);
-
-        tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
-        console.log('The api_task entrySeqID: ', tbm.api_tasks[entrySeqID].entrySeqID)
-
-        let api_task = tbm.api_tasks[entrySeqID];
-
-        tbm.resetPolylines();
-        tbm.currentPolyline = api_task.polyline; // Set the current polyline
-        tbm.currentPolyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
-        tbm.currentPolyline.options.selected = true;
-
-        tbm.setB21Task(api_task);
-
-        if (tbm.runningInApp) {
-            tbm.postSelectedTask(entrySeqID); // Notify the app
-        } else {
-            tbm.map.fitBounds(api_task.bounds);
-            if (!tbm.runningInApp) {
-                tbm.tb.getTaskDetails(entrySeqID);
-            }
-        }
-    }
-
     setB21Task(api_task) {
         let tbm = this;
         console.log('setB21Task',api_task.entrySeqID)
