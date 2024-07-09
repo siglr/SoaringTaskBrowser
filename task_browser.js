@@ -28,10 +28,7 @@ class TaskBrowser {
         // Check for task parameter in URL
         const entrySeqID = tb.getParameterByName('task');
         if (entrySeqID) {
-            //console.log('Waiting for tasks to load before calling taskClicked with parameter task', entrySeqID);
-
-            tb.getTaskDetails(entrySeqID); // !! Change to selectTaskFromURL !!
-
+            tb.tbm.selectTaskFromURL(entrySeqID);
         }
         tb.initCountryCodes();
     }
