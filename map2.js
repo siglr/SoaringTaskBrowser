@@ -344,18 +344,18 @@ class TaskBrowserMap {
         const entrySeqIDNbr = Number(entrySeqID);
         console.log("selectTaskFromURL()", entrySeqIDNbr);
 
-        // 1. Make sure the corresponding task entrySeqID is loaded in api_tasks, if not, we need to fetch it and change map bounds
-
-        // 2. Wait for the fetch and bounds change to be completed
-
-        // 3. Get the task details to show on the right panel.
-        tbm.tb.getTaskDetails(entrySeqIDNbr); // Display task details on the right panel
-
-        // 4. Call the selectTaskCommon to perform the common actions
-        tbm.selectTaskCommon(entrySeqIDNbr, true);
-
-        // 5. Remove the task parameter from the URL
+        // 1. Remove the task parameter from the URL
         tbm.tb.clearUrlParameter('task');
+
+        // 2. Make sure the corresponding task entrySeqID is loaded in api_tasks, if not, we need to fetch it and change map bounds
+
+        // 3. Wait for the fetch and bounds change to be completed
+
+        // 4. Get the task details to show on the right panel.
+        tbm.tb.getTaskDetails(entrySeqIDNbr, () => {
+            // 5. Call the selectTaskCommon to perform the common actions
+            tbm.selectTaskCommon(entrySeqIDNbr, true);
+        });
 
     }
 
