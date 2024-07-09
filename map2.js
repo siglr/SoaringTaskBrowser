@@ -402,8 +402,16 @@ class TaskBrowserMap {
         tbm.setB21Task(api_task); // This renders the full task right?
 
         // 3. Zoom in on the task if specified or if task bounds outside current map bounds
-        if (forceZoomToTask || !tbm.map.getBounds().contains(tbm.b21_task.get_bounds())) {
-            tbm.zoomToTask;
+        let taskBounds = tbm.b21_task.get_bounds();
+        let mapBounds = tbm.map.getBounds();
+        let containsBounds = mapBounds.contains(taskBounds);
+        console.log('forceZoomToTask:', forceZoomToTask);
+        console.log('taskBounds:', taskBounds);
+        console.log('mapBounds:', mapBounds);
+        console.log('mapBounds.contains(taskBounds):', containsBounds);
+
+        if (forceZoomToTask || !containsBounds) {
+            tbm.zoomToTask();
         }
     }
 
