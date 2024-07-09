@@ -331,39 +331,7 @@ class TaskBrowserMap {
 			}
 		});
 	}
-
-    // Function to select a task on the map
-    selectTask(entrySeqID, forceBoundsUpdate = false) {
-        let tbm = this;
-        console.log("selectTask()", entrySeqID);
-        if (tbm.api_tasks[entrySeqID]) {
-            tbm.taskClicked(entrySeqID);
-        } else {
-            console.warn('Error selecting task:', error);
-        }
-    }
-
-    // UNUSED ?? Not needed anymore ??
-    updateSelectedTask(entrySeqID) {
-        let tbm = this;
-        console.log('updateSelectedTask()', entrySeqID)
-        tbm.resetPolylines();
-        const polyline = tbm.api_tasks[entrySeqID].polyline;
-        polyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
-        polyline.options.selected = true;
-        if (!tbm.runningInApp) {
-            polyline.openPopup();
-        }
-        tbm.currentPolyline = polyline; // Set the current polyline
-        tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
-
-        // Set map bounds to the polyline bounds if forceBoundsUpdate is true
-        if (forceBoundsUpdate) {
-            const polylineBounds = polyline.getBounds();
-            tbm.map.fitBounds(polylineBounds);
-        }
-    }
-
+    
     //
     // TASK SELECTION REFACTORING
     //
@@ -485,18 +453,28 @@ class TaskBrowserMap {
     // Function to filter tasks based on a list of EntrySeqIDs
     filterTasksFromApp(entrySeqIDs) {
         let tbm = this;
+        console.log('filterTasksFromApp');
+
         // Save the list of tasks
         tbm.filteredEntrySeqIDs = entrySeqIDs;
 
-        manageFilteredTasks();
+        tbm.manageFilteredTasks();
+
+        // Todo: Reselect active task??
 
     }
 
     // Function to clear all filters and show all tasks
     clearFilterFromApp() {
         let tbm = this;
+        console.log('clearFilterFromApp');
+
+        // Clear the list of filtered tasks
         tbm.filteredEntrySeqIDs = null;
 
         tbm.drawPolylines();
+
+        // Todo: Reselect active task??
+
     }
 }
