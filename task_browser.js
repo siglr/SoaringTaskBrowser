@@ -318,7 +318,7 @@ class TaskBrowser {
         tb.downloadTextFile(tb.currentTask.WPRXML, fileName);
     }
 
-    getTaskDetails(entrySeqID) {
+    getTaskDetails(entrySeqID, forceZoomToTask = false) {
         let tb = this;
         console.log("getTaskDetails()");
         let fetch_promise;
@@ -329,17 +329,27 @@ class TaskBrowser {
         }
         fetch_promise
             .then(response => response.json())
-            .then(task_details => { tb.handleTaskDetails(task_details); })
+            .then(task_details => { tb.handleTaskDetails(task_details, forceZoomToTask); })
             .catch(error => {
                 console.error('Error fetching task details:', error);
             });
     }
 
-    handleTaskDetails(task_details) {
+    handleTaskDetails(task_details, forceZoomToTask = false) {
         let tb = this;
         console.log('handleTaskDetails', task_details.entrySeqID)
         tb.tbm.setB21Task(task_details);
-        // tb.tbm.map.fitBounds(tb.tbm.b21_task.get_bounds());
+
+        // Zoom in on the task if specified or if task bounds outside current map bounds
+        let taskBounds = tb.tbm.b21_task.get_bounds();
+        let mapBounds = tb.tbm.map.getBounds();
+        let containsBounds = mapBounds.contains(taskBounds);
+
+        if (forceZoomToTask || !containsBounds) {
+            console.log('zooming to task', forceZoomToTask, containsBounds);
+            tb.tbm.zoomToTask();
+        }
+        //tb.tbm.map.fitBounds(tb.tbm.b21_task.get_bounds());
         tb.showTaskDetailsStandalone(task_details);
     }
 
