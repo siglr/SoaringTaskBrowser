@@ -165,10 +165,8 @@ class TaskBrowserMap {
     loadTask(api_task) {
         let tbm = this;
 
-        // Check if the task is already in the cache
-        if (tbm.api_tasks[api_task.EntrySeqID]) {
-            console.log('Task ${api_task.EntrySeqID} is already in cache.');
-        } else {
+        // Check if the task is not in the cache
+        if (!tbm.api_tasks[api_task.EntrySeqID]) {
             tbm.api_tasks[api_task.EntrySeqID] = api_task; // cache the download
         }
 
