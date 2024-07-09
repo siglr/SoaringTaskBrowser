@@ -63,8 +63,12 @@ class TaskBrowserMap {
         tbm.currentEntrySeqID = null; // Track the EntrySeqID of the selected polyline
         tbm.filteredEntrySeqIDs = null; // Track the filtered tasks
 
-        // Initial task fetch
-        tbm.fetchTasks(tbm.map.getBounds());
+        // Initial task fetch with a callback
+        tbm.fetchTasks(tbm.map.getBounds(), () => {
+            if (tbm.onTasksLoaded) {
+                tbm.onTasksLoaded();
+            }
+        });
 
         // Fetch tasks when the map view changes
         tbm.map.on('moveend', function () {
@@ -88,7 +92,7 @@ class TaskBrowserMap {
     //
     // Common functions for the map
     //
-	fetchTasks(bounds) {
+    fetchTasks(bounds, callback) {
         let tbm = this;
         console.log("fetchTasks()",bounds);
 
@@ -138,6 +142,8 @@ class TaskBrowserMap {
 					}
 					tbm.currentPolyline = polyline; // Set the current polyline
 				}
+
+                if (callback) callback(); // Call the callback after tasks are loaded
 
 				return Promise.resolve();
 			})

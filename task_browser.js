@@ -27,10 +27,17 @@ class TaskBrowser {
         };
         // Check for task parameter in URL
         const entrySeqID = tb.getParameterByName('task');
+        // Check for task parameter in URL
+        const entrySeqID = tb.getParameterByName('task');
         if (entrySeqID) {
-            console.log('Calling taskClicked with parameter task',entrySeqID)
-            tb.tbm.taskClicked(entrySeqID);
-            tb.clearUrlParameter('task');
+            console.log('Waiting for tasks to load before calling taskClicked with parameter task', entrySeqID);
+
+            // Set a callback for when tasks are loaded
+            tb.tbm.onTasksLoaded = function () {
+                console.log('Tasks loaded, now calling taskClicked with parameter task', entrySeqID);
+                tb.tbm.taskClicked(entrySeqID);
+                tb.clearUrlParameter('task');
+            };
         }
         tb.initCountryCodes();
     }
