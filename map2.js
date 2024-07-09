@@ -327,7 +327,7 @@ class TaskBrowserMap {
         //Doesn't seem to be required at the moment, the task ends up being selected
 
         // 4. Get the task details to show on the right panel.
-        tbm.tb.getTaskDetails(entrySeqIDNbr); // Display task details on the right panel
+        tbm.tb.getTaskDetails(entrySeqIDNbr, true); // Display task details on the right panel
 
         // 5. Call the selectTaskCommon to perform the common actions
         tbm.selectTaskCommon(entrySeqIDNbr, true);
@@ -349,7 +349,7 @@ class TaskBrowserMap {
         if (tbm.runningInApp) {
             tbm.postSelectedTask(entrySeqID); // Notify the app
         } else {
-            tbm.tb.getTaskDetails(entrySeqID); // Display task details on the right panel
+            tbm.tb.getTaskDetails(entrySeqID, false); // Display task details on the right panel
         }
     }
 
