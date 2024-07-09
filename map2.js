@@ -338,7 +338,7 @@ class TaskBrowserMap {
     //
 
     // Selecting a task from the "task" parameter in the URL string
-    selectTaskFromURL(entrySeqID, forceZoomToTask = false) {
+    selectTaskFromURL(entrySeqID) {
 
         let tbm = this;
         const entrySeqIDNbr = Number(entrySeqID);
@@ -348,14 +348,14 @@ class TaskBrowserMap {
 
         // 2. Wait for the fetch and bounds change to be completed
 
-        // 3. Call the selectTaskCommon to perform the common actions
-        tbm.selectTaskCommon(entrySeqIDNbr, forceZoomToTask);
-
-        // 4. Remove the task parameter from the URL
-        tbm.tb.clearUrlParameter('task');
-
-        // 5. Get the task details to show on the right panel.
+        // 3. Get the task details to show on the right panel.
         tbm.tb.getTaskDetails(entrySeqIDNbr); // Display task details on the right panel
+
+        // 4. Call the selectTaskCommon to perform the common actions
+        tbm.selectTaskCommon(entrySeqIDNbr, true);
+
+        // 5. Remove the task parameter from the URL
+        tbm.tb.clearUrlParameter('task');
 
     }
 
@@ -385,8 +385,10 @@ class TaskBrowserMap {
         console.log("selectTaskFromDPHXApp()", entrySeqIDNbr);
 
         // 1. Make sure the corresponding task entrySeqID is loaded in api_tasks, if not, we need to fetch it and change map bounds
+        // Right now, not necessary as all tasks are being loaded right from the start
 
         // 2. Wait for the fetch and bounds change to be completed
+        // Right now, not necessary as all tasks are being loaded right from the start
 
         // 3. Call the selectTaskCommon to perform the common actions
         tbm.selectTaskCommon(entrySeqIDNbr, forceZoomToTask);
@@ -400,16 +402,15 @@ class TaskBrowserMap {
         console.log("selectTaskCommon()", entrySeqID);
 
         // 1. The previous (if any) selected task's normal unselected polyline should be drawn (and the detailed task rendering removed)
-        // not too sure what to do to here to redraw the normal polyline on the previously selected task
-        tbm.resetPolylines(); // What does this do?
+        tbm.resetPolylines();
         
         // 2. Render the detailed task and remove the regular polyline
         tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
-        let api_task = tbm.api_tasks[entrySeqID]; // Retrieve api_task from the cache - it should be there by that point, but if not??
+        let api_task = tbm.api_tasks[entrySeqID]; // Retrieve api_task from the cache
         tbm.currentPolyline = api_task.polyline; // Set the current polyline
-        tbm.currentPolyline.setStyle({ color: '#0000ff', weight: tbm.selWeight }); // Now I think we need to remove it no?
-        tbm.currentPolyline.options.selected = true; // Do we still need this?
-        tbm.setB21Task(api_task); // This renders the full task right?
+        tbm.currentPolyline.setStyle({ color: '#0000ff', weight: tbm.selWeight }); // Set selWeight (0 actually)
+        tbm.currentPolyline.options.selected = true; // Se the selection flag on the polyline
+        tbm.setB21Task(api_task); // Render the B21Task
 
         // 3. Zoom in on the task if specified or if task bounds outside current map bounds
         let taskBounds = tbm.b21_task.get_bounds();
