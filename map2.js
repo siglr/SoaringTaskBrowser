@@ -200,6 +200,7 @@ class TaskBrowserMap {
 
         // Only highlight if it's not the currently selected task
         if (tbm.currentEntrySeqID !== entrySeqIDStr) {
+            console.log('Highlight Task:', { currentEntrySeqID: tbm.currentEntrySeqID, entrySeqID });
             tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#9900cc', weight: tbm.hoverWeight });
         }
     }
@@ -210,6 +211,7 @@ class TaskBrowserMap {
 
         // Only unhighlight if it's not the currently selected task
         if (tbm.currentEntrySeqID !== entrySeqIDStr) {
+            console.log('UnhighlightTask Task:', { currentEntrySeqID: tbm.currentEntrySeqID, entrySeqID });
             tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
         }
     }
