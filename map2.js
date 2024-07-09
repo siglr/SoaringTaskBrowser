@@ -14,7 +14,7 @@ class TaskBrowserMap {
         tbm.M_TO_FEET = 3.28084;
         tbm.defWeight = 6;
         tbm.hoverWeight = 7;
-        tbm.selWeight = 8;
+        tbm.selWeight = 0;
 
         //B21 update
         tbm.fetchBounds = null; // Keep track of the GetTasksForMap bounds
@@ -391,11 +391,11 @@ class TaskBrowserMap {
 
         // 1. The previous (if any) selected task's normal unselected polyline should be drawn (and the detailed task rendering removed)
         // not too sure what to do to here to redraw the normal polyline on the previously selected task
-
+        tbm.resetPolylines(); // What does this do?
+        
         // 2. Render the detailed task and remove the regular polyline
         tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
         let api_task = tbm.api_tasks[entrySeqID]; // Retrieve api_task from the cache - it should be there by that point, but if not??
-        tbm.resetPolylines(); // What does this do?
         tbm.currentPolyline = api_task.polyline; // Set the current polyline
         tbm.currentPolyline.setStyle({ color: '#0000ff', weight: tbm.selWeight }); // Now I think we need to remove it no?
         tbm.currentPolyline.options.selected = true; // Do we still need this?
