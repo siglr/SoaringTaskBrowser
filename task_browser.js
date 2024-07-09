@@ -28,14 +28,15 @@ class TaskBrowser {
         // Check for task parameter in URL
         const entrySeqID = tb.getParameterByName('task');
         if (entrySeqID) {
-            console.log('Waiting for tasks to load before calling taskClicked with parameter task', entrySeqID);
+            //console.log('Waiting for tasks to load before calling taskClicked with parameter task', entrySeqID);
 
+            tb.getTaskDetails(entrySeqID);
             // Set a callback for when tasks are loaded
-            tb.tbm.onTasksLoaded = function () {
-                console.log('Tasks loaded, now calling taskClicked with parameter task', entrySeqID);
-                tb.tbm.taskClicked(entrySeqID);
-                tb.clearUrlParameter('task');
-            };
+            //tb.tbm.onTasksLoaded = function () {
+            //    console.log('Tasks loaded, now calling taskClicked with parameter task', entrySeqID);
+            //    tb.tbm.taskClicked(entrySeqID);
+            //    tb.clearUrlParameter('task');
+            //};
         }
         tb.initCountryCodes();
     }
@@ -338,6 +339,7 @@ class TaskBrowser {
 
     getTaskDetails(entrySeqID) {
         let tb = this;
+        console.log("getTaskDetails()");
         let fetch_promise;
         if (DEBUG_LOCAL) {
 		    fetch_promise = test_fetch_task_details(entrySeqID);
@@ -355,7 +357,7 @@ class TaskBrowser {
     handleTaskDetails(task_details) {
         let tb = this;
         console.log('handleTaskDetails', task_details.entrySeqID)
-        //tb.tbm.setB21Task(task_details);
+        tb.tbm.setB21Task(task_details);
         tb.tbm.map.fitBounds(tb.tbm.b21_task.get_bounds());
         tb.showTaskDetailsStandalone(task_details);
     }
