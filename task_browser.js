@@ -318,7 +318,7 @@ class TaskBrowser {
         tb.downloadTextFile(tb.currentTask.WPRXML, fileName);
     }
 
-    getTaskDetails(entrySeqID, callback) {
+    getTaskDetails(entrySeqID) {
         let tb = this;
         console.log("getTaskDetails()");
         let fetch_promise;
@@ -329,15 +329,7 @@ class TaskBrowser {
         }
         fetch_promise
             .then(response => response.json())
-            .then(task_details => {
-                tb.handleTaskDetails(task_details);
-                return task_details; // Return task_details to the next then block
-            })
-            .then(task_details => {
-                if (callback && typeof callback === 'function') {
-                    callback(task_details);
-                }
-            })
+            .then(task_details => { tb.handleTaskDetails(task_details); })
             .catch(error => {
                 console.error('Error fetching task details:', error);
             });

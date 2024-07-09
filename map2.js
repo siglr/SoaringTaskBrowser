@@ -352,10 +352,11 @@ class TaskBrowserMap {
         // 3. Wait for the fetch and bounds change to be completed
 
         // 4. Get the task details to show on the right panel.
-        tbm.tb.getTaskDetails(entrySeqIDNbr, () => {
-            // 5. Call the selectTaskCommon to perform the common actions
-            tbm.selectTaskCommon(entrySeqIDNbr, true);
-        });
+        tbm.tb.getTaskDetails(entrySeqIDNbr); // Display task details on the right panel
+
+        // 5. Call the selectTaskCommon to perform the common actions
+        tbm.selectTaskCommon(entrySeqIDNbr, true);
+
 
     }
 
