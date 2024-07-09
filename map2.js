@@ -195,13 +195,13 @@ class TaskBrowserMap {
     }
 
     highlightTask(tbm, entrySeqID) {
-        if (!tbm.currentEntrySeqID == entrySeqID) {
+        if (tbm.currentEntrySeqID !== entrySeqID) {
             tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#9900cc', weight: tbm.hoverWeight });
         }
     }
 
     unhighlightTask(tbm, entrySeqID) {
-        if (!tbm.currentEntrySeqID == entrySeqID) {
+        if (tbm.currentEntrySeqID !== entrySeqID) {
             tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
         }
     }
