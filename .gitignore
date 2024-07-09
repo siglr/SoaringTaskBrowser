@@ -368,3 +368,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /TasksDatabase.sqbpro
+/.ftpquota
+/.htaccess
+/.htaccess.no_htaccess.phpupgrader
+/.gitignore
+/.gitignore
