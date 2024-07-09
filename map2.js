@@ -348,8 +348,10 @@ class TaskBrowserMap {
         tbm.tb.clearUrlParameter('task');
 
         // 2. Make sure the corresponding task entrySeqID is loaded in api_tasks, if not, we need to fetch it and change map bounds
+        //Doesn't seem to be required at the moment, the task ends up being selected
 
         // 3. Wait for the fetch and bounds change to be completed
+        //Doesn't seem to be required at the moment, the task ends up being selected
 
         // 4. Get the task details to show on the right panel.
         tbm.tb.getTaskDetails(entrySeqIDNbr); // Display task details on the right panel
