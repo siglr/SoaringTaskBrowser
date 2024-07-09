@@ -195,14 +195,15 @@ class TaskBrowserMap {
     }
 
     highlightTask(tbm, entrySeqID) {
-        console.log('highlightTask',entrySeqID,tbm.currentEntrySeqID)
+        console.log('highlightTask', entrySeqID, tbm.currentEntrySeqID);
         if (tbm.currentEntrySeqID !== entrySeqID) {
+            console.log('Really highlighting the task!');
             tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#9900cc', weight: tbm.hoverWeight });
         }
     }
 
     unhighlightTask(tbm, entrySeqID) {
-        console.log('unhighlightTask', entrySeqID, tbm.currentEntrySeqID)
+        console.log('unhighlightTask', entrySeqID, tbm.currentEntrySeqID);
         if (tbm.currentEntrySeqID !== entrySeqID) {
             tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
         }
