@@ -408,11 +408,10 @@ class TaskBrowserMap {
         tbm.currentPolyline.options.selected = true; // Do we still need this?
         tbm.setB21Task(api_task); // This renders the full task right?
 
-        // 3. Zoom in on the task if specified
-        if (forceZoomToTask) {
-            tbm.zoomToTask();
+        // 3. Zoom in on the task if specified or if task bounds outside current map bounds
+        if (forceZoomToTask || !tbm.map.getBounds().contains(tbm.b21_task.get_bounds())) {
+            tbm.zoomToTask;
         }
-
     }
 
     //
