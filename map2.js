@@ -195,22 +195,16 @@ class TaskBrowserMap {
     }
 
     highlightTask(tbm, entrySeqID) {
-        // Convert entrySeqID to a string for comparison
-        const entrySeqIDStr = String(entrySeqID);
-
         // Only highlight if it's not the currently selected task
-        if (tbm.currentEntrySeqID !== entrySeqIDStr) {
+        if (tbm.currentEntrySeqID !== entrySeqID) {
             console.log('Highlight Task:', { currentEntrySeqID: tbm.currentEntrySeqID, entrySeqID });
             tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#9900cc', weight: tbm.hoverWeight });
         }
     }
 
     unhighlightTask(tbm, entrySeqID) {
-        // Convert entrySeqID to a string for comparison
-        const entrySeqIDStr = String(entrySeqID);
-
         // Only unhighlight if it's not the currently selected task
-        if (tbm.currentEntrySeqID !== entrySeqIDStr) {
+        if (tbm.currentEntrySeqID !== entrySeqID) {
             console.log('UnhighlightTask Task:', { currentEntrySeqID: tbm.currentEntrySeqID, entrySeqID });
             tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
         }
@@ -339,20 +333,21 @@ class TaskBrowserMap {
     selectTaskFromURL(entrySeqID, forceZoomToTask = false) {
 
         let tbm = this;
-        console.log("selectTaskFromURL()", entrySeqID);
+        const entrySeqIDNbr = Number(entrySeqID);
+        console.log("selectTaskFromURL()", entrySeqIDNbr);
 
         // 1. Make sure the corresponding task entrySeqID is loaded in api_tasks, if not, we need to fetch it and change map bounds
 
         // 2. Wait for the fetch and bounds change to be completed
 
         // 3. Call the selectTaskCommon to perform the common actions
-        tbm.selectTaskCommon(entrySeqID, forceZoomToTask);
+        tbm.selectTaskCommon(entrySeqIDNbr, forceZoomToTask);
 
         // 4. Remove the task parameter from the URL
         tbm.tb.clearUrlParameter('task');
 
         // 5. Get the task details to show on the right panel.
-        tbm.tb.getTaskDetails(entrySeqID); // Display task details on the right panel
+        tbm.tb.getTaskDetails(entrySeqIDNbr); // Display task details on the right panel
 
     }
 
@@ -378,14 +373,15 @@ class TaskBrowserMap {
     selectTaskFromDPHXApp(entrySeqID, forceZoomToTask = false) {
 
         let tbm = this;
-        console.log("selectTaskFromDPHXApp()", entrySeqID);
+        const entrySeqIDNbr = Number(entrySeqID);
+        console.log("selectTaskFromDPHXApp()", entrySeqIDNbr);
 
         // 1. Make sure the corresponding task entrySeqID is loaded in api_tasks, if not, we need to fetch it and change map bounds
 
         // 2. Wait for the fetch and bounds change to be completed
 
         // 3. Call the selectTaskCommon to perform the common actions
-        tbm.selectTaskCommon(entrySeqID, forceZoomToTask);
+        tbm.selectTaskCommon(entrySeqIDNbr, forceZoomToTask);
 
     }
 
