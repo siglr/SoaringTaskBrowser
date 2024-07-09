@@ -360,7 +360,7 @@ class B21_Task {
             }
             wp_sector = L.semiCircle(wp.position, {
                     radius: radius_m,
-                    color: 'red',
+                    color: task.planner.settings.task_line_color_1,
                     interactive: false
                 })
                 .setDirection(direction_deg, 180);
@@ -374,12 +374,12 @@ class B21_Task {
             }
             wp_sector = L.semiCircle(wp.position, {
                     radius: radius_m,
-                    color: 'red',
+                    color: task.planner.settings.task_line_color_1,
                     interactive: false
                 })
                 .setDirection(direction_deg, 180);
         } else {
-            let sector_color = wp.isAAT() ? "green" : "red";
+            let sector_color = wp.isAAT() ? "green" : task.planner.settings.task_line_color_1;
             // Sector = WAYPOINT
             wp_sector = L.circle(wp.position, {
                 radius: wp.radius_m,
