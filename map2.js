@@ -199,7 +199,7 @@ class TaskBrowserMap {
             polyline.on('mouseout', () => { tbm.unhighlightTask(tbm, api_task.EntrySeqID); });
 
             polyline.on('click', function () {
-                tbm.taskClicked(api_task.EntrySeqID); // Will need to be changed to selectTaskFromClick
+                tbm.selectTaskFromClick(api_task.EntrySeqID);
             });
         }
     }
