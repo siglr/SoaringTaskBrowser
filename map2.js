@@ -347,7 +347,7 @@ class TaskBrowserMap {
         // 2. Wait for the fetch and bounds change to be completed
 
         // 3. Call the selectTaskCommon to perform the common actions
-        selectTaskCommon(entrySeqID, forceZoomToTask);
+        tbm.selectTaskCommon(entrySeqID, forceZoomToTask);
 
         // 4. Remove the task parameter from the URL
         tbm.tb.clearUrlParameter('task');
@@ -364,7 +364,7 @@ class TaskBrowserMap {
         console.log("selectTaskFromClick()", entrySeqID);
 
         // 1. Call the selectTaskCommon to perform the common actions
-        selectTaskCommon(entrySeqID, forceZoomToTask);
+        tbm.selectTaskCommon(entrySeqID, forceZoomToTask);
 
         // 2a. If we're not running in the context of the DPHX app, get the task details to show on the right panel.
         // 2b. If we're running in the context of DPHX app, call the postSelectedTask function.
@@ -386,7 +386,7 @@ class TaskBrowserMap {
         // 2. Wait for the fetch and bounds change to be completed
 
         // 3. Call the selectTaskCommon to perform the common actions
-        selectTaskCommon(entrySeqID, forceZoomToTask);
+        tbm.selectTaskCommon(entrySeqID, forceZoomToTask);
 
     }
 
@@ -410,7 +410,7 @@ class TaskBrowserMap {
 
         // 3. Zoom in on the task if specified
         if (forceZoomToTask) {
-            this.zoomToTask();
+            tbm.zoomToTask();
         }
 
     }
