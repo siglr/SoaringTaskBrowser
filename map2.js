@@ -155,7 +155,8 @@ class TaskBrowserMap {
         // Restore selected task
         if (tbm.currentEntrySeqID > 0) {
             let api_task = tbm.api_tasks[tbm.currentEntrySeqID];
-            tbm.setB21Task(api_task);
+            tbm.selectTaskCommon(tbm.currentEntrySeqID);
+            //tbm.setB21Task(api_task);
         }
 
     }
