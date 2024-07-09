@@ -17,9 +17,9 @@ class IntegratedTB {
     //
 
     // Function to select a task on the map
-    selectTaskFromApp(entrySeqID, forceBoundsUpdate = false) {
+    selectTaskFromApp(entrySeqID, forceZoomToTask = false) {
         let itb = this;
-        itb.tbm.selectTaskFromApp(entrySeqID, forceBoundsUpdate);
+        itb.tbm.selectTaskFromDPHXApp(entrySeqID, forceZoomToTask);
     };
 
     // Function to filter tasks based on a list of EntrySeqIDs

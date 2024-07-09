@@ -69,13 +69,6 @@ class TaskBrowserMap {
 
         L.control.layers(tbm.base_maps, tbm.map_layers).addTo(tbm.map);
 
-        // Add the default layer to the map
-        //tbm.layers["Google Terrain", tbm.airport_markers].addTo(tbm.map);
-
-        // Add layer control to the map
-        //L.control.layers(tbm.layers).addTo(tbm.map);
-
-
         tbm.runningInApp = false;
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('appContext')) {
@@ -88,7 +81,7 @@ class TaskBrowserMap {
         tbm.currentEntrySeqID = null; // Track the EntrySeqID of the selected polyline
         tbm.filteredEntrySeqIDs = null; // Track the filtered tasks
 
-        // Initial task fetch with a callback
+        // Initial task fetch
         tbm.fetchTasks();
 
         // Fetch tasks when the map view changes
@@ -156,7 +149,7 @@ class TaskBrowserMap {
             tbm.loadTask(api_task);
         });
 
-        // Manager filtered tasks
+        // Manager filtered tasks to remove tasks from the display !!! NEED TO FIX !!!
         tbm.manageFilteredTasks();
 
         //tbm.highlightCurrentTask();
@@ -197,7 +190,7 @@ class TaskBrowserMap {
             polyline.on('mouseout', () => { tbm.unhighlightTask(tbm, api_task.EntrySeqID); });
 
             polyline.on('click', function () {
-                tbm.taskClicked(api_task.EntrySeqID); //
+                tbm.taskClicked(api_task.EntrySeqID); // Will need to be changed to selectTaskFromClick
             });
         }
     }
@@ -350,6 +343,7 @@ class TaskBrowserMap {
         }
     }
 
+    // UNUSED ?? Not needed anymore ??
     updateSelectedTask(entrySeqID) {
         let tbm = this;
         console.log('updateSelectedTask()', entrySeqID)
@@ -368,6 +362,89 @@ class TaskBrowserMap {
             const polylineBounds = polyline.getBounds();
             tbm.map.fitBounds(polylineBounds);
         }
+    }
+
+    //
+    // TASK SELECTION REFACTORING
+    //
+
+    // Selecting a task from the "task" parameter in the URL string
+    selectTaskFromURL(entrySeqID, forceZoomToTask = false) {
+
+        let tbm = this;
+        console.log("selectTaskFromURL()", entrySeqID);
+
+        // 1. Make sure the corresponding task entrySeqID is loaded in api_tasks, if not, we need to fetch it and change map bounds
+
+        // 2. Wait for the fetch and bounds change to be completed
+
+        // 3. Call the selectTaskCommon to perform the common actions
+        selectTaskCommon(entrySeqID, forceZoomToTask);
+
+        // 4. Remove the task parameter from the URL
+        tbm.tb.clearUrlParameter('task');
+
+        // 5. Get the task details to show on the right panel.
+        tbm.tb.getTaskDetails(entrySeqID); // Display task details on the right panel
+
+    }
+
+    // Selecting a task from a true user click on the map
+    selectTaskFromClick(entrySeqID, forceZoomToTask = false) {
+
+        let tbm = this;
+        console.log("selectTaskFromClick()", entrySeqID);
+
+        // 1. Call the selectTaskCommon to perform the common actions
+        selectTaskCommon(entrySeqID, forceZoomToTask);
+
+        // 2a. If we're not running in the context of the DPHX app, get the task details to show on the right panel.
+        // 2b. If we're running in the context of DPHX app, call the postSelectedTask function.
+        if (tbm.runningInApp) {
+            tbm.postSelectedTask(entrySeqID); // Notify the app
+        } else {
+            tbm.tb.getTaskDetails(entrySeqID); // Display task details on the right panel
+        }
+    }
+
+    // Selecting a task based on an interaction from the external DPHX app
+    selectTaskFromDPHXApp(entrySeqID, forceZoomToTask = false) {
+
+        let tbm = this;
+        console.log("selectTaskFromDPHXApp()", entrySeqID);
+
+        // 1. Make sure the corresponding task entrySeqID is loaded in api_tasks, if not, we need to fetch it and change map bounds
+
+        // 2. Wait for the fetch and bounds change to be completed
+
+        // 3. Call the selectTaskCommon to perform the common actions
+        selectTaskCommon(entrySeqID, forceZoomToTask);
+
+    }
+
+    // Common actions that need to be performed by all task selection use cases
+    selectTaskCommon(entrySeqID, forceZoomToTask = false) {
+
+        let tbm = this;
+        console.log("selectTaskCommon()", entrySeqID);
+
+        // 1. The previous (if any) selected task's normal unselected polyline should be drawn (and the detailed task rendering removed)
+        // not too sure what to do to here to redraw the normal polyline on the previously selected task
+
+        // 2. Render the detailed task and remove the regular polyline
+        tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
+        let api_task = tbm.api_tasks[entrySeqID]; // Retrieve api_task from the cache - it should be there by that point, but if not??
+        tbm.resetPolylines(); // What does this do?
+        tbm.currentPolyline = api_task.polyline; // Set the current polyline
+        tbm.currentPolyline.setStyle({ color: '#0000ff', weight: tbm.selWeight }); // Now I think we need to remove it no?
+        tbm.currentPolyline.options.selected = true; // Do we still need this?
+        tbm.setB21Task(api_task); // This renders the full task right?
+
+        // 3. Zoom in on the task if specified
+        if (forceZoomToTask) {
+            this.zoomToTask();
+        }
+
     }
 
     //
@@ -404,16 +481,6 @@ class TaskBrowserMap {
     //
     // Commands received by the task browser app
     //
-
-    // Function to select a task on the map
-    selectTaskFromApp(entrySeqID, forceBoundsUpdate = false) {
-        let tbm = this;
-        console.log("selectTaskFromApp()", entrySeqID);
-        tbm.selectTask(entrySeqID, forceBoundsUpdate)
-        tbm.map.fitBounds(tbm.b21_task.get_bounds());
-        //tbm.taskClicked(entrySeqID);
-        //tbm.zoomToTask();
-    }
 
     // Function to filter tasks based on a list of EntrySeqIDs
     filterTasksFromApp(entrySeqIDs) {
