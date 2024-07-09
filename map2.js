@@ -152,7 +152,6 @@ class TaskBrowserMap {
         // Manager filtered tasks to remove tasks from the display !!! NEED TO FIX !!!
         tbm.manageFilteredTasks();
 
-        //tbm.highlightCurrentTask();
     }
 
     //B21_update
@@ -196,28 +195,16 @@ class TaskBrowserMap {
     }
 
     highlightTask(tbm, entrySeqID) {
+        console.log('highlightTask',entrySeqID,tbm.currentEntrySeqID)
         if (tbm.currentEntrySeqID !== entrySeqID) {
             tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#9900cc', weight: tbm.hoverWeight });
         }
     }
 
     unhighlightTask(tbm, entrySeqID) {
+        console.log('unhighlightTask', entrySeqID, tbm.currentEntrySeqID)
         if (tbm.currentEntrySeqID !== entrySeqID) {
             tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
-        }
-    }
-
-    highlightCurrentTask() {
-        let tbm = this;
-        // Restore the selected task if any
-        if (tbm.currentEntrySeqID && tbm.api_tasks[tbm.currentEntrySeqID].polyline) {
-            const polyline = tbm.api_tasks[tbm.currentEntrySeqID].polyline;
-            polyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
-            polyline.options.selected = true;
-            if (!tbm.runningInApp) {
-                polyline.openPopup();
-            }
-            tbm.currentPolyline = polyline; // Set the current polyline
         }
     }
 
