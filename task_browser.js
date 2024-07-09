@@ -56,7 +56,6 @@ class TaskBrowser {
 
     // Function to clear a specific parameter from the URL
     clearUrlParameter(param) {
-        console.log('Clearing URL Parameter',param)
         const url = new URL(window.location);
         url.searchParams.delete(param);
         window.history.replaceState({}, document.title, url.toString());
@@ -319,18 +318,26 @@ class TaskBrowser {
         tb.downloadTextFile(tb.currentTask.WPRXML, fileName);
     }
 
-    getTaskDetails(entrySeqID) {
+    getTaskDetails(entrySeqID, callback) {
         let tb = this;
         console.log("getTaskDetails()");
         let fetch_promise;
         if (DEBUG_LOCAL) {
-		    fetch_promise = test_fetch_task_details(entrySeqID);
+            fetch_promise = test_fetch_task_details(entrySeqID);
         } else {
-		    fetch_promise = fetch(`php/GetTaskDetails.php?entrySeqID=${entrySeqID}`);
+            fetch_promise = fetch(`php/GetTaskDetails.php?entrySeqID=${entrySeqID}`);
         }
         fetch_promise
             .then(response => response.json())
-            .then(task_details => { tb.handleTaskDetails(task_details); })
+            .then(task_details => {
+                tb.handleTaskDetails(task_details);
+                return task_details; // Return task_details to the next then block
+            })
+            .then(task_details => {
+                if (callback && typeof callback === 'function') {
+                    callback(task_details);
+                }
+            })
             .catch(error => {
                 console.error('Error fetching task details:', error);
             });
