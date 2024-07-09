@@ -30,13 +30,8 @@ class TaskBrowser {
         if (entrySeqID) {
             //console.log('Waiting for tasks to load before calling taskClicked with parameter task', entrySeqID);
 
-            tb.getTaskDetails(entrySeqID);
-            // Set a callback for when tasks are loaded
-            //tb.tbm.onTasksLoaded = function () {
-            //    console.log('Tasks loaded, now calling taskClicked with parameter task', entrySeqID);
-            //    tb.tbm.taskClicked(entrySeqID);
-            //    tb.clearUrlParameter('task');
-            //};
+            tb.getTaskDetails(entrySeqID); // !! Change to selectTaskFromURL !!
+
         }
         tb.initCountryCodes();
     }
@@ -326,17 +321,6 @@ class TaskBrowser {
         tb.downloadTextFile(tb.currentTask.WPRXML, fileName);
     }
 
-    //showTaskListStandalone(tasks) {
-    //    let tb = this;
-    //    const taskListContainer = document.getElementById("taskListContainer");
-    //    taskListContainer.innerHTML = tasks.map(task => `
-    //        <div class="task-list-item" onclick="TB.selectTask(${task.EntrySeqID})">
-    //            <h4>${task.Title}</h4>
-    //            <p>${task.ShortDescription}</p>
-    //        </div>
-    //    `).join('');
-    //}
-
     getTaskDetails(entrySeqID) {
         let tb = this;
         console.log("getTaskDetails()");
@@ -362,11 +346,4 @@ class TaskBrowser {
         tb.showTaskDetailsStandalone(task_details);
     }
 
-//    selectTask(entrySeqID, forceBoundsUpdate = false) {
-//        let tb = this;
-//        tb.tbm.selectTask(entrySeqID, forceBoundsUpdate);
-//        tb.tbm.taskClicked(entrySeqID);
-//        tb.tbm.zoomToTask();
-//        tb.getTaskDetails(entrySeqID);
-//    }
 }
