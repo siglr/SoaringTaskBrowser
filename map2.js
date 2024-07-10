@@ -14,7 +14,7 @@ class TaskBrowserMap {
         tbm.M_TO_FEET = 3.28084;
         tbm.defWeight = 6;
         tbm.hoverWeight = 7;
-        tbm.selWeight = 8;
+        tbm.selWeight = 0;
 
         //B21 update
         tbm.fetchBounds = null; // Keep track of the GetTasksForMap bounds
@@ -69,13 +69,6 @@ class TaskBrowserMap {
 
         L.control.layers(tbm.base_maps, tbm.map_layers).addTo(tbm.map);
 
-        // Add the default layer to the map
-        //tbm.layers["Google Terrain", tbm.airport_markers].addTo(tbm.map);
-
-        // Add layer control to the map
-        //L.control.layers(tbm.layers).addTo(tbm.map);
-
-
         tbm.runningInApp = false;
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('appContext')) {
@@ -88,7 +81,7 @@ class TaskBrowserMap {
         tbm.currentEntrySeqID = null; // Track the EntrySeqID of the selected polyline
         tbm.filteredEntrySeqIDs = null; // Track the filtered tasks
 
-        // Initial task fetch with a callback
+        // Initial task fetch
         tbm.fetchTasks();
 
         // Fetch tasks when the map view changes
@@ -156,17 +149,26 @@ class TaskBrowserMap {
             tbm.loadTask(api_task);
         });
 
-        // Manager filtered tasks
+        // Manager filtered tasks to remove tasks from the display !!! NEED TO FIX !!!
         tbm.manageFilteredTasks();
 
-        //tbm.highlightCurrentTask();
+        // Restore selected task
+        if (tbm.currentEntrySeqID > 0) {
+            let api_task = tbm.api_tasks[tbm.currentEntrySeqID];
+            tbm.selectTaskCommon(tbm.currentEntrySeqID);
+            //tbm.setB21Task(api_task);
+        }
+
     }
 
     //B21_update
     loadTask(api_task) {
         let tbm = this;
 
-        tbm.api_tasks[api_task.EntrySeqID] = api_task; // cache the download
+        // Check if the task is not in the cache
+        if (!tbm.api_tasks[api_task.EntrySeqID]) {
+            tbm.api_tasks[api_task.EntrySeqID] = api_task; // cache the download
+        }
 
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(api_task.PLNXML, "text/xml");
@@ -197,30 +199,22 @@ class TaskBrowserMap {
             polyline.on('mouseout', () => { tbm.unhighlightTask(tbm, api_task.EntrySeqID); });
 
             polyline.on('click', function () {
-                tbm.taskClicked(api_task.EntrySeqID); //
+                tbm.selectTaskFromClick(api_task.EntrySeqID);
             });
         }
     }
 
     highlightTask(tbm, entrySeqID) {
-        tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#9900cc', weight: tbm.hoverWeight });
+        // Only highlight if it's not the currently selected task
+        if (tbm.currentEntrySeqID !== entrySeqID) {
+            tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#9900cc', weight: tbm.hoverWeight });
+        }
     }
 
     unhighlightTask(tbm, entrySeqID) {
-        tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
-    }
-
-    highlightCurrentTask() {
-        let tbm = this;
-        // Restore the selected task if any
-        if (tbm.currentEntrySeqID && tbm.api_tasks[tbm.currentEntrySeqID].polyline) {
-            const polyline = tbm.api_tasks[tbm.currentEntrySeqID].polyline;
-            polyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
-            polyline.options.selected = true;
-            if (!tbm.runningInApp) {
-                polyline.openPopup();
-            }
-            tbm.currentPolyline = polyline; // Set the current polyline
+        // Only unhighlight if it's not the currently selected task
+        if (tbm.currentEntrySeqID !== entrySeqID) {
+            tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
         }
     }
 
@@ -258,33 +252,6 @@ class TaskBrowserMap {
         for (const entrySeqID in tbm.api_tasks) {
             let polyline = tbm.api_tasks[entrySeqID].polyline;
             polyline.addTo(tbm.map);
-        }
-    }
-
-    // B21 update
-    taskClicked(entrySeqID) {
-        let tbm = this;
-        console.log('taskClicked', entrySeqID);
-
-        tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
-        console.log('The api_task entrySeqID: ', tbm.api_tasks[entrySeqID].entrySeqID)
-
-        let api_task = tbm.api_tasks[entrySeqID];
-
-        tbm.resetPolylines();
-        tbm.currentPolyline = api_task.polyline; // Set the current polyline
-        tbm.currentPolyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
-        tbm.currentPolyline.options.selected = true;
-
-        tbm.setB21Task(api_task);
-
-        if (tbm.runningInApp) {
-            tbm.postSelectedTask(entrySeqID); // Notify the app
-        } else {
-            tbm.map.fitBounds(api_task.bounds);
-            if (!tbm.runningInApp) {
-                tbm.tb.getTaskDetails(entrySeqID);
-            }
         }
     }
 
@@ -338,35 +305,97 @@ class TaskBrowserMap {
 			}
 		});
 	}
+    
+    //
+    // TASK SELECTION REFACTORING
+    //
 
-    // Function to select a task on the map
-    selectTask(entrySeqID, forceBoundsUpdate = false) {
+    // Selecting a task from the "task" parameter in the URL string
+    selectTaskFromURL(entrySeqID) {
+
         let tbm = this;
-        console.log("selectTask()", entrySeqID);
-        if (tbm.api_tasks[entrySeqID]) {
-            tbm.taskClicked(entrySeqID);
+        const entrySeqIDNbr = Number(entrySeqID);
+        console.log("selectTaskFromURL()", entrySeqIDNbr);
+
+        // 1. Remove the task parameter from the URL
+        tbm.tb.clearUrlParameter('task');
+
+        // 2. Make sure the corresponding task entrySeqID is loaded in api_tasks, if not, we need to fetch it and change map bounds
+        //Doesn't seem to be required at the moment, the task ends up being selected
+
+        // 3. Wait for the fetch and bounds change to be completed
+        //Doesn't seem to be required at the moment, the task ends up being selected
+
+        // 4. Get the task details to show on the right panel.
+        tbm.tb.getTaskDetails(entrySeqIDNbr, true); // Display task details on the right panel
+
+        // 5. Call the selectTaskCommon to perform the common actions
+        tbm.selectTaskCommon(entrySeqIDNbr, true);
+
+
+    }
+
+    // Selecting a task from a true user click on the map
+    selectTaskFromClick(entrySeqID, forceZoomToTask = false) {
+
+        let tbm = this;
+        console.log("selectTaskFromClick()", entrySeqID);
+
+        // 1. Call the selectTaskCommon to perform the common actions
+        tbm.selectTaskCommon(entrySeqID, forceZoomToTask);
+
+        // 2a. If we're not running in the context of the DPHX app, get the task details to show on the right panel.
+        // 2b. If we're running in the context of DPHX app, call the postSelectedTask function.
+        if (tbm.runningInApp) {
+            tbm.postSelectedTask(entrySeqID); // Notify the app
         } else {
-            console.warn('Error selecting task:', error);
+            tbm.tb.getTaskDetails(entrySeqID, false); // Display task details on the right panel
         }
     }
 
-    updateSelectedTask(entrySeqID) {
-        let tbm = this;
-        console.log('updateSelectedTask()', entrySeqID)
-        tbm.resetPolylines();
-        const polyline = tbm.api_tasks[entrySeqID].polyline;
-        polyline.setStyle({ color: '#0000ff', weight: tbm.selWeight });
-        polyline.options.selected = true;
-        if (!tbm.runningInApp) {
-            polyline.openPopup();
-        }
-        tbm.currentPolyline = polyline; // Set the current polyline
-        tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
+    // Selecting a task based on an interaction from the external DPHX app
+    selectTaskFromDPHXApp(entrySeqID, forceZoomToTask = false) {
 
-        // Set map bounds to the polyline bounds if forceBoundsUpdate is true
-        if (forceBoundsUpdate) {
-            const polylineBounds = polyline.getBounds();
-            tbm.map.fitBounds(polylineBounds);
+        let tbm = this;
+        const entrySeqIDNbr = Number(entrySeqID);
+        console.log("selectTaskFromDPHXApp()", entrySeqIDNbr);
+
+        // 1. Make sure the corresponding task entrySeqID is loaded in api_tasks, if not, we need to fetch it and change map bounds
+        // Right now, not necessary as all tasks are being loaded right from the start
+
+        // 2. Wait for the fetch and bounds change to be completed
+        // Right now, not necessary as all tasks are being loaded right from the start
+
+        // 3. Call the selectTaskCommon to perform the common actions
+        tbm.selectTaskCommon(entrySeqIDNbr, forceZoomToTask);
+
+    }
+
+    // Common actions that need to be performed by all task selection use cases
+    selectTaskCommon(entrySeqID, forceZoomToTask = false) {
+
+        let tbm = this;
+        console.log("selectTaskCommon()", entrySeqID);
+
+        // 1. The previous (if any) selected task's normal unselected polyline should be drawn (and the detailed task rendering removed)
+        tbm.resetPolylines();
+        
+        // 2. Render the detailed task and remove the regular polyline
+        tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
+        let api_task = tbm.api_tasks[entrySeqID]; // Retrieve api_task from the cache
+        tbm.currentPolyline = api_task.polyline; // Set the current polyline
+        tbm.currentPolyline.setStyle({ color: '#0000ff', weight: tbm.selWeight }); // Set selWeight (0 actually)
+        tbm.currentPolyline.options.selected = true; // Se the selection flag on the polyline
+        tbm.setB21Task(api_task); // Render the B21Task
+
+        // 3. Zoom in on the task if specified or if task bounds outside current map bounds
+        let taskBounds = tbm.b21_task.get_bounds();
+        let mapBounds = tbm.map.getBounds();
+        let containsBounds = mapBounds.contains(taskBounds);
+
+        if (forceZoomToTask || !containsBounds) {
+            console.log('zooming to task', forceZoomToTask, containsBounds);
+            tbm.zoomToTask();
         }
     }
 
@@ -405,31 +434,31 @@ class TaskBrowserMap {
     // Commands received by the task browser app
     //
 
-    // Function to select a task on the map
-    selectTaskFromApp(entrySeqID, forceBoundsUpdate = false) {
-        let tbm = this;
-        console.log("selectTaskFromApp()", entrySeqID);
-        tbm.selectTask(entrySeqID, forceBoundsUpdate)
-        tbm.map.fitBounds(tbm.b21_task.get_bounds());
-        //tbm.taskClicked(entrySeqID);
-        //tbm.zoomToTask();
-    }
-
     // Function to filter tasks based on a list of EntrySeqIDs
     filterTasksFromApp(entrySeqIDs) {
         let tbm = this;
+        console.log('filterTasksFromApp');
+
         // Save the list of tasks
         tbm.filteredEntrySeqIDs = entrySeqIDs;
 
-        manageFilteredTasks();
+        tbm.manageFilteredTasks();
+
+        // Todo: Reselect active task??
 
     }
 
     // Function to clear all filters and show all tasks
     clearFilterFromApp() {
         let tbm = this;
+        console.log('clearFilterFromApp');
+
+        // Clear the list of filtered tasks
         tbm.filteredEntrySeqIDs = null;
 
         tbm.drawPolylines();
+
+        // Todo: Reselect active task??
+
     }
 }

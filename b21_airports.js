@@ -183,15 +183,15 @@ class B21_Airports {
                             marker.on('mouseout', function(event) {
                                 marker.closePopup();
                             });
-                            marker.on('click', (e) => {
-                                console.log("User click:", ident, name);
-                                this.mapper.task.add_new_poi(position, type, {
-                                    "ident": ident,
-                                    "name": name,
-                                    "alt_m": alt_m,
-                                    "runways": runways
-                                });
-                            });
+                            //marker.on('click', (e) => {
+                            //    console.log("User click:", ident, name);
+                            //    this.mapper.task.add_new_poi(position, type, {
+                            //        "ident": ident,
+                            //        "name": name,
+                            //        "alt_m": alt_m,
+                            //        "runways": runways
+                            //    });
+                            //});
                             if (ident == this.search_ident) {
                                 marker.openPopup();
                                 this.search_ident = null;

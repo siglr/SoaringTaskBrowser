@@ -28,15 +28,7 @@ class TaskBrowser {
         // Check for task parameter in URL
         const entrySeqID = tb.getParameterByName('task');
         if (entrySeqID) {
-            //console.log('Waiting for tasks to load before calling taskClicked with parameter task', entrySeqID);
-
-            tb.getTaskDetails(entrySeqID);
-            // Set a callback for when tasks are loaded
-            //tb.tbm.onTasksLoaded = function () {
-            //    console.log('Tasks loaded, now calling taskClicked with parameter task', entrySeqID);
-            //    tb.tbm.taskClicked(entrySeqID);
-            //    tb.clearUrlParameter('task');
-            //};
+            tb.tbm.selectTaskFromURL(entrySeqID);
         }
         tb.initCountryCodes();
     }
@@ -337,47 +329,39 @@ class TaskBrowser {
         tb.downloadTextFile(tb.currentTask.WPRXML, fileName);
     }
 
-    //showTaskListStandalone(tasks) {
-    //    let tb = this;
-    //    const taskListContainer = document.getElementById("taskListContainer");
-    //    taskListContainer.innerHTML = tasks.map(task => `
-    //        <div class="task-list-item" onclick="TB.selectTask(${task.EntrySeqID})">
-    //            <h4>${task.Title}</h4>
-    //            <p>${task.ShortDescription}</p>
-    //        </div>
-    //    `).join('');
-    //}
-
-    getTaskDetails(entrySeqID) {
+    getTaskDetails(entrySeqID, forceZoomToTask = false) {
         let tb = this;
         console.log("getTaskDetails()");
         let fetch_promise;
         if (DEBUG_LOCAL) {
-		    fetch_promise = test_fetch_task_details(entrySeqID);
+            fetch_promise = test_fetch_task_details(entrySeqID);
         } else {
-		    fetch_promise = fetch(`php/GetTaskDetails.php?entrySeqID=${entrySeqID}`);
+            fetch_promise = fetch(`php/GetTaskDetails.php?entrySeqID=${entrySeqID}`);
         }
         fetch_promise
             .then(response => response.json())
-            .then(task_details => { tb.handleTaskDetails(task_details); })
+            .then(task_details => { tb.handleTaskDetails(task_details, forceZoomToTask); })
             .catch(error => {
                 console.error('Error fetching task details:', error);
             });
     }
 
-    handleTaskDetails(task_details) {
+    handleTaskDetails(task_details, forceZoomToTask = false) {
         let tb = this;
         console.log('handleTaskDetails', task_details.entrySeqID)
         tb.tbm.setB21Task(task_details);
-        tb.tbm.map.fitBounds(tb.tbm.b21_task.get_bounds());
+
+        // Zoom in on the task if specified or if task bounds outside current map bounds
+        let taskBounds = tb.tbm.b21_task.get_bounds();
+        let mapBounds = tb.tbm.map.getBounds();
+        let containsBounds = mapBounds.contains(taskBounds);
+
+        if (forceZoomToTask || !containsBounds) {
+            console.log('zooming to task', forceZoomToTask, containsBounds);
+            tb.tbm.zoomToTask();
+        }
+        //tb.tbm.map.fitBounds(tb.tbm.b21_task.get_bounds());
         tb.showTaskDetailsStandalone(task_details);
     }
 
-//    selectTask(entrySeqID, forceBoundsUpdate = false) {
-//        let tb = this;
-//        tb.tbm.selectTask(entrySeqID, forceBoundsUpdate);
-//        tb.tbm.taskClicked(entrySeqID);
-//        tb.tbm.zoomToTask();
-//        tb.getTaskDetails(entrySeqID);
-//    }
 }
