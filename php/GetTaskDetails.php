@@ -53,7 +53,8 @@ try {
             WPRXML,
             RepostText,
             LastUpdate,
-            LastUpdateDescription
+            LastUpdateDescription,
+            TotDownloads
         FROM Tasks
         WHERE EntrySeqID = :entrySeqID
     ";

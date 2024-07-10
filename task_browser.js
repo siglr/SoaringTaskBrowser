@@ -272,6 +272,7 @@ class TaskBrowser {
                     <li><a href="#" onclick="TB.downloadPLNFile()">Flight plan file (PLN): ${tb.getFileNameFromPath(tb.currentTask.PLNFilename)}</a></li>
                     <li><a href="#" onclick="TB.downloadWPRFile()">Weather file (WPR): ${tb.getFileNameFromPath(tb.currentTask.WPRFilename)}</a></li>
                 </ul>
+                <p>Current downloads (PLN or DPHX): ${task.TotDownloads}</p>
             </div>`;
     }
 
@@ -299,11 +300,6 @@ class TaskBrowser {
     }
 
     downloadTextFile(content, filename) {
-        let tb = this;
-        // Call the PHP script to increment the download count
-        fetch('php/IncrementDownloadForTask.php?EntrySeqID=${tb.currentTask.EntrySeqID}', {
-            mode: 'no-cors' // Do not wait for the response
-        });
         const blob = new Blob([content], { type: 'text/xml' });
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
@@ -319,6 +315,10 @@ class TaskBrowser {
 
     downloadPLNFile() {
         let tb = this;
+        // Call the PHP script to increment the download count
+        fetch('php/IncrementDownloadForTask.php?EntrySeqID=${tb.currentTask.EntrySeqID}', {
+            mode: 'no-cors' // Do not wait for the response
+        });
         const fileName = tb.getFileNameFromPath(tb.currentTask.PLNFilename);
         tb.downloadTextFile(tb.currentTask.PLNXML, fileName);
     }
