@@ -261,8 +261,8 @@ class TaskBrowser {
                 <h2>🔗 Links</h2>
                 <ul>
                     <li><a href="#" onclick="TB.copyTextToClipboard('https://wesimglide.org/index.html?task=${task.EntrySeqID}')">Share this task (copy link to clipboard)</a></li>
-                    <li><a href="discord://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank">Link to this task's thread on Discord app</a></li>
-                    <li><a href="https://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank">Link to this task's thread on Discord (web version)</a></li>
+                    <li><a href="discord://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord app</a></li>
+                    <li><a href="https://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord (web version)</a></li>
                 </ul>
                 <h2>📁 Files</h2>
                 <p><strong>Option 1:</strong> Download the single package DPHX file for use with the <a href="https://flightsim.to/file/62573/msfs-soaring-task-tools-dphx-unpack-load" target="_blank">DPHX Unpack & Load tool</a></p>
@@ -274,6 +274,13 @@ class TaskBrowser {
                 </ul>
                 <p>Current downloads (PLN or DPHX): ${task.TotDownloads}</p>
             </div>`;
+    }
+
+    // Function to increment thread access count
+    incrementThreadAccess(entrySeqID) {
+        fetch('php/IncrementThreadAccessForTask.php?EntrySeqID=${entrySeqID}}', {
+            mode: 'no-cors' // Do not wait for the response
+        });
     }
 
     downloadDPHXFile(url, filename) {
