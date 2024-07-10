@@ -278,17 +278,36 @@ class TaskBrowser {
 
     // Function to increment thread access count
     incrementThreadAccess(entrySeqID) {
-        fetch('php/IncrementThreadAccessForTask.php?EntrySeqID=${entrySeqID}}', {
-            mode: 'no-cors' // Do not wait for the response
-        });
+        fetch(`php/IncrementThreadAccessForTask.php?EntrySeqID=${entrySeqID}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status !== 'success') {
+                    console.error('Error incrementing thread access:', data.message);
+                } else {
+                    console.log('Thread access incremented successfully');
+                }
+            })
+            .catch(err => console.error('Error incrementing thread access:', err));
+    }
+
+    incrementDownloadCount(entrySeqID) {
+        // Call the PHP script to increment the download count
+        fetch(`php/IncrementDownloadForTask.php?EntrySeqID=${entrySeqID}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status !== 'success') {
+                    console.error('Error incrementing download count:', data.message);
+                } else {
+                    console.log('Download count incremented successfully');
+                }
+            })
+            .catch(err => console.error('Error incrementing download count:', err));
     }
 
     downloadDPHXFile(url, filename) {
         let tb = this;
-        // Call the PHP script to increment the download count
-        fetch('php/IncrementDownloadForTask.php?EntrySeqID=${tb.currentTask.EntrySeqID}', {
-            mode: 'no-cors' // Do not wait for the response
-        });
+        // Increment download count
+        tb.incrementDownloadCount(tb.currentTask.EntrySeqID);
 
         fetch(url)
             .then(response => response.blob())
@@ -322,10 +341,8 @@ class TaskBrowser {
 
     downloadPLNFile() {
         let tb = this;
-        // Call the PHP script to increment the download count
-        fetch('php/IncrementDownloadForTask.php?EntrySeqID=${tb.currentTask.EntrySeqID}', {
-            mode: 'no-cors' // Do not wait for the response
-        });
+        // Increment download count
+        tb.incrementDownloadCount(tb.currentTask.EntrySeqID);
         const fileName = tb.getFileNameFromPath(tb.currentTask.PLNFilename);
         tb.downloadTextFile(tb.currentTask.PLNXML, fileName);
     }
