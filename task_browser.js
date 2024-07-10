@@ -284,6 +284,12 @@ class TaskBrowser {
     }
 
     downloadDPHXFile(url, filename) {
+        let tb = this;
+        // Call the PHP script to increment the download count
+        fetch('php/IncrementDownloadForTask.php?EntrySeqID=${tb.currentTask.EntrySeqID}', {
+            mode: 'no-cors' // Do not wait for the response
+        });
+
         fetch(url)
             .then(response => response.blob())
             .then(blob => {
@@ -301,6 +307,11 @@ class TaskBrowser {
     }
 
     downloadTextFile(content, filename) {
+        let tb = this;
+        // Call the PHP script to increment the download count
+        fetch('php/IncrementDownloadForTask.php?EntrySeqID=${tb.currentTask.EntrySeqID}', {
+            mode: 'no-cors' // Do not wait for the response
+        });
         const blob = new Blob([content], { type: 'text/xml' });
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
