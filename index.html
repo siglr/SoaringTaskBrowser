@@ -14,23 +14,55 @@
 </head>
 <body>
     <div id="container">
+        <div id="tabButtons">
+            <button class="tabButton" onclick="TB.switchTab('homeTab')" title="WeSimGlide.org's Home">🏠</button>
+            <button class="tabButton" onclick="TB.switchTab('eventTab')" title="Sim Soaring events calendar">📆</button>
+            <button class="tabButton active" onclick="TB.switchTab('mapTab')" title="Explore tasks on the map">🌐</button>
+            <button class="tabButton" onclick="TB.switchTab('listTab')" title="Search/Filter tasks">🔍</button>
+            <button class="tabButton" onclick="TB.switchTab('settingsTab')" title="Your settings">⚙️</button>
+            <button class="tabButton" onclick="TB.switchTab('aboutTab')" title="About WeSimGlide.org">ℹ️</button>
+        </div>
         <div id="tabsContainer">
-            <div id="tabButtons">
-                <button class="tabButton active" onclick="TB.switchTab('mapTab')">Map</button>
-                <button class="tabButton" onclick="TB.switchTab('listTab')">List</button>
-                <button class="tabButton" onclick="TB.switchTab('settingsTab')">Settings</button>
-                <button class="tabButton" onclick="TB.switchTab('aboutTab')">About</button>
+            <div id="homeTab" class="tabContent">
+                <!-- Home content will go here -->
+                <h2>Our home is under construction!</h2>
+                <p>Tell us what you would like to see.</p>
+                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
+                    <button class="button-style">Go to our Discord</button>
+                </a>
+            </div>
+            <div id="eventTab" class="tabContent">
+                <!-- Events content will go here -->
+                <h2>Soon you will find soaring events here!</h2>
+                <p>Tell us what you would like to see.</p>
+                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
+                    <button class="button-style">Go to our Discord</button>
+                </a>
             </div>
             <div id="mapTab" class="tabContent active">
-                <div id="map"></div>
+                <div id="mapContainer">
+                    <div id="map"></div>
+                    <div id="resizer"></div>
+                    <div id="taskDetailContainer"></div>
+                </div>
                 <button id="zoomButton" onclick="TB.tbm.zoomToTask()">Zoom to Task</button>
                 <button id="fullWorldButton" onclick="TB.tbm.resetToFullWorld()">Full World</button>
             </div>
             <div id="listTab" class="tabContent">
                 <!-- List content will go here -->
+                <h2>We hope to bring search and filtering capabilities soon!</h2>
+                <p>Tell us what you would like to see.</p>
+                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
+                    <button class="button-style">Go to our Discord</button>
+                </a>
             </div>
             <div id="settingsTab" class="tabContent">
                 <!-- Settings content will go here -->
+                <h2>Want to customize your settings? Coming soon!</h2>
+                <p>Tell us what you would like to see.</p>
+                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
+                    <button class="button-style">Go to our Discord</button>
+                </a>
             </div>
             <div id="aboutTab" class="tabContent">
                 <h2>About WeSimGlide</h2>
@@ -47,7 +79,7 @@
                 <h3>Support WeSimGlide.org</h3>
                 <p>WeSimGlide is a passion project aimed at enriching the virtual soaring community. If you enjoy using these tools and would like to support further development, I welcome voluntary contributions. Your donations help us cover server costs, develop new features, and maintain the quality of our offerings.</p>
                 <a href="https://www.paypal.com/paypalme/wesimglide" target="_blank">
-                    <button>Donate Now</button>
+                    <button class="button-style">Donate Now</button>
                 </a>
                 <p>Contributions can also take other forms:</p>
                 <ul>
@@ -58,10 +90,6 @@
                 <h3>Be Advised</h3>
                 <p><strong>Note:</strong> WeSimGlide.org is still a work in progress. I appreciate your patience and feedback as I continue to improve and expand the feature set.</p>
             </div>
-        </div>
-        <div id="resizer"></div>
-        <div id="taskDetailContainer">
-            <!-- Task details content will go here -->
         </div>
     </div>
 
@@ -78,8 +106,9 @@
     <script src="b21_msfs_pln.js"></script>
     <script src="b21_airports.js"></script>
     <script src="b21_server_shim/test_api.js"></script>
-    <script>var DEBUG_LOCAL = false;
-            var VERSION = "0.0.4_MD";
+    <script>
+        var DEBUG_LOCAL = false;
+        var VERSION = "0.0.5_MD";
     </script>
 
     <!-- Standalone-specific JavaScript -->
