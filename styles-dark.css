@@ -188,3 +188,14 @@ body {
     .task-details a:hover {
         text-decoration: underline;
     }
+
+.header-container {
+    display: flex;
+    align-items: center;
+}
+
+.header-image {
+    width: 150px;
+    height: auto;
+    margin-right: 10px;
+}
