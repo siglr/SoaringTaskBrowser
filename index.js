@@ -84,7 +84,24 @@ function loadTabContent(tabId) {
                 <p>Tell us what you would like to see.</p>
                 <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
                     <button class="button-style">Go to our Discord</button>
-                </a>`;
+                </a>
+                <p></p>`;
+            document.getElementById(tabId).innerHTML = content;
+            setTimeout(() => {
+                TB.generateToolEntry('Kinetic Assistant', `
+Useful tool to be used while flying (or perhaps more specifically to get you in the air?) in MSFS.
+[Kinetic Assistant Official Page](https://msfs.touching.cloud/mods/kinetic-assistant/)
+You will find a good discussion thread about it on the SSC Discord Server:
+[Kinetic Assistant on SSC](https://discord.com/channels/876123356385149009/876133299989385257)
+
+And here's a video that demonstrates the most valuable features of this app:
+[MSFS Glider Tow With and Without Kinetic Assistant](https://youtu.be/aHr24V9H-wY)
+`);
+                TB.generateToolEntry('NB21 Logger', `
+Soaring-oriented flight logger that creates IGC files with a lot of information in them.
+https://flightsim.to/file/64628/nb21-logger
+`);
+            }, 0);
             break;
         case 'settingsTab':
             content = `

@@ -388,4 +388,111 @@ class TaskBrowser {
         tb.showTaskDetailsStandalone(task_details);
     }
 
+    // Function to generate tool entries
+    generateToolEntry(title, description) {
+        let tb = this;
+        console.log("Entering generateToolEntry");
+        const descriptionHtml = tb.convertToMarkdown(description);
+
+        const toolEntry = document.createElement('div');
+        toolEntry.className = 'tool-entry';
+
+        const titleElement = document.createElement('h3');
+        titleElement.innerText = title;
+
+        const descriptionElement = document.createElement('div');
+        descriptionElement.innerHTML = descriptionHtml;
+
+        toolEntry.appendChild(titleElement);
+        toolEntry.appendChild(descriptionElement);
+
+        const toolsTab = document.getElementById('toolsTab');
+        toolsTab.appendChild(toolEntry);
+
+        console.log("Just before processing links");
+
+        const links = descriptionElement.querySelectorAll('a');
+        links.forEach(link => {
+            const url = link.href;
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                console.log("YouTube link");
+                tb.fetchYouTubeMetadata(url).then(metadata => {
+                    console.log("Fetched metadata for YouTube link:", metadata);
+                    if (metadata.embedHtml) {
+                        const preview = document.createElement('div');
+                        preview.className = 'link-preview';
+                        preview.innerHTML = `
+                            <div class="youtube-container">
+                                ${metadata.embedHtml}
+                                <div class="preview-details">
+                                    <a href="${url}" target="_blank"><h3>${metadata.ogTitle}</h3></a>
+                                    <p>${metadata.ogDescription}</p>
+                                </div>
+                            </div>
+                        `;
+                        link.insertAdjacentElement('afterend', preview);
+                    }
+                });
+            } else {
+                console.log("Other link");
+                tb.fetchLinkMetadata(url).then(metadata => {
+                    console.log("Fetched metadata for other link:", metadata);
+                    if (metadata.ogTitle || metadata.ogDescription || metadata.ogImage) {
+                        const preview = document.createElement('div');
+                        preview.className = 'link-preview';
+                        preview.innerHTML = `
+                            <img src="${metadata.ogImage}" alt="Preview Image">
+                            <div class="preview-details">
+                                <a href="${url}" target="_blank"><h3>${metadata.ogTitle}</h3></a>
+                                <p>${metadata.ogDescription}</p>
+                            </div>
+                        `;
+                        link.insertAdjacentElement('afterend', preview);
+                    }
+                });
+            }
+        });
+
+        console.log("Just after processing links");
+    }
+
+    // Function to fetch metadata for YouTube links
+    fetchYouTubeMetadata(url) {
+        let videoId;
+        if (url.includes('youtu.be')) {
+            videoId = url.split('/').pop();
+        } else {
+            videoId = new URL(url).searchParams.get('v');
+        }
+
+        const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=AIzaSyCQD9fCWerrxjy-GQr3-w0k1d2UftSXDfo&part=snippet`;
+        return fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const snippet = data.items[0].snippet;
+                const shortDescription = snippet.description.length > 400 ? snippet.description.substring(0, 400) + '...' : snippet.description;
+                return {
+                    ogTitle: snippet.title,
+                    ogDescription: shortDescription,
+                    ogImage: snippet.thumbnails.high.url,
+                    embedHtml: `<iframe width="300" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`
+                };
+            })
+            .catch(error => {
+                console.error('Error fetching YouTube metadata:', error);
+                return {};
+            });
+    }
+
+    // Function to fetch metadata for other links
+    fetchLinkMetadata(url) {
+        const apiUrl = `https://soaring.siglr.com/php/FetchMetadata.php?url=${encodeURIComponent(url)}`;
+        return fetch(apiUrl)
+            .then(response => response.json())
+            .catch(error => {
+                console.error('Error fetching link metadata:', error);
+                return {};
+            });
+    }
 }
+

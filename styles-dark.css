@@ -189,6 +189,10 @@ body {
         text-decoration: underline;
     }
 
+    .task-details a:visited {
+        color: #1da1f2; /* Keep the same color after clicking */
+    }
+
 .header-container {
     display: flex;
     align-items: center;
@@ -199,3 +203,69 @@ body {
     height: auto;
     margin-right: 10px;
 }
+
+.tool-entry {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #3a3d42; /* A bit lighter background */
+}
+
+    .tool-entry h3 {
+        margin: 0 0 10px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+.link-preview {
+    display: flex;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+    align-items: center;
+}
+
+    .link-preview img {
+        max-width: 120px;
+        margin-right: 10px;
+    }
+
+.preview-details {
+    font-size: 0.875em; /* Smaller font size */
+    line-height: 1.2em; /* Adjust line height */
+}
+
+    .preview-details h3 {
+        font-size: 1em; /* Smaller title size */
+        margin: 0 0 0.5em 0; /* Adjust margin */
+    }
+
+    .preview-details p {
+        font-size: 0.875em; /* Smaller description size */
+        margin: 0; /* Adjust margin */
+    }
+
+.youtube-container {
+    display: flex;
+    align-items: center;
+}
+
+    .youtube-container iframe {
+        margin-right: 10px;
+    }
+
+/* Add link styles for tools tab to match task details */
+.tool-entry a {
+    color: #1da1f2;
+    text-decoration: none;
+}
+
+    .tool-entry a:hover {
+        text-decoration: underline;
+    }
+
+    .tool-entry a:visited {
+        color: #1da1f2; /* Keep the same color after clicking */
+    }
