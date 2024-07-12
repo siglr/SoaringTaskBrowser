@@ -14,22 +14,32 @@ if (strpos($url, 'discord://') !== false || strpos($url, 'discord.com') !== fals
     exit;
 }
 
-// Fetch metadata for other links
-try {
-    $context = stream_context_create([
-        'http' => [
-            'method' => 'GET',
-            'header' => [
-                'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
-            ]
-        ]
-    ]);
-    $html = file_get_contents($url, false, $context);
+function fetchUrl($url) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36');
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // If the target site uses HTTPS
 
-    if ($html === false) {
-        throw new Exception("HTTP request failed");
+    $output = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    
+    if (curl_errno($ch)) {
+        throw new Exception(curl_error($ch));
+    }
+    
+    curl_close($ch);
+
+    if ($httpCode >= 400) {
+        throw new Exception("HTTP request failed with status code $httpCode");
     }
 
+    return $output;
+}
+
+try {
+    $html = fetchUrl($url);
     $doc = new DOMDocument();
     @$doc->loadHTML($html);
     $tags = $doc->getElementsByTagName('meta');
