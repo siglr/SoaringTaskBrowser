@@ -75,6 +75,17 @@ function loadTabContent(tabId) {
                     <button class="button-style">Go to our Discord</button>
                 </a>`;
             break;
+        case 'toolsTab':
+            content = `
+                <div class="header-container">
+                    <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
+                    <h2>Soon you'll find links to useful soaring tools and other references!</h2>
+                </div>
+                <p>Tell us what you would like to see.</p>
+                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
+                    <button class="button-style">Go to our Discord</button>
+                </a>`;
+            break;
         case 'settingsTab':
             content = `
                 <div class="header-container">
