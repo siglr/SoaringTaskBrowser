@@ -3,7 +3,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
 // Replace 'YOUR_NEW_API_KEY' with your actual YouTube Data API key
-define('YOUTUBE_API_KEY', 'YOUR_NEW_API_KEY');
+define('YOUTUBE_API_KEY', 'AIzaSyCQD9fCWerrxjy-GQr3-w0k1d2UftSXDfo');
 
 function fetchYouTubeMetadata($videoId) {
     $apiUrl = "https://www.googleapis.com/youtube/v3/videos?id={$videoId}&key=" . YOUTUBE_API_KEY . "&part=snippet";
