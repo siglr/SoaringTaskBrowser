@@ -1,16 +1,36 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
+header('Content-Type: application/json');
 
-function fetchLinkMetadata($url) {
-    $context = stream_context_create(['http' => ['header' => 'User-Agent: Mozilla/5.0']]);
+$url = $_GET['url'] ?? '';
+
+if (!$url) {
+    echo json_encode(['error' => 'No URL provided']);
+    exit;
+}
+
+// Skip Discord links
+if (strpos($url, 'discord://') !== false || strpos($url, 'discord.com') !== false) {
+    echo json_encode(['ogTitle' => '', 'ogDescription' => '', 'ogImage' => '']);
+    exit;
+}
+
+// Fetch metadata for other links
+try {
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'GET',
+            'header' => 'User-Agent: PHP'
+        ]
+    ]);
     $html = file_get_contents($url, false, $context);
+
     if ($html === false) {
-        error_log('Failed to fetch link metadata: HTTP request failed');
-        return ['error' => 'Failed to fetch link metadata', 'details' => 'HTTP request failed'];
+        throw new Exception("HTTP request failed");
     }
+
     $doc = new DOMDocument();
     @$doc->loadHTML($html);
+    $tags = $doc->getElementsByTagName('meta');
 
     $metadata = [
         'ogTitle' => '',
@@ -18,25 +38,22 @@ function fetchLinkMetadata($url) {
         'ogImage' => ''
     ];
 
-    foreach ($doc->getElementsByTagName('meta') as $meta) {
-        if ($meta->getAttribute('property') == 'og:title') {
-            $metadata['ogTitle'] = $meta->getAttribute('content');
+    foreach ($tags as $tag) {
+        if ($tag->getAttribute('property') == 'og:title') {
+            $metadata['ogTitle'] = $tag->getAttribute('content');
         }
-        if ($meta->getAttribute('property') == 'og:description') {
-            $metadata['ogDescription'] = $meta->getAttribute('content');
+        if ($tag->getAttribute('property') == 'og:description') {
+            $metadata['ogDescription'] = $tag->getAttribute('content');
         }
-        if ($meta->getAttribute('property') == 'og:image') {
-            $metadata['ogImage'] = $meta->getAttribute('content');
+        if ($tag->getAttribute('property') == 'og:image') {
+            $metadata['ogImage'] = $tag->getAttribute('content');
         }
     }
 
-    return $metadata;
-}
-
-if (isset($_GET['url'])) {
-    $url = $_GET['url'];
-    $metadata = fetchLinkMetadata($url);
     echo json_encode($metadata);
-} else {
-    echo json_encode(['error' => 'No URL provided']);
+
+} catch (Exception $e) {
+    error_log('Failed to fetch link metadata: ' . $e->getMessage());
+    echo json_encode(['ogTitle' => '', 'ogDescription' => '', 'ogImage' => '']);
 }
+?>
