@@ -8,6 +8,7 @@
 .htaccess.no_htaccess.phpupgrader
 update.sh
 webhook.php
+config.php
 
 # User-specific files
 *.rsuser
@@ -371,5 +372,8 @@ FodyWeavers.xsd
 /.ftpquota
 /.htaccess
 /.htaccess.no_htaccess.phpupgrader
+/.gitignore
+/.gitignore
+/.gitignore
 /.gitignore
 /.gitignore
