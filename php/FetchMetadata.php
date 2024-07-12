@@ -32,7 +32,6 @@ if (isset($_GET['url'])) {
     $url = $_GET['url'];
 
     if (strpos($url, 'youtube.com') !== false || strpos($url, 'youtu.be') !== false) {
-        // Extract the video ID from the URL
         if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.*\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $url, $matches)) {
             $videoId = $matches[1];
             $metadata = fetchYouTubeMetadata($videoId);
@@ -44,7 +43,6 @@ if (isset($_GET['url'])) {
         }
     }
 
-    // Fallback to general metadata fetching for other URLs
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
