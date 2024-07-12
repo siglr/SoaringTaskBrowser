@@ -1,9 +1,12 @@
 <?php
-// Database and important files path
-$databasePath = '/home2/siglr3/private/DPHXTaskBrowser/TasksDatabase.db';
-$newsDBPath = '/home2/siglr3/private/DPHXTaskBrowser/News.db';
-$logFile = '/home2/siglr3/private/DPHXTaskBrowser/error_log.txt';
-$userPermissionsPath = '/home2/siglr3/private/DPHXTaskBrowser/UserRights.xml';
+// Include the configuration file
+$config = include 'config.php';
+
+// Assign paths from the configuration array
+$databasePath = $config['databasePath'];
+$newsDBPath = $config['newsDBPath'];
+$logFile = $config['logFile'];
+$userPermissionsPath = $config['userPermissionsPath'];
 
 // Function to log messages
 function logMessage($message) {
@@ -111,7 +114,14 @@ function createOrUpdateTaskNewsEntry($taskData, $isUpdate) {
         $action = $isUpdate ? 'UpdateTask' : 'CreateTask';
         $title = $isUpdate ? "Updated task #" . $taskData['EntrySeqID'] : "New task #" . $taskData['EntrySeqID'];
 
-        $comments = !empty($taskData['MainAreaPOI']) ? $taskData['MainAreaPOI'] : $taskData['ShortDescription'];
+        // Handle comments
+        if ($isUpdate && !empty($taskData['LastUpdateDescription'])) {
+            $comments = $taskData['LastUpdateDescription'];
+        } else {
+            $comments = !empty($taskData['MainAreaPOI']) ? $taskData['MainAreaPOI'] : $taskData['ShortDescription'];
+        }
+        
+        // Process credits
         $credits = str_replace("All credits to ", "By ", preg_replace("/ for this task.*/", "", $taskData['Credits']));
 
         // Prepare the delete statement
@@ -143,8 +153,30 @@ function createOrUpdateTaskNewsEntry($taskData, $isUpdate) {
         logMessage("News entry created or updated for TaskID: {$taskData['TaskID']}.");
 
     } catch (Exception $e) {
-        logMessage("Error in createOrUpdateNewsEntry: " . $e->getMessage());
+        logMessage("Error in createOrUpdateTaskNewsEntry: " . $e->getMessage());
         throw new Exception('Failed to create or update news entry.');
+    }
+}
+
+// Function to delete task news entries
+function deleteTaskNewsEntries($taskID) {
+    global $newsDBPath;
+
+    try {
+        // Open the news database connection
+        $newsPdo = new PDO("sqlite:$newsDBPath");
+        $newsPdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        logMessage("News database connection established for deleting task news.");
+
+        // Prepare the delete statement
+        $stmt = $newsPdo->prepare("DELETE FROM News WHERE TaskID = :TaskID");
+        $stmt->execute([':TaskID' => $taskID]);
+
+        logMessage("News entries deleted for TaskID: $taskID.");
+
+    } catch (Exception $e) {
+        logMessage("Error in deleteTaskNewsEntries: " . $e->getMessage());
+        throw new Exception('Failed to delete task news entries.');
     }
 }
 ?>
