@@ -88,8 +88,25 @@ function loadTabContent(tabId) {
                 <p></p>`;
             document.getElementById(tabId).innerHTML = content;
             setTimeout(() => {
-                TB.generateToolEntry('Kinetic Assistant', `
-Useful tool to be used while flying (or perhaps more specifically to get you in the air?) in MSFS.
+                TB.generateToolEntry('B21 Task Planer',
+                    `This one is **THE** ultimate tool to get to know and use to create the flight plans for your tasks.
+https://xp-soaring.github.io/tasks/b21_task_planner/index.html
+
+You will find a good discussion thread about it on the SSC Discord Server:
+[B21 Task Planner on SSC](https://discord.com/channels/876123356385149009/878323455584534558)
+`);
+                TB.generateToolEntry('XCSoar',
+                    `Useful tool to be used while flying a task in MSFS. This tool is used in real life but there is an integration app you can use with it so it can work in MSFS.
+https://www.xcsoar.org/
+
+You will also need XCSimSoar which is the integration app to use between MSFS and XCSoar.
+https://drive.google.com/u/0/uc?id=12cI8cNxAlZUNWZzdsqeELIJ9GnF31RdM
+
+You will find a good discussion thread about it on the SSC Discord Server:
+[XCSoar on SSC](https://discord.com/channels/876123356385149009/935541676825538580)
+`);
+                TB.generateToolEntry('Kinetic Assistant',
+                    `Useful tool to be used while flying (or perhaps more specifically to get you in the air?) in MSFS.
 [Kinetic Assistant Official Page](https://msfs.touching.cloud/mods/kinetic-assistant/)
 You will find a good discussion thread about it on the SSC Discord Server:
 [Kinetic Assistant on SSC](https://discord.com/channels/876123356385149009/876133299989385257)
@@ -97,8 +114,8 @@ You will find a good discussion thread about it on the SSC Discord Server:
 And here's a video that demonstrates the most valuable features of this app:
 [MSFS Glider Tow With and Without Kinetic Assistant](https://youtu.be/aHr24V9H-wY)
 `);
-                TB.generateToolEntry('NB21 Logger', `
-Soaring-oriented flight logger that creates IGC files with a lot of information in them.
+                TB.generateToolEntry('NB21 Logger',
+                    `Soaring-oriented flight logger that creates IGC files with a lot of information in them.
 https://flightsim.to/file/64628/nb21-logger
 `);
             }, 0);

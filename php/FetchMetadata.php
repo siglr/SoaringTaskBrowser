@@ -40,7 +40,7 @@ function fetchUrl($url) {
     curl_close($ch);
 
     if ($httpCode >= 400) {
-        throw new Exception("HTTP request failed with status code $httpCode");
+        throw new Exception("HTTP request to $url failed with status code $httpCode");
     }
 
     return $output;
@@ -73,7 +73,7 @@ try {
     echo json_encode($metadata);
 
 } catch (Exception $e) {
-    error_log('Failed to fetch link metadata: ' . $e->getMessage());
+    error_log('Failed to fetch link ($url) metadata: ' . $e->getMessage());
     echo json_encode(['ogTitle' => '', 'ogDescription' => '', 'ogImage' => '']);
 }
 ?>
