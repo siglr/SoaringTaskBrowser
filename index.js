@@ -88,7 +88,7 @@ function loadTabContent(tabId) {
                 <p></p>`;
             document.getElementById(tabId).innerHTML = content;
             setTimeout(() => {
-                TB.generateToolEntry('B21 Task Planer',
+                TB.generateToolEntry('B21 Task Planner',
                     `This one is **THE** ultimate tool to get to know and use to create the flight plans for your tasks.
 https://xp-soaring.github.io/tasks/b21_task_planner/index.html
 
@@ -100,7 +100,7 @@ You will find a good discussion thread about it on the SSC Discord Server:
 https://www.xcsoar.org/
 
 You will also need XCSimSoar which is the integration app to use between MSFS and XCSoar.
-https://drive.google.com/u/0/uc?id=12cI8cNxAlZUNWZzdsqeELIJ9GnF31RdM
+[Google Drive for XCSimSoar](https://drive.google.com/u/0/uc?id=12cI8cNxAlZUNWZzdsqeELIJ9GnF31RdM)
 
 You will find a good discussion thread about it on the SSC Discord Server:
 [XCSoar on SSC](https://discord.com/channels/876123356385149009/935541676825538580)

@@ -388,36 +388,36 @@ class TaskBrowser {
         tb.showTaskDetailsStandalone(task_details);
     }
 
-    // Function to generate tool entries
     generateToolEntry(title, description) {
         let tb = this;
-        console.log("Entering generateToolEntry");
         const descriptionHtml = tb.convertToMarkdown(description);
 
         const toolEntry = document.createElement('div');
-        toolEntry.className = 'tool-entry';
+        toolEntry.className = 'tool-entry collapsible collapsed';
 
-        const titleElement = document.createElement('h3');
+        const titleElement = document.createElement('div');
+        titleElement.className = 'title';
         titleElement.innerText = title;
 
-        const descriptionElement = document.createElement('div');
-        descriptionElement.innerHTML = descriptionHtml;
+        const contentElement = document.createElement('div');
+        contentElement.className = 'content';
+        contentElement.innerHTML = descriptionHtml;
 
         toolEntry.appendChild(titleElement);
-        toolEntry.appendChild(descriptionElement);
+        toolEntry.appendChild(contentElement);
+
+        titleElement.addEventListener('click', () => {
+            toolEntry.classList.toggle('collapsed');
+        });
 
         const toolsTab = document.getElementById('toolsTab');
         toolsTab.appendChild(toolEntry);
 
-        console.log("Just before processing links");
-
-        const links = descriptionElement.querySelectorAll('a');
+        const links = contentElement.querySelectorAll('a');
         links.forEach(link => {
             const url = link.href;
             if (url.includes('youtube.com') || url.includes('youtu.be')) {
-                console.log("YouTube link");
                 tb.fetchYouTubeMetadata(url).then(metadata => {
-                    console.log("Fetched metadata for YouTube link:", metadata);
                     if (metadata.embedHtml) {
                         const preview = document.createElement('div');
                         preview.className = 'link-preview';
@@ -425,7 +425,7 @@ class TaskBrowser {
                             <div class="youtube-container">
                                 ${metadata.embedHtml}
                                 <div class="preview-details">
-                                    <a href="${url}" target="_blank"><h3>${metadata.ogTitle}</h3></a>
+                                    ${metadata.ogTitle !== title ? `<a href="${url}" target="_blank"><h3>${metadata.ogTitle}</h3></a>` : ''}
                                     <p>${metadata.ogDescription}</p>
                                 </div>
                             </div>
@@ -434,16 +434,14 @@ class TaskBrowser {
                     }
                 });
             } else {
-                console.log("Other link");
                 tb.fetchLinkMetadata(url).then(metadata => {
-                    console.log("Fetched metadata for other link:", metadata);
-                    if (metadata.ogTitle || metadata.ogDescription || metadata.ogImage) {
+                    if ((metadata.ogTitle && metadata.ogTitle !== title) || metadata.ogDescription || metadata.ogImage) {
                         const preview = document.createElement('div');
                         preview.className = 'link-preview';
                         preview.innerHTML = `
-                            <img src="${metadata.ogImage}" alt="Preview Image">
+                            ${metadata.ogImage ? `<img src="${metadata.ogImage}" alt="Preview Image">` : ''}
                             <div class="preview-details">
-                                <a href="${url}" target="_blank"><h3>${metadata.ogTitle}</h3></a>
+                                ${metadata.ogTitle && metadata.ogTitle !== title ? `<a href="${url}" target="_blank"><h3>${metadata.ogTitle}</h3></a>` : ''}
                                 <p>${metadata.ogDescription}</p>
                             </div>
                         `;
@@ -452,8 +450,6 @@ class TaskBrowser {
                 });
             }
         });
-
-        console.log("Just after processing links");
     }
 
     // Function to fetch metadata for YouTube links
@@ -486,6 +482,9 @@ class TaskBrowser {
 
     // Function to fetch metadata for other links
     fetchLinkMetadata(url) {
+        if (url.includes('discord.com') || url.includes('google.com')) {
+            return Promise.resolve({});
+        }
         const apiUrl = `https://soaring.siglr.com/php/FetchMetadata.php?url=${encodeURIComponent(url)}`;
         return fetch(apiUrl)
             .then(response => response.json())

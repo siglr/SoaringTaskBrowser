@@ -206,21 +206,42 @@ body {
 
 .tool-entry {
     border: 1px solid #ccc;
-    border-radius: 10px;
+    border-radius: 0px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
     margin-bottom: 20px;
     background-color: #3a3d42; /* A bit lighter background */
+    transition: all 0.3s ease;
 }
 
-    .tool-entry h3 {
-        margin: 0 0 10px;
-        font-size: 24px;
+    .tool-entry.collapsible .title {
+        cursor: pointer;
+    }
+
+    .tool-entry.collapsed .content {
+        display: none;
+    }
+
+    .tool-entry .title {
+        padding: 10px;
+        font-size: 18px;
         font-weight: bold;
+        background-color: #3a3d42;
+        color: #fff;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .tool-entry .content {
+        padding: 20px;
+        background-color: #3a3d42; /* Ensure content matches the entry background */
+    }
+
+    .tool-entry .title:hover {
+        background-color: #7289da;
     }
 
 .link-preview {
     display: flex;
+    background-color: #4d5054; /* Ensure content matches the entry background */
     border: 1px solid #ccc;
     padding: 10px;
     margin-top: 10px;
