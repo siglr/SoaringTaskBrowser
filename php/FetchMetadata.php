@@ -32,15 +32,15 @@ function fetchUrl($url) {
 
     $output = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    
+
     if (curl_errno($ch)) {
         throw new Exception(curl_error($ch));
     }
-    
+
     curl_close($ch);
 
     if ($httpCode >= 400) {
-        throw new Exception("HTTP request to $url failed with status code $httpCode");
+        throw new Exception("HTTP request failed with status code $httpCode");
     }
 
     return $output;
@@ -48,6 +48,9 @@ function fetchUrl($url) {
 
 try {
     $html = fetchUrl($url);
+    if (!$html) {
+        throw new Exception('Failed to fetch content from the URL');
+    }
     $doc = new DOMDocument();
     @$doc->loadHTML($html);
     $tags = $doc->getElementsByTagName('meta');
@@ -70,10 +73,14 @@ try {
         }
     }
 
+    if (empty($metadata['ogTitle']) && empty($metadata['ogDescription']) && empty($metadata['ogImage'])) {
+        throw new Exception('No Open Graph metadata found');
+    }
+
     echo json_encode($metadata);
 
 } catch (Exception $e) {
-    error_log('Failed to fetch link ($url) metadata: ' . $e->getMessage());
+    error_log('Failed to fetch link metadata: ' . $e->getMessage());
     echo json_encode(['ogTitle' => '', 'ogDescription' => '', 'ogImage' => '']);
 }
 ?>
