@@ -245,7 +245,7 @@ class TaskBrowser {
                 <h1>${task.Title}</h1>
                 ${tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.ShortDescription))}
                 ${tb.addDetailLineWithBreak('🗺', task.MainAreaPOI)}
-                🛫 ${task.DepartureICAO} ${task.DepartureName} ${tb}<br>
+                🛫 ${task.DepartureICAO} ${task.DepartureName} ${task.DepartureExtra}<br>
                 🛬 ${task.ArrivalICAO} ${task.ArrivalName} ${this.addDetailWithinBrackets(task.ArrivalExtra)}<br>
                 ⌚ ${tb.formatSimDateTime(task.SimDateTime, task.IncludeYear)} ${tb.addDetailWithinBrackets(task.SimDateTimeExtraInfo)}<br>
                 ↗️ ${task.SoaringRidge ? 'Ridge' : ''}${task.SoaringThermals ? ' Thermals' : ''}${task.SoaringWaves ? ' Waves' : ''}${task.SoaringDynamic ? ' Dynamic' : ''} ${tb.addDetailWithinBrackets(task.SoaringExtraInfo)}<br>
