@@ -62,10 +62,10 @@ try {
     ];
 
     foreach ($tags as $tag) {
-        if ($tag->getAttribute('property') == 'og:title') {
+        if ($tag->getAttribute('property') == 'og:title' || $tag->getAttribute('name') == 'title') {
             $metadata['ogTitle'] = $tag->getAttribute('content');
         }
-        if ($tag->getAttribute('property') == 'og:description') {
+        if ($tag->getAttribute('property') == 'og:description' || $tag->getAttribute('name') == 'description') {
             $metadata['ogDescription'] = $tag->getAttribute('content');
         }
         if ($tag->getAttribute('property') == 'og:image') {
@@ -73,8 +73,25 @@ try {
         }
     }
 
+    if (empty($metadata['ogTitle'])) {
+        $titles = $doc->getElementsByTagName('title');
+        if ($titles->length > 0) {
+            $metadata['ogTitle'] = $titles->item(0)->textContent;
+        }
+    }
+
+    if (empty($metadata['ogDescription'])) {
+        $metaDescriptions = $doc->getElementsByTagName('meta');
+        foreach ($metaDescriptions as $metaDescription) {
+            if ($metaDescription->getAttribute('name') == 'description') {
+                $metadata['ogDescription'] = $metaDescription->getAttribute('content');
+                break;
+            }
+        }
+    }
+
     if (empty($metadata['ogTitle']) && empty($metadata['ogDescription']) && empty($metadata['ogImage'])) {
-        throw new Exception('No Open Graph metadata found');
+        throw new Exception('No metadata found');
     }
 
     echo json_encode($metadata);
