@@ -20,7 +20,7 @@ function fetchUrl($url) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36');
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // If the target site uses HTTPS
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // If the target site uses HTTPS correct
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
         'Accept-Language: en-US,en;q=0.9',
@@ -68,7 +68,7 @@ try {
         if ($tag->getAttribute('property') == 'og:description' || $tag->getAttribute('name') == 'description') {
             $metadata['ogDescription'] = $tag->getAttribute('content');
         }
-        if ($tag->getAttribute('property') == 'og:image') {
+        if ($tag->getAttribute('property') == 'og:image' || $tag->getAttribute('name') == 'image') {
             $metadata['ogImage'] = $tag->getAttribute('content');
         }
     }
