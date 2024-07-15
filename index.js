@@ -341,6 +341,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Handle browser back and forward buttons
 window.addEventListener('popstate', function () {
-    const params = getUrlParams();
-    handleParams(params);
+    if (TB.shouldHandlePopState) {
+        const params = getUrlParams();
+        handleParams(params);
+    }
 });

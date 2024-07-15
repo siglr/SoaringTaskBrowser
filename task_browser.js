@@ -3,6 +3,7 @@
 class TaskBrowser {
     constructor() {
         let tb = this;
+        let shouldHandlePopState = true; // Flag to control popstate handling
         console.log("new TaskBrowser()");
     }
 
@@ -57,9 +58,10 @@ class TaskBrowser {
     }
 
     copyTextToClipboard(text) {
+        let tb = this;
+        tb.shouldHandlePopState = false; // Disable popstate handling
         if (navigator.clipboard) {
             navigator.clipboard.writeText(text).then(() => {
-                console.log('Text copied to clipboard');
                 alert("Link copied to your clipboard!");
             }).catch(err => {
                 console.error('Failed to copy text: ', err);
@@ -73,13 +75,13 @@ class TaskBrowser {
             textArea.select();
             try {
                 document.execCommand('copy');
-                console.log('Text copied to clipboard');
                 alert("Link copied to your clipboard!");
             } catch (err) {
                 console.error('Failed to copy text: ', err);
             }
             document.body.removeChild(textArea);
         }
+        shouldHandlePopState = true; // Re-enable popstate handling
     }
 
     resizeMap() {
