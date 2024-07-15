@@ -485,7 +485,7 @@ class TaskBrowser {
         if (url.includes('discord.com') || url.includes('google.com')) {
             return Promise.resolve({});
         }
-        const apiUrl = `https://soaring.siglr.com/php/FetchMetadata.php?url=${encodeURIComponent(url)}`;
+        const apiUrl = `php/FetchMetadata.php?url=${encodeURIComponent(url)}`;
         return fetch(apiUrl)
             .then(response => response.json())
             .catch(error => {
