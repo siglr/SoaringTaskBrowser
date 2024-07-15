@@ -108,30 +108,30 @@ class TaskBrowserMap {
         console.log("fetchTasks()");
 
         let bounds = tbm.map.getBounds();
-		const { _southWest: sw, _northEast: ne } = bounds;
+        const { _southWest: sw, _northEast: ne } = bounds;
 
-		const bufferKm = 0.5;
-		const bufferLat = bufferKm / 110.574; // Approximate conversion from km to latitude
-		const bufferLng = bufferKm / (111.320 * Math.cos((sw.lat + ne.lat) / 2 * Math.PI / 180)); // Approx conversion from km to longitude
+        const bufferKm = 0.5;
+        const bufferLat = bufferKm / 110.574; // Approximate conversion from km to latitude
+        const bufferLng = bufferKm / (111.320 * Math.cos((sw.lat + ne.lat) / 2 * Math.PI / 180)); // Approx conversion from km to longitude
 
-		const latMin = sw.lat - bufferLat;
-		const latMax = ne.lat + bufferLat;
-		const lngMin = sw.lng - bufferLng;
-		const lngMax = ne.lng + bufferLng;
+        const latMin = sw.lat - bufferLat;
+        const latMax = ne.lat + bufferLat;
+        const lngMin = sw.lng - bufferLng;
+        const lngMax = ne.lng + bufferLng;
 
         let fetch_promise;
         if (DEBUG_LOCAL) {
-		    fetch_promise = test_fetch_tasks(`GetTasksForMap.php?latMin=${latMin}&latMax=${latMax}&lngMin=${lngMin}&lngMax=${lngMax}`)
+            fetch_promise = test_fetch_tasks(`GetTasksForMap.php?latMin=${latMin}&latMax=${latMax}&lngMin=${lngMin}&lngMax=${lngMax}`)
         } else {
-		    fetch_promise = fetch(`php/GetTasksForMap.php?latMin=${latMin}&latMax=${latMax}&lngMin=${lngMin}&lngMax=${lngMax}`)
+            fetch_promise = fetch(`php/GetTasksForMap.php?latMin=${latMin}&latMax=${latMax}&lngMin=${lngMin}&lngMax=${lngMax}`)
         }
         fetch_promise
-			.then(response => response.json())
-			.then(tasks => { tbm.handleTasks(tasks, bounds); })
-			.catch(error => {
-				console.error('Error fetching tasks:', error);
-			});
-	}
+            .then(response => response.json())
+            .then(tasks => { tbm.handleTasks(tasks, bounds); })
+            .catch(error => {
+                console.error('Error fetching tasks:', error);
+            });
+    }
 
     // Process the tasks returned by fetchTasks
     handleTasks(tasks, bounds) {
@@ -155,7 +155,7 @@ class TaskBrowserMap {
         // Restore selected task
         if (tbm.currentEntrySeqID > 0) {
             let api_task = tbm.api_tasks[tbm.currentEntrySeqID];
-            tbm.selectTaskCommon(tbm.currentEntrySeqID);
+            tbm.selectTaskCommon(tbm.currentEntrySeqID, false, false);
             //tbm.setB21Task(api_task);
         }
 
@@ -236,16 +236,16 @@ class TaskBrowserMap {
     }
 
     // B21 update - tbm.api_tasks[entrySeqID].polyline
-	resetPolylines() {
+    resetPolylines() {
         let tbm = this;
         for (const entrySeqID in tbm.api_tasks) {
             let polyline = tbm.api_tasks[entrySeqID].polyline;
-			if (polyline.options.selected) {
-				polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
-				polyline.options.selected = false;
-			}
+            if (polyline.options.selected) {
+                polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
+                polyline.options.selected = false;
+            }
         }
-	}
+    }
 
     drawPolylines() {
         // Add all polylines to the map
@@ -257,7 +257,7 @@ class TaskBrowserMap {
 
     setB21Task(api_task) {
         let tbm = this;
-        console.log('setB21Task',api_task.entrySeqID)
+        console.log('setB21Task', api_task.entrySeqID)
         // Remove the previous task map_elements
         if (tbm.b21_task != null) {
             tbm.b21_task.reset();
@@ -289,23 +289,23 @@ class TaskBrowserMap {
         return decimal;
     }
 
-	manageFilteredTasks() {
+    manageFilteredTasks() {
         let tbm = this;
-		// Check if filtered tasks are active or not (filteredEntrySeqIDs is null or not)
-		if (tbm.filteredEntrySeqIDs === null) {
-			return;
-		}
-		// Hide all polylines first
+        // Check if filtered tasks are active or not (filteredEntrySeqIDs is null or not)
+        if (tbm.filteredEntrySeqIDs === null) {
+            return;
+        }
+        // Hide all polylines first
         tbm.clearPolylines();
 
-		// Show only the polylines whose EntrySeqID is in the filteredEntrySeqIDs list
-		tbm.filteredEntrySeqIDs.forEach(entrySeqID => {
-			if (tbm.api_tasks[entrySeqID]) {
-				tbm.api_tasks[entrySeqID].polyline.addTo(tbm.map);
-			}
-		});
-	}
-    
+        // Show only the polylines whose EntrySeqID is in the filteredEntrySeqIDs list
+        tbm.filteredEntrySeqIDs.forEach(entrySeqID => {
+            if (tbm.api_tasks[entrySeqID]) {
+                tbm.api_tasks[entrySeqID].polyline.addTo(tbm.map);
+            }
+        });
+    }
+
     //
     // TASK SELECTION REFACTORING
     //
@@ -372,14 +372,14 @@ class TaskBrowserMap {
     }
 
     // Common actions that need to be performed by all task selection use cases
-    selectTaskCommon(entrySeqID, forceZoomToTask = false) {
+    selectTaskCommon(entrySeqID, forceZoomToTask = false, realSelection = true) {
 
         let tbm = this;
         console.log("selectTaskCommon()", entrySeqID);
 
         // 1. The previous (if any) selected task's normal unselected polyline should be drawn (and the detailed task rendering removed)
         tbm.resetPolylines();
-        
+
         // 2. Render the detailed task and remove the regular polyline
         tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
         let api_task = tbm.api_tasks[entrySeqID]; // Retrieve api_task from the cache
@@ -388,14 +388,16 @@ class TaskBrowserMap {
         tbm.currentPolyline.options.selected = true; // Se the selection flag on the polyline
         tbm.setB21Task(api_task); // Render the B21Task
 
-        // 3. Zoom in on the task if specified or if task bounds outside current map bounds
-        let taskBounds = tbm.b21_task.get_bounds();
-        let mapBounds = tbm.map.getBounds();
-        let containsBounds = mapBounds.contains(taskBounds);
+        if (realSelection) {
+            // 3. Zoom in on the task if specified or if task bounds outside current map bounds
+            let taskBounds = tbm.b21_task.get_bounds();
+            let mapBounds = tbm.map.getBounds();
+            let containsBounds = mapBounds.contains(taskBounds);
 
-        if (forceZoomToTask || !containsBounds) {
-            console.log('zooming to task', forceZoomToTask, containsBounds);
-            tbm.zoomToTask();
+            if (forceZoomToTask || !containsBounds) {
+                console.log('zooming to task', forceZoomToTask, containsBounds);
+                tbm.zoomToTask();
+            }
         }
     }
 
