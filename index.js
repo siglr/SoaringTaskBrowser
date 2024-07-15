@@ -1,4 +1,4 @@
-var TB = new TaskBrowser();
+﻿var TB = new TaskBrowser();
 TB.init();
 
 // Add event listeners for resizing
@@ -48,7 +48,13 @@ function loadTabContent(tabId) {
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
                     <h2>Our home is under construction!</h2>
                 </div>
-                <p>Tell us what you would like to see.</p>
+                <p>Currently, you can use the tabs above to access the available features that are ready:</p>
+                <ul class="all-links">
+                    <li><a href="#" onclick="TB.switchTab('mapTab')">(🌐) Explore tasks on the world map</a></li>
+                    <li><a href="#" onclick="TB.switchTab('toolsTab')">(🛠️) View a list of useful tools and other resources for soaring in MSFS</a></li>
+                    <li><a href="#" onclick="TB.switchTab('aboutTab')">( ℹ️ ) Learn a bit more about WeSimGlide.org</a></li>
+                </ul>
+                <p>Tell us what else you would like to see on the home page!</p>
                 <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
                     <button class="button-style">Go to our Discord</button>
                 </a>`;

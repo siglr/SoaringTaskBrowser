@@ -290,3 +290,17 @@ body {
     .tool-entry a:visited {
         color: #1da1f2; /* Keep the same color after clicking */
     }
+
+/* Add link styles for linkss */
+.all-links a {
+    color: #1da1f2;
+    text-decoration: none;
+}
+
+    .all-links a:hover {
+        text-decoration: underline;
+    }
+
+    .all-links a:visited {
+        color: #1da1f2; /* Keep the same color after clicking */
+    }
