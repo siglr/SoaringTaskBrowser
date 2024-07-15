@@ -79,15 +79,15 @@ function loadTabContent(tabId) {
             content = `
                 <div class="header-container">
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
-                    <h2>Soon you'll find links to useful soaring tools and other references!</h2>
-                </div>
-                <p>Tell us what you would like to see.</p>
-                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
-                    <button class="button-style">Go to our Discord</button>
-                </a>
-                <p></p>`;
+                    <h2>Most useful soaring tools and other references!</h2>
+                </div>`;
             document.getElementById(tabId).innerHTML = content;
             setTimeout(() => {
+                TB.generateToolEntry('MSFS Soaring Tools',
+                    `Of course, these are our own soaring tools! How can we not recommend them!
+https://flightsim.to/file/62571/msfs-soaring-task-tools-discord-post-helper
+https://flightsim.to/file/62573/msfs-soaring-task-tools-dphx-unpack-load
+`);
                 TB.generateToolEntry('B21 Task Planner',
                     `This one is **THE** ultimate tool to get to know and use to create the flight plans for your tasks.
 https://xp-soaring.github.io/tasks/b21_task_planner/index.html
@@ -114,10 +114,44 @@ You will find a good discussion thread about it on the SSC Discord Server:
 And here's a video that demonstrates the most valuable features of this app:
 [MSFS Glider Tow With and Without Kinetic Assistant](https://youtu.be/aHr24V9H-wY)
 `);
+                TB.generateToolEntry('FSPM VFR Map',
+                    `Adds your vario trails on the default VFR map for any glider.
+https://flightsim.to/file/3181/fspm-vfr-map
+`);
+                TB.generateToolEntry('Little Navmap VR Panel',
+                    `If you fly in VR and love Little NavMap, then this plugin is made for you!
+https://flightsim.to/file/43086/little-navmap-vr-panel
+`);
                 TB.generateToolEntry('NB21 Logger',
                     `Soaring-oriented flight logger that creates IGC files with a lot of information in them.
 https://flightsim.to/file/64628/nb21-logger
 `);
+                TB.generateToolEntry("SSC Soaring Weather 1",
+                    `Although each task in the library and in a **DPHX** package comes with its own weather file, frequently they are coming from a pre-made package of weather profiles. 
+Also, these ready-to-go profiles can be use when you're designing tasks or doing some improv flights around the world.
+https://flightsim.to/file/56827/soaring-weather
+There is also a version 2 in Beta at the moment that you can download from SSC's Discord:
+[SSC Weather 2 Beta on Discord](https://discord.com/channels/876123356385149009/1015259957295325185/1221443335978483932)
+`);
+                TB.generateToolEntry("Merlinor's 160 Soaring Weather Presets",
+                    `Here's another offering for pre-made weather profiles from @Merlinor. It can complement the SSC package above.
+https://flightsim.to/file/77471/160-soaring-weather-presets
+`);
+                TB.generateToolEntry('Tutorials / Knowledge base on MSFS soaring and group flights',
+                    `Great resources that will get you up to speed on soaring in MSFS and joining group flights!
+[GotGravel - The Beginner's Guide to Soaring Events](https://discord.com/channels/793376245915189268/1097520643580362753/1097520937701736529)
+[SSC - How to join our Group Flights](https://discord.com/channels/876123356385149009/1038819881396744285)
+`);
+                // Add the message and button below all the tool entries
+                const messageAndButton = `
+                    <p>If you would like to suggest a new tool or reference, contact us through our support channel on Discord!</p>
+                    <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
+                        <button class="button-style">Go to our Discord</button>
+                    </a>
+                    <p></p>
+                `;
+                const toolsTab = document.getElementById('toolsTab');
+                toolsTab.insertAdjacentHTML('beforeend', messageAndButton);
             }, 0);
             break;
         case 'settingsTab':
