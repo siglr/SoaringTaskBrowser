@@ -251,6 +251,34 @@ TB.switchTab = function (tabId) {
         url.searchParams.delete('event');
     }
 
+    // Update page title based on the active tab
+    switch (tabId) {
+        case 'homeTab':
+            document.title = "WeSimGlide - Home";
+            break;
+        case 'eventTab':
+            document.title = "WeSimGlide - Events";
+            break;
+        case 'mapTab':
+            document.title = "WeSimGlide - World Map";
+            break;
+        case 'listTab':
+            document.title = "WeSimGlide - Task List";
+            break;
+        case 'toolsTab':
+            document.title = "WeSimGlide - Tools";
+            break;
+        case 'settingsTab':
+            document.title = "WeSimGlide - Settings";
+            break;
+        case 'aboutTab':
+            document.title = "WeSimGlide - About";
+            break;
+        default:
+            document.title = "WeSimGlide";
+            break;
+    }
+
     window.history.pushState({}, '', url);
 };
 
