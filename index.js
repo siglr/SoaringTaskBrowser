@@ -205,7 +205,6 @@ https://flightsim.to/file/77471/160-soaring-weather-presets
     document.getElementById(tabId).innerHTML = content;
 }
 
-// Overriding the switchTab function to load content dynamically
 TB.switchTab = function (tabId) {
     // Load content if it hasn't been loaded yet
     const tabContent = document.getElementById(tabId);
@@ -230,19 +229,25 @@ TB.switchTab = function (tabId) {
     const url = new URL(window.location);
     url.searchParams.set('tab', tabId.replace('Tab', ''));
 
-    // Preserve task or event parameters
-    const taskParam = url.searchParams.get('task');
-    const eventParam = url.searchParams.get('event');
-
-    if (taskParam) {
-        url.searchParams.set('task', taskParam);
+    // Preserve task or event parameters based on the active tab
+    if (tabId === 'mapTab' || tabId === 'listTab') {
+        const taskParam = url.searchParams.get('task');
+        if (taskParam) {
+            url.searchParams.set('task', taskParam);
+        } else {
+            url.searchParams.delete('task');
+        }
+        url.searchParams.delete('event');
+    } else if (tabId === 'eventTab') {
+        const eventParam = url.searchParams.get('event');
+        if (eventParam) {
+            url.searchParams.set('event', eventParam);
+        } else {
+            url.searchParams.delete('event');
+        }
+        url.searchParams.delete('task');
     } else {
         url.searchParams.delete('task');
-    }
-
-    if (eventParam) {
-        url.searchParams.set('event', eventParam);
-    } else {
         url.searchParams.delete('event');
     }
 
