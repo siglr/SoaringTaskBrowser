@@ -25,11 +25,6 @@ class TaskBrowser {
             'Virgin Islands - U.S.': 'United States Virgin Islands',
             'Virgin Islands - British': 'British Virgin Islands'
         };
-        // Check for task parameter in URL
-        const entrySeqID = tb.getParameterByName('task');
-        if (entrySeqID) {
-            tb.tbm.selectTaskFromURL(entrySeqID);
-        }
         tb.initCountryCodes();
     }
 
@@ -56,9 +51,9 @@ class TaskBrowser {
 
     // Function to clear a specific parameter from the URL
     clearUrlParameter(param) {
-        const url = new URL(window.location);
-        url.searchParams.delete(param);
-        window.history.replaceState({}, document.title, url.toString());
+        //const url = new URL(window.location);
+        //url.searchParams.delete(param);
+        //window.history.replaceState({}, document.title, url.toString());
     }
 
     copyTextToClipboard(text) {

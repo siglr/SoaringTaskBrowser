@@ -220,3 +220,60 @@ TB.switchTab = function (tabId) {
     }
     document.querySelector(`button[data-tab="${tabId}"]`).classList.add('active');
 };
+
+// URL parameter handling
+document.addEventListener('DOMContentLoaded', function () {
+    function getUrlParams() {
+        const params = new URLSearchParams(window.location.search);
+        const result = {};
+        for (const [key, value] of params.entries()) {
+            result[key] = value;
+        }
+        return result;
+    }
+
+    function handleParams(params) {
+        if (params.task) {
+            if (params.tab === 'list') {
+                TB.switchTab('listTab');
+            } else {
+                TB.switchTab('mapTab');
+            }
+            TB.tbm.selectTaskFromURL(params.task); // Ensure task details are fetched
+        } else if (params.event) {
+            TB.switchTab('eventTab');
+        } else if (params.tab) {
+            switch (params.tab) {
+                case 'map':
+                    TB.switchTab('mapTab');
+                    break;
+                case 'list':
+                    TB.switchTab('listTab');
+                    break;
+                case 'events':
+                    TB.switchTab('eventTab');
+                    break;
+                case 'tools':
+                    TB.switchTab('toolsTab');
+                    break;
+                case 'settings':
+                    TB.switchTab('settingsTab');
+                    break;
+                case 'about':
+                    TB.switchTab('aboutTab');
+                    break;
+                case 'home':
+                    TB.switchTab('homeTab');
+                    break;
+                default:
+                    TB.switchTab('homeTab');
+                    break;
+            }
+        } else {
+            TB.switchTab('homeTab');
+        }
+    }
+
+    const params = getUrlParams();
+    handleParams(params);
+});
