@@ -282,59 +282,65 @@ TB.switchTab = function (tabId) {
     window.history.pushState({}, '', url);
 };
 
+function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const result = {};
+    for (const [key, value] of params.entries()) {
+        result[key] = value;
+    }
+    return result;
+}
+
+function handleParams(params) {
+    if (params.task) {
+        if (params.tab === 'list') {
+            TB.switchTab('listTab');
+        } else {
+            TB.switchTab('mapTab');
+        }
+        TB.tbm.selectTaskFromURL(params.task); // Ensure task details are fetched
+    } else if (params.event) {
+        TB.switchTab('eventsTab');
+    } else if (params.tab) {
+        switch (params.tab) {
+            case 'map':
+                TB.switchTab('mapTab');
+                break;
+            case 'list':
+                TB.switchTab('listTab');
+                break;
+            case 'events':
+                TB.switchTab('eventsTab');
+                break;
+            case 'tools':
+                TB.switchTab('toolsTab');
+                break;
+            case 'settings':
+                TB.switchTab('settingsTab');
+                break;
+            case 'about':
+                TB.switchTab('aboutTab');
+                break;
+            case 'home':
+                TB.switchTab('homeTab');
+                break;
+            default:
+                TB.switchTab('homeTab');
+                break;
+        }
+    } else {
+        TB.switchTab('homeTab');
+    }
+}
+
 // URL parameter handling
 document.addEventListener('DOMContentLoaded', function () {
-    function getUrlParams() {
-        const params = new URLSearchParams(window.location.search);
-        const result = {};
-        for (const [key, value] of params.entries()) {
-            result[key] = value;
-        }
-        return result;
-    }
+    const params = getUrlParams();
+    handleParams(params);
+});
 
-    function handleParams(params) {
-        if (params.task) {
-            if (params.tab === 'list') {
-                TB.switchTab('listTab');
-            } else {
-                TB.switchTab('mapTab');
-            }
-            TB.tbm.selectTaskFromURL(params.task); // Ensure task details are fetched
-        } else if (params.event) {
-            TB.switchTab('eventsTab');
-        } else if (params.tab) {
-            switch (params.tab) {
-                case 'map':
-                    TB.switchTab('mapTab');
-                    break;
-                case 'list':
-                    TB.switchTab('listTab');
-                    break;
-                case 'events':
-                    TB.switchTab('eventsTab');
-                    break;
-                case 'tools':
-                    TB.switchTab('toolsTab');
-                    break;
-                case 'settings':
-                    TB.switchTab('settingsTab');
-                    break;
-                case 'about':
-                    TB.switchTab('aboutTab');
-                    break;
-                case 'home':
-                    TB.switchTab('homeTab');
-                    break;
-                default:
-                    TB.switchTab('homeTab');
-                    break;
-            }
-        } else {
-            TB.switchTab('homeTab');
-        }
-    }
-
+// Handle browser back and forward buttons
+window.addEventListener('popstate', function () {
     const params = getUrlParams();
     handleParams(params);
 });
