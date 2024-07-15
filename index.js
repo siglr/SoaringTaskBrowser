@@ -256,7 +256,7 @@ TB.switchTab = function (tabId) {
         case 'homeTab':
             document.title = "WeSimGlide - Home";
             break;
-        case 'eventTab':
+        case 'eventsTab':
             document.title = "WeSimGlide - Events";
             break;
         case 'mapTab':
