@@ -280,6 +280,36 @@ class TaskBrowser {
             </ul>
             <p>Current downloads (PLN or DPHX): ${task.TotDownloads}</p>`;
         tb.generateCollapsibleSection("📁 Files", filesContent, taskDetailContainer);
+
+        // Collapsible Weather Section
+        let weatherContent = `
+        <p>
+            <img src="https://siglr.com/DiscordPostHelper/TaskBrowser/WeatherCharts/${task.EntrySeqID}.jpg" class="weather-image" onclick="TB.showImageModal(this.src)" />
+        </p>`;
+        tb.generateCollapsibleSection("🌥 Weather", weatherContent, taskDetailContainer);
+    }
+
+    // Function to show image in a modal
+    showImageModal(src) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        modal.style.display = "block";
+        modalImg.src = src;
+        document.addEventListener('keydown', TB.handleKeyDown); // Add event listener for keydown
+    }
+
+    // Function to close the image modal
+    closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        modal.style.display = "none";
+        document.removeEventListener('keydown', TB.handleKeyDown); // Remove event listener for keydown
+    }
+
+    // Function to handle keydown events
+    handleKeyDown(event) {
+        if (event.key === 'Escape') {
+            TB.closeImageModal();
+        }
     }
 
     generateCollapsibleSection(title, content, container) {
