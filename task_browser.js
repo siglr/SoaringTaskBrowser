@@ -253,24 +253,55 @@ class TaskBrowser {
                 <p>${task.Credits}</p>
                 ${task.RepostText ? tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.RepostText)) : ''}
                 <p>${lastUpdateInfo}</p>
-                <h2>📖 Full Description</h2>
-                ${tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.LongDescription))}
-                <h2>🔗 Links</h2>
-                <ul>
-                    <li><a href="#" onclick="TB.copyTextToClipboard('https://wesimglide.org/index.html?task=${task.EntrySeqID}')">Share this task (copy link to clipboard)</a></li>
-                    <li><a href="discord://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord app</a></li>
-                    <li><a href="https://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord (web version)</a></li>
-                </ul>
-                <h2>📁 Files</h2>
-                <p><strong>Option 1:</strong> Download the single package DPHX file for use with the <a href="https://flightsim.to/file/62573/msfs-soaring-task-tools-dphx-unpack-load" target="_blank">DPHX Unpack & Load tool</a></p>
-                <p><a href="#" onclick="TB.downloadDPHXFile('https://siglr.com/DiscordPostHelper/TaskBrowser/Tasks/${task.TaskID}.dphx', '${task.Title}.dphx')">${task.Title}.dphx</a></p>
-                <p><strong>Option 2:</strong> Download individual files and install them yourself</p>
-                <ul>
-                    <li><a href="#" onclick="TB.downloadPLNFile()">Flight plan file (PLN): ${tb.getFileNameFromPath(tb.currentTask.PLNFilename)}</a></li>
-                    <li><a href="#" onclick="TB.downloadWPRFile()">Weather file (WPR): ${tb.getFileNameFromPath(tb.currentTask.WPRFilename)}</a></li>
-                </ul>
-                <p>Current downloads (PLN or DPHX): ${task.TotDownloads}</p>
             </div>`;
+
+        // Collapsible Full Description
+        if (task.LongDescription) {
+            tb.generateCollapsibleSection("📖 Full Description", tb.convertToMarkdown(task.LongDescription), taskDetailContainer);
+        }
+
+        // Collapsible Links
+        let linksContent = `
+            <ul>
+                <li><a href="#" onclick="TB.copyTextToClipboard('https://wesimglide.org/index.html?task=${task.EntrySeqID}')">Share this task (copy link to clipboard)</a></li>
+                <li><a href="discord://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord app</a></li>
+                <li><a href="https://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord (web version)</a></li>
+            </ul>`;
+        tb.generateCollapsibleSection("🔗 Links", linksContent, taskDetailContainer);
+
+        // Collapsible Files
+        let filesContent = `
+            <p><strong>Option 1:</strong> Download the single package DPHX file for use with the <a href="https://flightsim.to/file/62573/msfs-soaring-task-tools-dphx-unpack-load" target="_blank">DPHX Unpack & Load tool</a></p>
+            <p><a href="#" onclick="TB.downloadDPHXFile('https://siglr.com/DiscordPostHelper/TaskBrowser/Tasks/${task.TaskID}.dphx', '${task.Title}.dphx')">${task.Title}.dphx</a></p>
+            <p><strong>Option 2:</strong> Download individual files and install them yourself</p>
+            <ul>
+                <li><a href="#" onclick="TB.downloadPLNFile()">Flight plan file (PLN): ${tb.getFileNameFromPath(tb.currentTask.PLNFilename)}</a></li>
+                <li><a href="#" onclick="TB.downloadWPRFile()">Weather file (WPR): ${tb.getFileNameFromPath(tb.currentTask.WPRFilename)}</a></li>
+            </ul>
+            <p>Current downloads (PLN or DPHX): ${task.TotDownloads}</p>`;
+        tb.generateCollapsibleSection("📁 Files", filesContent, taskDetailContainer);
+    }
+
+    generateCollapsibleSection(title, content, container) {
+        const section = document.createElement('div');
+        section.className = 'tool-entry collapsible collapsed';
+
+        const titleElement = document.createElement('div');
+        titleElement.className = 'title';
+        titleElement.innerText = title;
+
+        const contentElement = document.createElement('div');
+        contentElement.className = 'content';
+        contentElement.innerHTML = content;
+
+        section.appendChild(titleElement);
+        section.appendChild(contentElement);
+
+        titleElement.addEventListener('click', () => {
+            section.classList.toggle('collapsed');
+        });
+
+        container.appendChild(section);
     }
 
     // Function to increment thread access count
@@ -491,4 +522,3 @@ class TaskBrowser {
             });
     }
 }
-

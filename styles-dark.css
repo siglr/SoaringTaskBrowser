@@ -208,7 +208,7 @@ body {
     border: 1px solid #ccc;
     border-radius: 0px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    margin-bottom: 12px;
     background-color: #3a3d42; /* A bit lighter background */
     transition: all 0.3s ease;
 }
@@ -222,8 +222,8 @@ body {
     }
 
     .tool-entry .title {
-        padding: 10px;
-        font-size: 18px;
+        padding: 8px;
+        font-size: 16px;
         font-weight: bold;
         background-color: #3a3d42;
         color: #fff;
@@ -231,13 +231,25 @@ body {
     }
 
     .tool-entry .content {
-        padding: 20px;
+        padding: 10px;
+        font-size: 14px;
         background-color: #3a3d42; /* Ensure content matches the entry background */
     }
 
     .tool-entry .title:hover {
         background-color: #7289da;
     }
+
+    .tool-entry ul, .tool-entry ol {
+        margin: 0;
+        padding-left: 15px; /* Adjust this value to decrease the indentation */
+        line-height: 1.3;
+    }
+
+        .tool-entry ul li, .tool-entry ol li {
+            margin-bottom: 3px;
+            padding-left: 5; /* Adjust this value if necessary */
+        }
 
 .link-preview {
     display: flex;
