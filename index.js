@@ -59,7 +59,7 @@ function loadTabContent(tabId) {
                     <button class="button-style">Go to our Discord</button>
                 </a>`;
             break;
-        case 'eventTab':
+        case 'eventsTab':
             content = `
                 <div class="header-container">
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
@@ -225,6 +225,28 @@ TB.switchTab = function (tabId) {
         button.classList.remove('active');
     }
     document.querySelector(`button[data-tab="${tabId}"]`).classList.add('active');
+
+    // Update URL
+    const url = new URL(window.location);
+    url.searchParams.set('tab', tabId.replace('Tab', ''));
+
+    // Preserve task or event parameters
+    const taskParam = url.searchParams.get('task');
+    const eventParam = url.searchParams.get('event');
+
+    if (taskParam) {
+        url.searchParams.set('task', taskParam);
+    } else {
+        url.searchParams.delete('task');
+    }
+
+    if (eventParam) {
+        url.searchParams.set('event', eventParam);
+    } else {
+        url.searchParams.delete('event');
+    }
+
+    window.history.pushState({}, '', url);
 };
 
 // URL parameter handling
@@ -247,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             TB.tbm.selectTaskFromURL(params.task); // Ensure task details are fetched
         } else if (params.event) {
-            TB.switchTab('eventTab');
+            TB.switchTab('eventsTab');
         } else if (params.tab) {
             switch (params.tab) {
                 case 'map':
@@ -257,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     TB.switchTab('listTab');
                     break;
                 case 'events':
-                    TB.switchTab('eventTab');
+                    TB.switchTab('eventsTab');
                     break;
                 case 'tools':
                     TB.switchTab('toolsTab');
