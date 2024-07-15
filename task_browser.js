@@ -245,7 +245,7 @@ class TaskBrowser {
                 <h1>${task.Title}</h1>
                 ${tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.ShortDescription))}
                 ${tb.addDetailLineWithBreak('🗺', task.MainAreaPOI)}
-                🛫 ${task.DepartureICAO} ${task.DepartureName} ${tb}<br>
+                🛫 ${task.DepartureICAO} ${task.DepartureName} ${task.DepartureExtra}<br>
                 🛬 ${task.ArrivalICAO} ${task.ArrivalName} ${this.addDetailWithinBrackets(task.ArrivalExtra)}<br>
                 ⌚ ${tb.formatSimDateTime(task.SimDateTime, task.IncludeYear)} ${tb.addDetailWithinBrackets(task.SimDateTimeExtraInfo)}<br>
                 ↗️ ${task.SoaringRidge ? 'Ridge' : ''}${task.SoaringThermals ? ' Thermals' : ''}${task.SoaringWaves ? ' Waves' : ''}${task.SoaringDynamic ? ' Dynamic' : ''} ${tb.addDetailWithinBrackets(task.SoaringExtraInfo)}<br>
@@ -388,4 +388,110 @@ class TaskBrowser {
         tb.showTaskDetailsStandalone(task_details);
     }
 
+    generateToolEntry(title, description) {
+        let tb = this;
+        const descriptionHtml = tb.convertToMarkdown(description);
+
+        const toolEntry = document.createElement('div');
+        toolEntry.className = 'tool-entry collapsible collapsed';
+
+        const titleElement = document.createElement('div');
+        titleElement.className = 'title';
+        titleElement.innerText = title;
+
+        const contentElement = document.createElement('div');
+        contentElement.className = 'content';
+        contentElement.innerHTML = descriptionHtml;
+
+        toolEntry.appendChild(titleElement);
+        toolEntry.appendChild(contentElement);
+
+        titleElement.addEventListener('click', () => {
+            toolEntry.classList.toggle('collapsed');
+        });
+
+        const toolsTab = document.getElementById('toolsTab');
+        toolsTab.appendChild(toolEntry);
+
+        const links = contentElement.querySelectorAll('a');
+        links.forEach(link => {
+            const url = link.href;
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                tb.fetchYouTubeMetadata(url).then(metadata => {
+                    if (metadata.embedHtml) {
+                        const preview = document.createElement('div');
+                        preview.className = 'link-preview';
+                        preview.innerHTML = `
+                            <div class="youtube-container">
+                                ${metadata.embedHtml}
+                                <div class="preview-details">
+                                    ${metadata.ogTitle !== title ? `<a href="${url}" target="_blank"><h3>${metadata.ogTitle}</h3></a>` : ''}
+                                    <p>${metadata.ogDescription}</p>
+                                </div>
+                            </div>
+                        `;
+                        link.insertAdjacentElement('afterend', preview);
+                    }
+                });
+            } else {
+                tb.fetchLinkMetadata(url).then(metadata => {
+                    if ((metadata.ogTitle && metadata.ogTitle !== title) || metadata.ogDescription || metadata.ogImage) {
+                        const preview = document.createElement('div');
+                        preview.className = 'link-preview';
+                        preview.innerHTML = `
+                            ${metadata.ogImage ? `<img src="${metadata.ogImage}" alt="Preview Image">` : ''}
+                            <div class="preview-details">
+                                ${metadata.ogTitle && metadata.ogTitle !== title ? `<a href="${url}" target="_blank"><h3>${metadata.ogTitle}</h3></a>` : ''}
+                                <p>${metadata.ogDescription}</p>
+                            </div>
+                        `;
+                        link.insertAdjacentElement('afterend', preview);
+                    }
+                });
+            }
+        });
+    }
+
+    // Function to fetch metadata for YouTube links
+    fetchYouTubeMetadata(url) {
+        let videoId;
+        if (url.includes('youtu.be')) {
+            videoId = url.split('/').pop();
+        } else {
+            videoId = new URL(url).searchParams.get('v');
+        }
+
+        const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=AIzaSyCQD9fCWerrxjy-GQr3-w0k1d2UftSXDfo&part=snippet`;
+        return fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const snippet = data.items[0].snippet;
+                const shortDescription = snippet.description.length > 400 ? snippet.description.substring(0, 400) + '...' : snippet.description;
+                return {
+                    ogTitle: snippet.title,
+                    ogDescription: shortDescription,
+                    ogImage: snippet.thumbnails.high.url,
+                    embedHtml: `<iframe width="300" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`
+                };
+            })
+            .catch(error => {
+                console.error('Error fetching YouTube metadata:', error);
+                return {};
+            });
+    }
+
+    // Function to fetch metadata for other links
+    fetchLinkMetadata(url) {
+        if (url.includes('discord.com') || url.includes('google.com')) {
+            return Promise.resolve({});
+        }
+        const apiUrl = `https://soaring.siglr.com/php/FetchMetadata.php?url=${encodeURIComponent(url)}`;
+        return fetch(apiUrl)
+            .then(response => response.json())
+            .catch(error => {
+                console.error('Error fetching link metadata:', error);
+                return {};
+            });
+    }
 }
+

@@ -15,34 +15,17 @@
 <body>
     <div id="container">
         <div id="tabButtons">
-            <button class="tabButton" onclick="TB.switchTab('homeTab')" title="WeSimGlide.org's Home">🏠</button>
-            <button class="tabButton" onclick="TB.switchTab('eventTab')" title="Sim Soaring events calendar">📆</button>
-            <button class="tabButton active" onclick="TB.switchTab('mapTab')" title="Explore tasks on the map">🌐</button>
-            <button class="tabButton" onclick="TB.switchTab('listTab')" title="Search/Filter tasks">🔍</button>
-            <button class="tabButton" onclick="TB.switchTab('settingsTab')" title="Your settings">⚙️</button>
-            <button class="tabButton" onclick="TB.switchTab('aboutTab')" title="About WeSimGlide.org">ℹ️</button>
+            <button class="tabButton" onclick="TB.switchTab('homeTab')" title="WeSimGlide.org's Home" data-tab="homeTab">🏠</button>
+            <button class="tabButton" onclick="TB.switchTab('eventTab')" title="Sim Soaring events calendar" data-tab="eventTab">📆</button>
+            <button class="tabButton active" onclick="TB.switchTab('mapTab')" title="Explore tasks on the map" data-tab="mapTab">🌐</button>
+            <button class="tabButton" onclick="TB.switchTab('listTab')" title="Search/Filter tasks" data-tab="listTab">🔍</button>
+            <button class="tabButton" onclick="TB.switchTab('toolsTab')" title="Useful tools and other references" data-tab="toolsTab">🛠️</button>
+            <button class="tabButton" onclick="TB.switchTab('settingsTab')" title="Your settings" data-tab="settingsTab">⚙️</button>
+            <button class="tabButton" onclick="TB.switchTab('aboutTab')" title="About WeSimGlide.org" data-tab="aboutTab">ℹ️</button>
         </div>
         <div id="tabsContainer">
-            <div id="homeTab" class="tabContent">
-                <div class="header-container">
-                    <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
-                    <h2>Our home is under construction!</h2>
-                </div>
-                <p>Tell us what you would like to see.</p>
-                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
-                    <button class="button-style">Go to our Discord</button>
-                </a>
-            </div>
-            <div id="eventTab" class="tabContent">
-                <div class="header-container">
-                    <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
-                    <h2>Soon you will find soaring events here!</h2>
-                </div>
-                <p>Tell us what you would like to see.</p>
-                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
-                    <button class="button-style">Go to our Discord</button>
-                </a>
-            </div>
+            <div id="homeTab" class="tabContent"></div>
+            <div id="eventTab" class="tabContent"></div>
             <div id="mapTab" class="tabContent active">
                 <div id="mapContainer">
                     <div id="map"></div>
@@ -52,55 +35,10 @@
                 <button id="zoomButton" onclick="TB.tbm.zoomToTask()">Zoom to Task</button>
                 <button id="fullWorldButton" onclick="TB.tbm.resetToFullWorld()">Full World</button>
             </div>
-            <div id="listTab" class="tabContent">
-                <div class="header-container">
-                    <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
-                    <h2>We hope to bring search and filtering capabilities soon!</h2>
-                </div>
-                <p>Tell us what you would like to see.</p>
-                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
-                    <button class="button-style">Go to our Discord</button>
-                </a>
-            </div>
-            <div id="settingsTab" class="tabContent">
-                <div class="header-container">
-                    <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
-                    <h2>Want to customize your settings? Coming soon!</h2>
-                </div>
-                <p>Tell us what you would like to see.</p>
-                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
-                    <button class="button-style">Go to our Discord</button>
-                </a>
-            </div>
-            <div id="aboutTab" class="tabContent">
-                <div class="header-container">
-                    <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
-                    <h2>About WeSimGlide</h2>
-                </div>
-                <p>Welcome to WeSimGlide.org, your go-to destination for virtual soaring in Flight Simulator. Inspired by the official WeGlide.org site for real-life soaring, WeSimGlide is dedicated to bringing the same level of community to the virtual skies.</p>
-                <h3>Our Vision</h3>
-                <p>WeSimGlide is part of a comprehensive solution designed to enhance your soaring experience. This project includes:</p>
-                <ul>
-                    <li>A dedicated <strong>Discord server</strong> for community engagement and support. <a href="https://discord.gg/aW8YYe3HJF" target="_blank">(Discord Invite)</a></li>
-                    <li>Several <strong>Windows applications</strong> tailored for soaring enthusiasts. <a href="https://flightsim.to/profile/siglr" target="_blank">(Visit FlightSim.to)</a></li>
-                    <li>A detailed <strong>world map browser</strong> showcasing hundreds of soaring tasks created by talented designers from around the globe (this is where you are now).</li>
-                </ul>
-                <h3>Who's behind this?</h3>
-                <p>While the library and tools are primarily a solo endeavor by myself, Guy (MajorDad), this project wouldn't be possible without the invaluable contributions of Ian (B21) and the input from many dedicated members of the community.</p>
-                <h3>Support WeSimGlide.org</h3>
-                <p>WeSimGlide is a passion project aimed at enriching the virtual soaring community. If you enjoy using these tools and would like to support further development, I welcome voluntary contributions. Your donations help us cover server costs, develop new features, and maintain the quality of our offerings.</p>
-                <a href="https://www.paypal.com/paypalme/wesimglide" target="_blank">
-                    <button class="button-style">Donate Now</button>
-                </a>
-                <p>Contributions can also take other forms:</p>
-                <ul>
-                    <li><strong>Community Contributions:</strong> Use our tools to create, share and download soaring tasks, provide feedback, or help others on the Discord server.</li>
-                    <li><strong>Spread the Word:</strong> Share WeSimGlide.org with your friends and fellow pilots to help grow our community.</li>
-                </ul>
-                <p>Thank you for being a part of the WeSimGlide community. Together, we can make virtual soaring an even more incredible experience.</p>
-                <h3>Be Advised</h3>
-                <p><strong>Note:</strong> WeSimGlide.org is still a work in progress. I appreciate your patience and feedback as I continue to improve and expand the feature set.</p>
-            </div>
+            <div id="listTab" class="tabContent"></div>
+            <div id="toolsTab" class="tabContent"></div>
+            <div id="settingsTab" class="tabContent"></div>
+            <div id="aboutTab" class="tabContent"></div>
         </div>
     </div>
 
@@ -110,13 +48,13 @@
     <script src="map2.js"></script>
     <script src="semicircle.js"></script> <!-- Leaflet extension -->
     <script src="b21_leaflet-canvas-markers.js"></script> <!-- Leaflet extension -->
-    <script src="b21_utils_static.js"></script>
-    <script src="b21_geo_static.js"></script>
-    <script src="b21_wp.js"></script>
-    <script src="b21_task.js"></script>
-    <script src="b21_msfs_pln.js"></script>
-    <script src="b21_airports.js"></script>
-    <script src="b21_server_shim/test_api.js"></script>
+    <script src="b21_utils_static.js"></script> <!-- Leaflet extension -->
+    <script src="b21_geo_static.js"></script> <!-- Leaflet extension -->
+    <script src="b21_wp.js"></script> <!-- Leaflet extension -->
+    <script src="b21_task.js"></script> <!-- Leaflet extension -->
+    <script src="b21_msfs_pln.js"></script> <!-- Leaflet extension -->
+    <script src="b21_airports.js"></script> <!-- Leaflet extension -->
+    <script src="b21_server_shim/test_api.js"></script> <!-- Leaflet extension -->
     <script>
         var DEBUG_LOCAL = false;
         var VERSION = "0.0.5_MD";
@@ -124,47 +62,7 @@
 
     <!-- Standalone-specific JavaScript -->
     <script src="task_browser.js"></script>
-    <script>
-        var TB = new TaskBrowser();
-        TB.init();
-
-        // Add event listeners for resizing
-        window.addEventListener('resize', TB.resizeMap);
-
-        // Add resizer functionality
-        let isResizing = false;
-        const resizer = document.getElementById('resizer');
-        const tabsContainer = document.getElementById('tabsContainer');
-        const taskDetailContainer = document.getElementById('taskDetailContainer');
-
-        resizer.addEventListener('mousedown', (e) => {
-            isResizing = true;
-            document.addEventListener('mousemove', resize);
-            document.addEventListener('mouseup', stopResize);
-        });
-
-        function resize(e) {
-            if (isResizing) {
-                const containerWidth = tabsContainer.offsetWidth + taskDetailContainer.offsetWidth;
-                const newTabsWidth = e.clientX / containerWidth * 100;
-                const newTaskDetailWidth = 100 - newTabsWidth;
-
-                tabsContainer.style.width = `${newTabsWidth}%`;
-                taskDetailContainer.style.width = `${newTaskDetailWidth}%`;
-
-                TB.resizeMap(); // Ensure map is resized
-            }
-        }
-
-        function stopResize() {
-            isResizing = false;
-            document.removeEventListener('mousemove', resize);
-            document.removeEventListener('mouseup', stopResize);
-        }
-
-        // Call resizeMap initially to ensure correct sizing on load
-        TB.resizeMap();
-
-    </script>
+    <!-- Include the new index.js -->
+    <script src="index.js"></script>
 </body>
 </html>
