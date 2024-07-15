@@ -7,7 +7,7 @@ window.addEventListener('resize', TB.resizeMap);
 // Add resizer functionality
 let isResizing = false;
 const resizer = document.getElementById('resizer');
-const tabsContainer = document.getElementById('tabsContainer');
+const mapContainer = document.getElementById('map');
 const taskDetailContainer = document.getElementById('taskDetailContainer');
 
 resizer.addEventListener('mousedown', (e) => {
@@ -18,11 +18,11 @@ resizer.addEventListener('mousedown', (e) => {
 
 function resize(e) {
     if (isResizing) {
-        const containerWidth = tabsContainer.offsetWidth + taskDetailContainer.offsetWidth;
-        const newTabsWidth = e.clientX / containerWidth * 100;
-        const newTaskDetailWidth = 100 - newTabsWidth;
+        const containerWidth = mapContainer.offsetWidth + taskDetailContainer.offsetWidth;
+        const newMapWidth = e.clientX / containerWidth * 100;
+        const newTaskDetailWidth = 100 - newMapWidth;
 
-        tabsContainer.style.width = `${newTabsWidth}%`;
+        mapContainer.style.width = `${newMapWidth}%`;
         taskDetailContainer.style.width = `${newTaskDetailWidth}%`;
 
         TB.resizeMap(); // Ensure map is resized
