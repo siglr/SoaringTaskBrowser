@@ -345,4 +345,5 @@ window.addEventListener('popstate', function () {
         const params = getUrlParams();
         handleParams(params);
     }
+    TB.shouldHandlePopState = true;
 });

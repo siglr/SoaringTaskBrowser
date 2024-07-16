@@ -81,7 +81,7 @@ class TaskBrowser {
             }
             document.body.removeChild(textArea);
         }
-        tb.shouldHandlePopState = true; // Re-enable popstate handling
+        //tb.shouldHandlePopState = true; // Re-enable popstate handling
     }
 
     resizeMap() {
