@@ -610,7 +610,7 @@ class TaskBrowserMap {
 
     showSelectedOnly() {
         let tbm = this;
-        if (tbm.showSelectedOnlyChecked && TB.tbm.currentEntrySeqID) {
+        if (tbm.showSelectedOnlyChecked && tbm.currentEntrySeqID) {
             for (const entrySeqID in tbm.api_tasks) {
                 let polyline = tbm.api_tasks[entrySeqID].polyline;
                 if (tbm.currentEntrySeqID !== parseInt(entrySeqID)) {
