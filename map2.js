@@ -56,7 +56,8 @@ class TaskBrowserMap {
                 maxZoom: 19,
                 attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://www.OpenRailwayMap.org">OpenRailwayMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
             }),
-            "Wind Compass": L.layerGroup()
+            "Wind Compass": L.layerGroup(),
+            "Show selected only": L.layerGroup()
         };
 
         tbm.map = L.map('map', {
@@ -104,6 +105,7 @@ class TaskBrowserMap {
 
         let windCompassOptionChecked = false;
         let windCompassValidWindLayer = false;
+        let showSelectedOnlyChecked = false;
         tbm.addCompassRoseControl();
 
         // Listen to layer control changes
@@ -111,6 +113,9 @@ class TaskBrowserMap {
             if (eventLayer.name === 'Wind Compass') {
                 tbm.windCompassOptionChecked = true;
                 tbm.setWindCompassVisibility();
+            } else if (eventLayer.name === 'Show selected only') {
+                tbm.showSelectedOnlyChecked = true;
+                tbm.showSelectedOnly();
             }
         });
 
@@ -118,6 +123,9 @@ class TaskBrowserMap {
             if (eventLayer.name === 'Wind Compass') {
                 tbm.windCompassOptionChecked = false;
                 tbm.setWindCompassVisibility();
+            } else if (eventLayer.name === 'Show selected only') {
+                tbm.showSelectedOnlyChecked = false;
+                tbm.showSelectedOnly();
             }
         });
         tbm.setWindCompassVisibility();
@@ -179,7 +187,7 @@ class TaskBrowserMap {
             tbm.selectTaskCommon(tbm.currentEntrySeqID, false, false);
             //tbm.setB21Task(api_task);
         }
-
+        tbm.showSelectedOnly();
     }
 
     //B21_update
@@ -575,5 +583,22 @@ class TaskBrowserMap {
                 L.DomEvent.stopPropagation(e); // Prevent map from handling the event
             }
         });
+    }
+
+    showSelectedOnly() {
+        let tbm = this;
+        if (tbm.showSelectedOnlyChecked) {
+            for (const entrySeqID in tbm.api_tasks) {
+                let polyline = tbm.api_tasks[entrySeqID].polyline;
+                if (tbm.currentEntrySeqID !== parseInt(entrySeqID)) {
+                    tbm.map.removeLayer(polyline);
+                }
+            }
+        } else {
+            for (const entrySeqID in tbm.api_tasks) {
+                let polyline = tbm.api_tasks[entrySeqID].polyline;
+                tbm.map.addLayer(polyline);
+            }
+        }
     }
 }
