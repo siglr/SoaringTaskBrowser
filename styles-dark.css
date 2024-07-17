@@ -452,9 +452,11 @@ body {
 
 .wind-direction {
     position: absolute;
-    color: #fff;
-    font-size: 22px;
-    font-weight: bold;
-    text-shadow: 2px 2px 4px #000;
-    cursor: move; /* Indicate draggable */
+    color: #000;
+    font-size: 14px;
+    font-weight: normal;
+    top: 50.5%;
+    left: 50.5%;
+    transform: translate(-50%, -50%);
+    cursor: move;
 }

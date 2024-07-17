@@ -55,8 +55,9 @@ class TaskBrowserMap {
             "Railways": L.tileLayer('https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://www.OpenRailwayMap.org">OpenRailwayMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-            })
-        }
+            }),
+            "Wind Compass": L.layerGroup()
+        };
 
         tbm.map = L.map('map', {
             minZoom: 2,
@@ -102,6 +103,21 @@ class TaskBrowserMap {
         tbm.airports.init(tbm.map); // Here we ASYCHRONOUSLY load the airports JSON data (& will draw on map)
 
         tbm.addCompassRoseControl();
+        tbm.setWindCompassVisibility(false);
+
+        // Listen to layer control changes
+        tbm.map.on('overlayadd', function (eventLayer) {
+            if (eventLayer.name === 'Wind Compass') {
+                tbm.setWindCompassVisibility(true);
+            }
+        });
+
+        tbm.map.on('overlayremove', function (eventLayer) {
+            if (eventLayer.name === 'Wind Compass') {
+                tbm.setWindCompassVisibility(false);
+            }
+        });
+
     }
 
     fetchTasks() {
@@ -490,11 +506,25 @@ class TaskBrowserMap {
         tbm.setWindDirection(0);  // Initialize with 0° wind direction
     }
 
-    setWindDirection(degree) {
+    setWindCompassVisibility(isVisible = true) {
+        let compassContainer = document.querySelector('.compass-container');
+        if (compassContainer) {
+            if (isVisible) {
+                compassContainer.style.display = 'block';
+            } else {
+                compassContainer.style.display = 'none';
+            }
+        }
+    }
+
+    setWindDirection(degree, speed, altitude) {
+
         let windDirectionElem = document.getElementById('windDirection');
         let windArrowElem = document.getElementById('windArrow');
-        windDirectionElem.innerText = `${degree}°`;
-        windArrowElem.style.transform = `rotate(${degree}deg)`;
+        if (windDirectionElem && windArrowElem) {
+            windDirectionElem.innerText = `${speed} kts`;
+            windArrowElem.style.transform = `rotate(${degree}deg)`;
+        }
     }
 
     makeDraggable(element, handle) {
