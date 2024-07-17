@@ -3,6 +3,14 @@ class TaskBrowserMap {
         let tbm = this;
         tbm.tb = tb;
 
+        tbm.runningInApp = false;
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('appContext')) {
+            tbm.runningInApp = true;
+        } else {
+            tbm.runningInApp = false;
+        }
+
         // B21 update, these are used by B21_Task / B21_WP
         tbm.settings = {
             altitude_units: "feet",
@@ -20,9 +28,6 @@ class TaskBrowserMap {
         tbm.fetchBounds = null; // Keep track of the GetTasksForMap bounds
         tbm.api_tasks = {};     // Will hold all tasks from GetTasksForMap.php
         tbm.b21_task = null;    // Will hold parsed 'current' task
-
-        //tbm.map = L.map('map').setView([20, 0], 2);
-
 
         // b21_airports requirements
         tbm.canvas_renderer = L.canvas();
@@ -50,15 +55,27 @@ class TaskBrowserMap {
             })
         };
 
-        tbm.map_layers = {
-            "Airports": tbm.airport_markers,
-            "Railways": L.tileLayer('https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://www.OpenRailwayMap.org">OpenRailwayMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-            }),
-            "Wind Compass": L.layerGroup(),
-            "Show selected only": L.layerGroup()
-        };
+        if (!tbm.runningInApp) {
+            tbm.map_layers = {
+                "Airports": tbm.airport_markers,
+                "Railways": L.tileLayer('https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://www.OpenRailwayMap.org">OpenRailwayMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+                }),
+                "Wind Compass": L.layerGroup(),
+                "Show selected only": L.layerGroup()
+            };
+        } else {
+            tbm.map_layers = {
+                "Airports": tbm.airport_markers,
+                "Railways": L.tileLayer('https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://www.OpenRailwayMap.org">OpenRailwayMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+                }),
+                "Wind Compass": L.layerGroup()
+            };
+        }
+
 
         tbm.map = L.map('map', {
             minZoom: 2,
@@ -70,14 +87,6 @@ class TaskBrowserMap {
         tbm.map.setView([20, 0], 2);;
 
         L.control.layers(tbm.base_maps, tbm.map_layers).addTo(tbm.map);
-
-        tbm.runningInApp = false;
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('appContext')) {
-            tbm.runningInApp = true;
-        } else {
-            tbm.runningInApp = false;
-        }
 
         tbm.currentPolyline = null; // Track the currently selected polyline
         tbm.currentEntrySeqID = null; // Track the EntrySeqID of the selected polyline
@@ -610,7 +619,7 @@ class TaskBrowserMap {
 
     showSelectedOnly() {
         let tbm = this;
-        if (tbm.showSelectedOnlyChecked && tbm.currentEntrySeqID) {
+        if (tbm.showSelectedOnlyChecked && tbm.currentEntrySeqID && !tbm.runningInApp) {
             for (const entrySeqID in tbm.api_tasks) {
                 let polyline = tbm.api_tasks[entrySeqID].polyline;
                 if (tbm.currentEntrySeqID !== parseInt(entrySeqID)) {
