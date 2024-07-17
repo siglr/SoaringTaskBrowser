@@ -426,3 +426,35 @@ body {
     .weather-image:hover {
         opacity: 0.7;
     }
+
+.compass-container {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: not-allowed
+}
+
+.compass-rose {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.wind-arrow {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.wind-direction {
+    position: absolute;
+    color: #fff;
+    font-size: 22px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px #000;
+    cursor: move; /* Indicate draggable */
+}

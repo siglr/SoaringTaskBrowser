@@ -101,6 +101,7 @@ class TaskBrowserMap {
 
         tbm.airports.init(tbm.map); // Here we ASYCHRONOUSLY load the airports JSON data (& will draw on map)
 
+        tbm.addCompassRoseControl();
     }
 
     fetchTasks() {
@@ -462,5 +463,73 @@ class TaskBrowserMap {
 
         // Todo: Reselect active task??
 
+    }
+
+    addCompassRoseControl() {
+        let tbm = this;
+
+        // Custom control for the compass rose
+        L.Control.CompassRose = L.Control.extend({
+            onAdd: function (map) {
+                let compassContainer = L.DomUtil.create('div', 'compass-container');
+                compassContainer.innerHTML = `
+                    <img id="compassRose" class="compass-rose" src="images/compass_rose.png" alt="Compass Rose">
+                    <img id="windArrow" class="wind-arrow" src="images/wind_arrow.png" alt="Wind Arrow">
+                    <div id="windDirection" class="wind-direction">0°</div>
+                `;
+                tbm.makeDraggable(compassContainer, compassContainer.querySelector('#windDirection'));
+                return compassContainer;
+            }
+        });
+
+        // Add the control to the map
+        tbm.compassControl = new L.Control.CompassRose({ position: 'topleft' });
+        tbm.map.addControl(tbm.compassControl);
+
+        // Event listener for changing wind direction
+        tbm.setWindDirection(0);  // Initialize with 0° wind direction
+    }
+
+    setWindDirection(degree) {
+        let windDirectionElem = document.getElementById('windDirection');
+        let windArrowElem = document.getElementById('windArrow');
+        windDirectionElem.innerText = `${degree}°`;
+        windArrowElem.style.transform = `rotate(${degree}deg)`;
+    }
+
+    makeDraggable(element, handle) {
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        // Prevent map from handling drag events
+        L.DomEvent.disableClickPropagation(element);
+        L.DomEvent.disableScrollPropagation(element);
+
+        L.DomEvent.on(handle, 'mousedown', function (e) {
+            isDragging = true;
+            offsetX = e.clientX - parseInt(window.getComputedStyle(element).left);
+            offsetY = e.clientY - parseInt(window.getComputedStyle(element).top);
+            element.style.transition = 'none'; // Disable transitions during drag
+
+            L.DomEvent.stopPropagation(e); // Prevent map from handling the event
+        });
+
+        L.DomEvent.on(document, 'mousemove', function (e) {
+            if (isDragging) {
+                let x = e.clientX - offsetX;
+                let y = e.clientY - offsetY;
+                element.style.left = `${x}px`;
+                element.style.top = `${y}px`;
+                L.DomEvent.stopPropagation(e); // Prevent map from handling the event
+            }
+        });
+
+        L.DomEvent.on(document, 'mouseup', function (e) {
+            if (isDragging) {
+                isDragging = false;
+                element.style.transition = ''; // Re-enable transitions after drag
+                L.DomEvent.stopPropagation(e); // Prevent map from handling the event
+            }
+        });
     }
 }
