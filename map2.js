@@ -428,6 +428,7 @@ class TaskBrowserMap {
                 tbm.zoomToTask();
             }
         }
+        tbm.showSelectedOnly();
     }
 
     //
@@ -585,9 +586,31 @@ class TaskBrowserMap {
         });
     }
 
+    deselectTask() {
+        let tbm = this;
+
+        // Reset the style of the current selected polyline
+        if (tbm.currentPolyline) {
+            tbm.currentPolyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
+            tbm.currentPolyline.options.selected = false;
+        }
+
+        tbm.currentEntrySeqID = null;
+        tbm.currentPolyline = null;
+
+        // Hide the detailed task rendering if needed
+        if (tbm.b21_task != null) {
+            tbm.b21_task.reset();
+            tbm.b21_task = null;
+        }
+
+        tbm.tb.clearTaskDetails();
+        tbm.showSelectedOnly();
+    }
+
     showSelectedOnly() {
         let tbm = this;
-        if (tbm.showSelectedOnlyChecked) {
+        if (tbm.showSelectedOnlyChecked && TB.tbm.currentEntrySeqID) {
             for (const entrySeqID in tbm.api_tasks) {
                 let polyline = tbm.api_tasks[entrySeqID].polyline;
                 if (tbm.currentEntrySeqID !== parseInt(entrySeqID)) {

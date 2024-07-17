@@ -287,6 +287,14 @@ class TaskBrowser {
             <img src="https://siglr.com/DiscordPostHelper/TaskBrowser/WeatherCharts/${task.EntrySeqID}.jpg" class="weather-image" onclick="TB.showImageModal(this.src)" />
         </p>`;
         tb.generateCollapsibleSection("🌥 Weather", weatherContent, taskDetailContainer);
+        // Add the "Deselect Task" button
+        let deselectButton = document.createElement('button');
+        deselectButton.innerText = "Deselect Task";
+        deselectButton.className = "button-style"; // Use the same class as other tab buttons for consistent styling
+        deselectButton.onclick = function () {
+            tb.tbm.deselectTask();
+        };
+        taskDetailContainer.appendChild(deselectButton);
     }
 
     // Function to show image in a modal
@@ -444,6 +452,14 @@ class TaskBrowser {
         }
         //tb.tbm.map.fitBounds(tb.tbm.b21_task.get_bounds());
         tb.showTaskDetailsStandalone(task_details);
+    }
+
+    clearTaskDetails() {
+        // Assuming taskDetailContainer is the element that holds the task details
+        let taskDetailContainer = document.getElementById('taskDetailContainer');
+        if (taskDetailContainer) {
+            taskDetailContainer.innerHTML = ''; // Clear the task details
+        }
     }
 
     generateToolEntry(title, description) {
