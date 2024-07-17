@@ -3,13 +3,11 @@
 class TaskBrowser {
     constructor() {
         let tb = this;
-        let shouldHandlePopState = true; // Flag to control popstate handling
-        console.log("new TaskBrowser()");
+        let shouldHandlePopState = true;
     }
 
     init() {
         let tb = this;
-        console.log("TaskBrowser.init()");
         tb.countryCodes = {};
         tb.md = window.markdownit({
             html: false,
@@ -27,6 +25,7 @@ class TaskBrowser {
             'Virgin Islands - British': 'British Virgin Islands'
         };
         tb.initCountryCodes();
+        tb.loadUserSettings();
     }
 
     initCountryCodes() {
@@ -566,5 +565,73 @@ class TaskBrowser {
                 console.error('Error fetching link metadata:', error);
                 return {};
             });
+    }
+
+    setJsonCookie(name, jsonObject, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        var jsonString = JSON.stringify(jsonObject);
+        var encodedJsonString = encodeURIComponent(jsonString);
+        document.cookie = name + "=" + encodedJsonString + expires + "; path=/";
+    }
+
+    getJsonCookie(name, renewDays) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) {
+                var encodedJsonString = c.substring(nameEQ.length, c.length);
+                var jsonString = decodeURIComponent(encodedJsonString);
+                var jsonObject = JSON.parse(jsonString);
+
+                // Renew the cookie's expiration date
+                if (renewDays) {
+                    this.setJsonCookie(name, jsonObject, renewDays);
+                }
+
+                return jsonObject;
+            }
+        }
+        return null;
+    }
+
+    getCookieSize(name) {
+        const jsonCookie = this.getJsonCookie(name);
+        if (jsonCookie) {
+            const jsonString = JSON.stringify(jsonCookie);
+            const encodedJsonString = encodeURIComponent(jsonString);
+            return encodedJsonString.length;
+        }
+        return 0;
+    }
+
+    saveUserSettings() {
+        const tb = this;
+        const settings = {
+            mapLayer: tb.tbm.getCurrentMapLayer(),
+            showAirports: tb.tbm.isLayerVisible('Airports'),
+            showRailways: tb.tbm.isLayerVisible('Railways'),
+            windCompass: tb.tbm.isLayerVisible('Wind Compass'),
+            showSelectedOnly: tb.tbm.isLayerVisible('Show selected only')
+        };
+        tb.setJsonCookie('userSettings', settings, 300);
+    }
+
+    loadUserSettings() {
+        const tb = this;
+        const settings = tb.getJsonCookie('userSettings', 300);
+        if (settings) {
+            tb.tbm.setMapLayer(settings.mapLayer);
+            tb.tbm.setLayerVisibility('Airports', settings.showAirports);
+            tb.tbm.setLayerVisibility('Railways', settings.showRailways);
+            tb.tbm.setLayerVisibility('Wind Compass', settings.windCompass);
+            tb.tbm.setLayerVisibility('Show selected only', settings.showSelectedOnly);
+        }
     }
 }

@@ -29,6 +29,9 @@ class TaskBrowserMap {
         tbm.api_tasks = {};     // Will hold all tasks from GetTasksForMap.php
         tbm.b21_task = null;    // Will hold parsed 'current' task
 
+        //tbm.map = L.map('map').setView([20, 0], 2);
+
+
         // b21_airports requirements
         tbm.canvas_renderer = L.canvas();
         tbm.airport_markers = L.layerGroup(); //.addTo(planner.map);
@@ -75,7 +78,6 @@ class TaskBrowserMap {
                 "Wind Compass": L.layerGroup()
             };
         }
-
 
         tbm.map = L.map('map', {
             minZoom: 2,
@@ -126,6 +128,7 @@ class TaskBrowserMap {
                 tbm.showSelectedOnlyChecked = true;
                 tbm.showSelectedOnly();
             }
+            tbm.tb.saveUserSettings();
         });
 
         tbm.map.on('overlayremove', function (eventLayer) {
@@ -136,7 +139,13 @@ class TaskBrowserMap {
                 tbm.showSelectedOnlyChecked = false;
                 tbm.showSelectedOnly();
             }
+            tbm.tb.saveUserSettings();
         });
+
+        tbm.map.on('baselayerchange', function (eventLayer) {
+            tbm.tb.saveUserSettings();
+        });
+
         tbm.setWindCompassVisibility();
 
     }
@@ -503,6 +512,44 @@ class TaskBrowserMap {
 
     }
 
+    getCurrentMapLayer() {
+        let tbm = this;
+        for (let key in tbm.base_maps) {
+            if (tbm.map.hasLayer(tbm.base_maps[key])) {
+                return key;
+            }
+        }
+        return null;
+    }
+
+    setMapLayer(layerName) {
+        let tbm = this;
+        if (tbm.base_maps[layerName]) {
+            tbm.map.eachLayer(function (layer) {
+                tbm.map.removeLayer(layer);
+            });
+            tbm.map.addLayer(tbm.base_maps[layerName]);
+        }
+    }
+
+    isLayerVisible(layerName) {
+        let tbm = this;
+        return tbm.map.hasLayer(tbm.map_layers[layerName]);
+    }
+
+    setLayerVisibility(layerName, isVisible) {
+        let tbm = this;
+        if (isVisible) {
+            if (!tbm.map.hasLayer(tbm.map_layers[layerName])) {
+                tbm.map.addLayer(tbm.map_layers[layerName]);
+            }
+        } else {
+            if (tbm.map.hasLayer(tbm.map_layers[layerName])) {
+                tbm.map.removeLayer(tbm.map_layers[layerName]);
+            }
+        }
+    }
+
     addCompassRoseControl() {
         let tbm = this;
 
@@ -619,7 +666,7 @@ class TaskBrowserMap {
 
     showSelectedOnly() {
         let tbm = this;
-        if (tbm.showSelectedOnlyChecked && tbm.currentEntrySeqID && !tbm.runningInApp) {
+        if (tbm.showSelectedOnlyChecked && tbm.currentEntrySeqID) {
             for (const entrySeqID in tbm.api_tasks) {
                 let polyline = tbm.api_tasks[entrySeqID].polyline;
                 if (tbm.currentEntrySeqID !== parseInt(entrySeqID)) {
