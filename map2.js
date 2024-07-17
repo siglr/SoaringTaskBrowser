@@ -102,21 +102,25 @@ class TaskBrowserMap {
 
         tbm.airports.init(tbm.map); // Here we ASYCHRONOUSLY load the airports JSON data (& will draw on map)
 
+        let windCompassOptionChecked = false;
+        let windCompassValidWindLayer = false;
         tbm.addCompassRoseControl();
-        tbm.setWindCompassVisibility(false);
 
         // Listen to layer control changes
         tbm.map.on('overlayadd', function (eventLayer) {
             if (eventLayer.name === 'Wind Compass') {
-                tbm.setWindCompassVisibility(true);
+                tbm.windCompassOptionChecked = true;
+                tbm.setWindCompassVisibility();
             }
         });
 
         tbm.map.on('overlayremove', function (eventLayer) {
             if (eventLayer.name === 'Wind Compass') {
-                tbm.setWindCompassVisibility(false);
+                tbm.windCompassOptionChecked = false;
+                tbm.setWindCompassVisibility();
             }
         });
+        tbm.setWindCompassVisibility();
 
     }
 
@@ -503,13 +507,14 @@ class TaskBrowserMap {
         tbm.map.addControl(tbm.compassControl);
 
         // Event listener for changing wind direction
-        tbm.setWindDirection(0);  // Initialize with 0° wind direction
+        tbm.setWindDirection(-1);  // Initialize with 0° wind direction
     }
 
-    setWindCompassVisibility(isVisible = true) {
+    setWindCompassVisibility() {
+        let tbm = this;
         let compassContainer = document.querySelector('.compass-container');
         if (compassContainer) {
-            if (isVisible) {
+            if (tbm.windCompassValidWindLayer && tbm.windCompassOptionChecked) {
                 compassContainer.style.display = 'block';
             } else {
                 compassContainer.style.display = 'none';
@@ -518,7 +523,16 @@ class TaskBrowserMap {
     }
 
     setWindDirection(degree, speed, altitude) {
-
+        let tbm = this;
+        if (degree < 0) {
+            tbm.windCompassValidWindLayer = false;
+            tbm.setWindCompassVisibility();
+            return;
+        }
+        else {
+            tbm.windCompassValidWindLayer = true;
+            tbm.setWindCompassVisibility();
+        }
         let windDirectionElem = document.getElementById('windDirection');
         let windArrowElem = document.getElementById('windArrow');
         if (windDirectionElem && windArrowElem) {
