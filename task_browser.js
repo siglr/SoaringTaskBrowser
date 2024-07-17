@@ -618,7 +618,8 @@ class TaskBrowser {
             showAirports: tb.tbm.isLayerVisible('Airports'),
             showRailways: tb.tbm.isLayerVisible('Railways'),
             windCompass: tb.tbm.isLayerVisible('Wind Compass'),
-            showSelectedOnly: tb.tbm.isLayerVisible('Show selected only')
+            showSelectedOnly: tb.tbm.isLayerVisible('Show selected only'),
+            splitterPosition: tb.getSplitterPosition()
         };
         tb.setJsonCookie('userSettings', settings, 300);
     }
@@ -632,6 +633,27 @@ class TaskBrowser {
             tb.tbm.setLayerVisibility('Railways', settings.showRailways);
             tb.tbm.setLayerVisibility('Wind Compass', settings.windCompass);
             tb.tbm.setLayerVisibility('Show selected only', settings.showSelectedOnly);
+            tb.setSplitterPosition(settings.splitterPosition);
         }
     }
+
+    getSplitterPosition() {
+        const mapContainer = document.getElementById('map');
+        const taskDetailContainer = document.getElementById('taskDetailContainer');
+        return {
+            mapWidth: mapContainer.style.width,
+            taskDetailWidth: taskDetailContainer.style.width
+        };
+    }
+
+    setSplitterPosition(position) {
+        if (position) {
+            const mapContainer = document.getElementById('map');
+            const taskDetailContainer = document.getElementById('taskDetailContainer');
+            mapContainer.style.width = position.mapWidth;
+            taskDetailContainer.style.width = position.taskDetailWidth;
+            this.resizeMap();  // Ensure the map resizes correctly
+        }
+    }
+
 }
