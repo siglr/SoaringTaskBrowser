@@ -77,7 +77,8 @@ function loadTabContent(tabId) {
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
                     <h2>We hope to bring search and filtering capabilities soon!</h2>
                 </div>
-                <p>Tell us what you would like to see.</p>
+                <p>Meanwhile, you can search and filter tasks using our <a href="https://flightsim.to/file/62573/msfs-soaring-task-tools-dphx-unpack-load" target="_blank"><button class="button-style">DPHX Unpack & Load tool!</button></a></p>
+                <p>Tell us what else you would like to see.</p>
                 <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
                     <button class="button-style">Go to our Discord</button>
                 </a>`;
