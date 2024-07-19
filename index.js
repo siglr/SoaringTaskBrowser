@@ -232,6 +232,7 @@ function displayEvents(events) {
             <h3>Remember:</h3>
             <p>While the events are listed in UTC times, these might not always correspond to your local day. Please check the local date and time (for you) usually displayed with the original event for best accuracy. Also, note that during daylight saving time changes, there might be a period with incorrect time indications.</p>
             <p>Dive into our global schedule and choose your next group flight adventure!</p>
+            <div id="tutorials"></div>
             <h2>General Weekly Schedule</h2>
             <h3>Sunday</h3>
             <p>-</p>
@@ -251,6 +252,17 @@ function displayEvents(events) {
             🕔 17:45 UTC: SSC Saturday <em>(Daylight saving time)</em> - <a href="discord://discord.com/channels/876123356385149009/987611111509590087">Event Channel</a></br>
         </div>
     `, eventsTab);
+
+    // Add the tutorials section within the general information section
+    const tutorialsContainer = document.getElementById('tutorials');
+    TB.generateCollapsibleSection("Tutorials / Knowledge base on MSFS soaring and group flights", `
+        <p>Great resources that will get you up to speed on soaring in MSFS and joining group flights!</p>
+        <ul>
+            <li><a href="https://discord.com/channels/793376245915189268/1097520643580362753/1097520937701736529" target="_blank">GotGravel - The Beginner's Guide to Soaring Events</a></li>
+            <li><a href="https://discord.com/channels/876123356385149009/1038819881396744285" target="_blank">SSC - How to join our Group Flights</a></li>
+        </ul>
+    `, tutorialsContainer);
+
     events.forEach(event => {
         const eventDate = new Date(event.EventDate);
         const localEventDate = eventDate.toLocaleString(navigator.language, {
@@ -283,7 +295,7 @@ function displayEvents(events) {
             <p>${TB.convertToMarkdown(event.Comments)}</p>
             ${soaringInfo}
             <p><strong>Event meetup time:</strong> ${localEventDate} local</p>
-            <p><a href="${moreInfoLink}" target="_blank">More info on this group event</a></p>
+            <p><a href="${moreInfoLink}" target="_blank">More Info</a></p>
             ${taskButton}
         `;
 
