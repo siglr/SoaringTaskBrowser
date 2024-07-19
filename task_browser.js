@@ -295,6 +295,33 @@ class TaskBrowser {
             <p>Current downloads (PLN or DPHX): ${task.TotDownloads}</p>`;
         tb.generateCollapsibleSection("📁 Files", filesContent, taskDetailContainer);
 
+        // Collapsible Restrictions
+        let restrictionsContent = '<ul>';
+        tb.tbm.b21_task.waypoints.forEach((wp, index) => {
+            const name = wp.name || `Waypoint ${index + 1}`;
+            let restriction = '';
+
+            if (wp.max_alt_m) {
+                restriction += `${name}: MAX ${Math.round(wp.max_alt_m)}m (${Math.round(wp.max_alt_m * 3.28084)}')`;
+            }
+            if (wp.min_alt_m) {
+                restriction += `${name}: MIN ${Math.round(wp.min_alt_m)}m (${Math.round(wp.min_alt_m * 3.28084)}')`;
+            }
+            if (wp.max_alt_m && wp.min_alt_m) {
+                restriction = `${name}: Between ${Math.round(wp.min_alt_m)}m and ${Math.round(wp.max_alt_m)}m (${Math.round(wp.min_alt_m * 3.28084)}' and ${Math.round(wp.max_alt_m * 3.28084)}')`;
+            }
+
+            if (restriction) {
+                restrictionsContent += `<li>${restriction}</li>`;
+            }
+        });
+        restrictionsContent += '</ul>';
+
+        // Only generate the section if there are restrictions
+        if (restrictionsContent !== '<ul></ul>') {
+            tb.generateCollapsibleSection("⚠️ Altitude Restrictions", restrictionsContent, taskDetailContainer);
+        }
+
         // Collapsible Weather Section
         let weatherContent = `
         <p>
