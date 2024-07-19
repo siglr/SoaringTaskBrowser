@@ -51,6 +51,7 @@ function loadTabContent(tabId) {
                 </div>
                 <p>Currently, you can use the tabs above to access the available features that are ready:</p>
                 <ul class="all-links">
+                    <li><a href="#" onclick="TB.switchTab('eventsTab')">(📆) Discover group flight events happening soon</a></li>
                     <li><a href="#" onclick="TB.switchTab('mapTab')">(🌐) Explore tasks on the world map</a></li>
                     <li><a href="#" onclick="TB.switchTab('toolsTab')">(🛠️) View a list of useful tools and other resources for soaring in MSFS</a></li>
                     <li><a href="#" onclick="TB.switchTab('aboutTab')">( ℹ️ ) Learn a bit more about WeSimGlide.org</a></li>
