@@ -235,13 +235,17 @@ class TaskBrowserMap {
                 opacity: 0.7,
                 className: 'task-polyline'
             });
+
+            // Bind popup to the polyline
+            polyline.bindPopup(`${api_task.Title}<br>ID: ${api_task.EntrySeqID}`);
+
             polyline.addTo(tbm.map);
 
             tbm.api_tasks[api_task.EntrySeqID].bounds = polyline.getBounds(); // B21 update - add .bounds to each api_task
 
             tbm.api_tasks[api_task.EntrySeqID].polyline = polyline; // b21 update - add polyline to api_tasks entry
 
-            polyline.on('mouseover', () => { tbm.highlightTask(tbm, api_task.EntrySeqID); });
+            polyline.on('mouseover', (e) => { tbm.highlightTask(tbm, api_task.EntrySeqID, e); });
 
             polyline.on('mouseout', () => { tbm.unhighlightTask(tbm, api_task.EntrySeqID); });
 
@@ -251,10 +255,18 @@ class TaskBrowserMap {
         }
     }
 
-    highlightTask(tbm, entrySeqID) {
+    highlightTask(tbm, entrySeqID, event) {
         // Only highlight if it's not the currently selected task
         if (tbm.currentEntrySeqID !== entrySeqID) {
             tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#9900cc', weight: tbm.hoverWeight });
+
+            // Calculate the offset position for the popup
+            const offset = L.point(10, -10); // Adjust these values as needed
+            const popupPosition = tbm.map.layerPointToLatLng(tbm.map.latLngToLayerPoint(event.latlng).add(offset));
+
+            // Open the popup at the offset position
+            const popup = tbm.api_tasks[entrySeqID].polyline.getPopup();
+            popup.setLatLng(popupPosition).openOn(tbm.map);
         }
     }
 
@@ -262,6 +274,7 @@ class TaskBrowserMap {
         // Only unhighlight if it's not the currently selected task
         if (tbm.currentEntrySeqID !== entrySeqID) {
             tbm.api_tasks[entrySeqID].polyline.setStyle({ color: '#ff7800', weight: tbm.defWeight });
+            tbm.api_tasks[entrySeqID].polyline.closePopup(); // Close popup
         }
     }
 
