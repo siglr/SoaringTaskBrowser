@@ -66,7 +66,11 @@ function loadTabContent(tabId) {
                 <div class="header-container">
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
                     <h2>Group Soaring Events</h2>
-                </div>`;
+                </div>
+                <div id="eventsGeneralInfoSection"></div>
+                <button id="refreshButton" class="button-style">↻ Refresh Events</button>
+                <div id="eventsList"></div>
+                `;
             break;
         case 'listTab':
             content = `
@@ -218,8 +222,8 @@ function fetchAndDisplayEvents() {
         .catch(error => console.error('Error fetching events:', error));
 }
 
-function displayEvents(events) {
-    const eventsTab = document.getElementById('eventsTab');
+function displayEventsStaticPortion() {
+    const eventsTabGeneralInfo = document.getElementById('eventsGeneralInfoSection');
 
     // Add static general information collapsible section
     TB.generateCollapsibleSection("Global Schedule & Information", `
@@ -253,7 +257,7 @@ function displayEvents(events) {
             <h3>Saturday</h3>
             🕔 17:45 UTC: SSC Saturday <em>(Daylight saving time)</em> - <a href="discord://discord.com/channels/876123356385149009/987611111509590087">Event Channel</a></br>
         </div>
-    `, eventsTab);
+    `, eventsTabGeneralInfo);
 
     // Add the tutorials section within the general information section
     const tutorialsContainer = document.getElementById('tutorials');
@@ -275,10 +279,17 @@ function displayEvents(events) {
             <li><strong>UK Virtual Gliding Association</strong> (UKVGA Discord): <a href="discord://discord.gg/9PtUtaH9tz" target="_blank">https://discord.gg/9PtUtaH9tz</a></li>
             <li><strong>Planeur France FS2020</strong>: <a href="discord://discord.gg/h2GuWXJaGK" target="_blank">https://discord.gg/h2GuWXJaGK</a></li>
         </ul>
-    `, tutorialsContainer);
+    `, invitesContainer);
+}
+
+function displayEvents(events) {
+    const eventsTabEventsList = document.getElementById('eventsList');
 
     events.forEach(event => {
-        const eventDate = new Date(event.EventDate + ' UTC');
+        // Ensure the date is parsed correctly as UTC
+        const eventDate = new Date(event.EventDate.replace(' ', 'T') + 'Z'); // Ensure the date is ISO format and UTC
+
+        // Convert to local time zone
         const localEventDate = eventDate.toLocaleString(navigator.language, {
             month: 'long',
             day: 'numeric',
@@ -318,7 +329,7 @@ function displayEvents(events) {
             ${taskButton}
         `;
 
-        TB.generateCollapsibleSection(`📆 ${dayOfWeek}, ${localEventDate} : ${event.Title}`, eventContent, eventsTab);
+        TB.generateCollapsibleSection(`📆 ${dayOfWeek}, ${localEventDate} : ${event.Title}`, eventContent, eventsList);
     });
 
     // Add this function to handle the tab switch and task selection
@@ -326,6 +337,7 @@ function displayEvents(events) {
         TB.switchTab('mapTab'); // Switch to the map tab
         TB.tbm.selectTaskFromURL(entrySeqID); // Select the task on the map
     };
+
 }
 
 // Call fetchAndDisplayEvents when the events tab is switched to
@@ -335,7 +347,13 @@ TB.switchTab = function (tabId) {
     if (!tabContent.innerHTML) {
         loadTabContent(tabId);
         if (tabId === 'eventsTab') {
+            displayEventsStaticPortion();
             fetchAndDisplayEvents();
+            // Refresh events function
+            document.getElementById('refreshButton').addEventListener('click', () => {
+                document.getElementById('eventsList').innerHTML = ''; // Clear the events list
+                fetchAndDisplayEvents(); // Fetch and display updated events
+            });
         }
     }
 
