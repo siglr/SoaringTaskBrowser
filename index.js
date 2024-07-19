@@ -64,12 +64,8 @@ function loadTabContent(tabId) {
             content = `
                 <div class="header-container">
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
-                    <h2>Soon you will find soaring events here!</h2>
-                </div>
-                <p>Tell us what you would like to see.</p>
-                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
-                    <button class="button-style">Go to our Discord</button>
-                </a>`;
+                    <h2>Group Soaring Events</h2>
+                </div>`;
             break;
         case 'listTab':
             content = `
@@ -207,11 +203,109 @@ https://flightsim.to/file/77471/160-soaring-weather-presets
     document.getElementById(tabId).innerHTML = content;
 }
 
+function fetchAndDisplayEvents() {
+    fetch('php/RetrieveNewsWSG.php?newsType=1')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const events = data.data;
+                displayEvents(events);
+            } else {
+                console.error('Error fetching events:', data.message);
+            }
+        })
+        .catch(error => console.error('Error fetching events:', error));
+}
+
+function displayEvents(events) {
+    const eventsTab = document.getElementById('eventsTab');
+
+    // Add static general information collapsible section
+    TB.generateCollapsibleSection("Global Schedule & Information", `
+        <div class="general-info">
+            <p>Welcome to the heart of our soaring communities! In this channel, you'll discover a comprehensive weekly schedule of group flights held by the various Discord communities, meticulously organized for enthusiasts across different time zones.</p>
+            <h2>What's Inside:</h2>
+            <ul>
+                <li>A global calendar of all known group events from various soaring club channels, updated weekly.</li>
+                <li>Quick reference to help you align with events, regardless of where you are in the world.</li>
+            </ul>
+            <h3>Remember:</h3>
+            <p>While the events are listed in UTC times, these might not always correspond to your local day. Please check the local date and time (for you) usually displayed with the original event for best accuracy. Also, note that during daylight saving time changes, there might be a period with incorrect time indications.</p>
+            <p>Dive into our global schedule and choose your next group flight adventure!</p>
+            <h2>General Weekly Schedule</h2>
+            <h3>Sunday</h3>
+            <p>-</p>
+            <h3>Monday</h3>
+            <p>-</p>
+            <h3>Tuesday</h3>
+            🕘 09:30 UTC: Ausglide Tuesday <em>(Normal time)</em> - <a href="discord://discord.com/channels/876123356385149009/1066655140733517844">Event Channel</a></br>
+            🕕 18:15 UTC: UKVGA Tuesday <em>(Daylight saving time)</em> - <a href="discord://discord.com/channels/325227457445625856/1166042887084048515">Event Channel</a></br>
+            🕦 23:30 UTC: Diamonds Tuesday <em>(Daylight saving time)</em> - <a href="discord://discord.com/channels/793376245915189268/1097353400015921252">Event Channel</a></br>
+            <h3>Wednesday</h3>
+            🕔 17:45 UTC: SSC Wednesday <em>(Daylight saving time)</em> - <a href="discord://discord.com/channels/876123356385149009/1128345453063327835">Event Channel</a></br>
+            <h3>Thursday</h3>
+            🕕 18:15 UTC: UKVGA Thursday <em>(Daylight saving time)</em> - <a href="discord://discord.com/channels/325227457445625856/1166042920869175357">Event Channel</a></br>
+            <h3>Friday</h3>
+            🕘 21:00 UTC: Friday Soaring Club - <a href="discord://discord.com/channels/793376245915189268/1097354088892596234">Event Channel</a></br>
+            <h3>Saturday</h3>
+            🕔 17:45 UTC: SSC Saturday <em>(Daylight saving time)</em> - <a href="discord://discord.com/channels/876123356385149009/987611111509590087">Event Channel</a></br>
+        </div>
+    `, eventsTab);
+    events.forEach(event => {
+        const eventDate = new Date(event.EventDate);
+        const localEventDate = eventDate.toLocaleString(navigator.language, {
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+        });
+
+        const dayOfWeek = eventDate.toLocaleDateString(navigator.language, { weekday: 'long' });
+
+        let moreInfoLink = event.URLToGo;
+        if (moreInfoLink.includes("discord.com")) {
+            moreInfoLink = moreInfoLink.replace("https://", "discord://");
+        }
+
+        let soaringInfo = "<em>The task has not been published yet.</em>";
+        let taskButton = "";
+
+        if (event.EntrySeqID) {
+            soaringInfo = `
+                ↗️ ${event.SoaringRidge ? 'Ridge' : ''}${event.SoaringThermals ? ' Thermals' : ''}${event.SoaringWaves ? ' Waves' : ''}${event.SoaringDynamic ? ' Dynamic' : ''} ${TB.addDetailWithinBrackets(event.SoaringExtraInfo)}<br>
+                ⏳ ${TB.formatDuration(event.DurationMin, event.DurationMax)} ${TB.addDetailWithinBrackets(event.DurationExtraInfo)}<br>
+            `;
+            taskButton = `<button class="button-style" onclick="switchToMapAndSelectTask(${event.EntrySeqID})">View task on map</button>`;
+        }
+
+        const eventContent = `
+            <h3>${event.Subtitle}</h3>
+            <p>${TB.convertToMarkdown(event.Comments)}</p>
+            ${soaringInfo}
+            <p><strong>Event meetup time:</strong> ${localEventDate} local</p>
+            <p><a href="${moreInfoLink}" target="_blank">More Info</a></p>
+            ${taskButton}
+        `;
+
+        TB.generateCollapsibleSection(`📆 ${dayOfWeek}, ${localEventDate} : ${event.Title}`, eventContent, eventsTab);
+    });
+
+    // Add this function to handle the tab switch and task selection
+    window.switchToMapAndSelectTask = function (entrySeqID) {
+        TB.switchTab('mapTab'); // Switch to the map tab
+        TB.tbm.selectTaskFromURL(entrySeqID); // Select the task on the map
+    };
+}
+
+// Call fetchAndDisplayEvents when the events tab is switched to
 TB.switchTab = function (tabId) {
     // Load content if it hasn't been loaded yet
     const tabContent = document.getElementById(tabId);
     if (!tabContent.innerHTML) {
         loadTabContent(tabId);
+        if (tabId === 'eventsTab') {
+            fetchAndDisplayEvents();
+        }
     }
 
     // Switch tabs
