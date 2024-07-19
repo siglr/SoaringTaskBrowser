@@ -232,7 +232,8 @@ class TaskBrowser {
         const lastUpdateDescription = task.LastUpdateDescription ? ` (${task.LastUpdateDescription})` : "";
         lastUpdateInfo = `Last update: ${lastUpdateFormatted}${lastUpdateDescription}`;
 
-        taskDetailContainer.innerHTML = `
+        // Create the task details HTML
+        let taskDetailsHtml = `
             <div class="task-details markdown-content">
                 <div class="task-header">
                     <span class="task-number">#${task.EntrySeqID}</span>
@@ -247,12 +248,26 @@ class TaskBrowser {
                 ↗️ ${task.SoaringRidge ? 'Ridge' : ''}${task.SoaringThermals ? ' Thermals' : ''}${task.SoaringWaves ? ' Waves' : ''}${task.SoaringDynamic ? ' Dynamic' : ''} ${tb.addDetailWithinBrackets(task.SoaringExtraInfo)}<br>
                 📏 ${task.TaskDistance} km task (${task.TotalDistance} km total)<br>
                 ⏳ ${tb.formatDuration(task.DurationMin, task.DurationMax)} ${tb.addDetailWithinBrackets(task.DurationExtraInfo)}<br>
+                `;
+
+        // Check and add AAT minimum time if available
+        if (TB.tbm.b21_task && TB.tbm.b21_task.aat_min_time_s) {
+            const aatMinTime = TB.tbm.b21_task.aat_min_time_s;
+            const hours = Math.floor(aatMinTime / 3600);
+            const minutes = Math.floor((aatMinTime % 3600) / 60);
+            const formattedAatMinTime = `⚠️ AAT with a minimum duration of ${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+            taskDetailsHtml += `${formattedAatMinTime}<br>`;
+        }
+
+        taskDetailsHtml += `
                 ✈️ ${task.RecommendedGliders}<br>
                 🎚 ${tb.formatDifficultyRating(task.DifficultyRating, task.DifficultyExtraInfo)}
                 <p>${task.Credits}</p>
                 ${task.RepostText ? tb.addDetailLineWithoutBreak('', tb.convertToMarkdown(task.RepostText)) : ''}
                 <p>${lastUpdateInfo}</p>
             </div>`;
+
+        taskDetailContainer.innerHTML = taskDetailsHtml
 
         // Collapsible Full Description
         if (task.LongDescription) {
