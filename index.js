@@ -264,7 +264,7 @@ function displayEvents(events) {
     `, tutorialsContainer);
 
     events.forEach(event => {
-        const eventDate = new Date(event.EventDate);
+        const eventDate = new Date(event.EventDate + ' UTC');
         const localEventDate = eventDate.toLocaleString(navigator.language, {
             month: 'long',
             day: 'numeric',
