@@ -258,8 +258,8 @@ function displayEvents(events) {
     TB.generateCollapsibleSection("Tutorials / Knowledge base on MSFS soaring and group flights", `
         <p>Great resources that will get you up to speed on soaring in MSFS and joining group flights!</p>
         <ul>
-            <li><a href="https://discord.com/channels/793376245915189268/1097520643580362753/1097520937701736529" target="_blank">GotGravel - The Beginner's Guide to Soaring Events</a></li>
-            <li><a href="https://discord.com/channels/876123356385149009/1038819881396744285" target="_blank">SSC - How to join our Group Flights</a></li>
+            <li><a href="discord://discord.com/channels/793376245915189268/1097520643580362753/1097520937701736529" target="_blank">GotGravel - The Beginner's Guide to Soaring Events</a></li>
+            <li><a href="discord://discord.com/channels/876123356385149009/1038819881396744285" target="_blank">SSC - How to join our Group Flights</a></li>
         </ul>
     `, tutorialsContainer);
 
