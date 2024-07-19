@@ -220,11 +220,8 @@ class TaskBrowser {
         }
     }
 
-    showTaskDetailsStandalone(task) {
+    generateTaskDetailsMainSection(task) {
         let tb = this;
-        console.log("showTaskDetailsStandalone", task);
-        const taskDetailContainer = document.getElementById("taskDetailContainer");
-        tb.currentTask = task; // Save the current task for download use
 
         // Format the last update date/time and description if present
         let lastUpdateInfo = "";
@@ -251,8 +248,8 @@ class TaskBrowser {
                 `;
 
         // Check and add AAT minimum time if available
-        if (TB.tbm.b21_task && TB.tbm.b21_task.aat_min_time_s) {
-            const aatMinTime = TB.tbm.b21_task.aat_min_time_s;
+        if (tb.tbm.b21_task && tb.tbm.b21_task.aat_min_time_s) {
+            const aatMinTime = tb.tbm.b21_task.aat_min_time_s;
             const hours = Math.floor(aatMinTime / 3600);
             const minutes = Math.floor((aatMinTime % 3600) / 60);
             const formattedAatMinTime = `⚠️ AAT with a minimum duration of ${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
@@ -267,8 +264,11 @@ class TaskBrowser {
                 <p>${lastUpdateInfo}</p>
             </div>`;
 
-        taskDetailContainer.innerHTML = taskDetailsHtml
+        return taskDetailsHtml;
+    }
 
+    generateTaskDetailsFullDescription(task) {
+        let tb = this;
         // Collapsible Full Description
         if (task.LongDescription) {
             tb.generateCollapsibleSection("📖 Full Description", tb.convertToMarkdown(task.LongDescription), taskDetailContainer);
@@ -283,6 +283,25 @@ class TaskBrowser {
             </ul>`;
         tb.generateCollapsibleSection("🔗 Links", linksContent, taskDetailContainer);
 
+    }
+
+    generateTaskDetailsLinks(task) {
+        let tb = this;
+
+        // Collapsible Links
+        let linksContent = `
+            <ul>
+                <li><a href="#" onclick="TB.copyTextToClipboard('https://wesimglide.org/index.html?task=${task.EntrySeqID}')">Share this task (copy link to clipboard)</a></li>
+                <li><a href="discord://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord app</a></li>
+                <li><a href="https://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord (web version)</a></li>
+            </ul>`;
+        tb.generateCollapsibleSection("🔗 Links", linksContent, taskDetailContainer);
+
+    }
+
+    generateTaskDetailsFiles(task) {
+        let tb = this;
+
         // Collapsible Files
         let filesContent = `
             <p><strong>Option 1:</strong> Download the single package DPHX file for use with the <a href="https://flightsim.to/file/62573/msfs-soaring-task-tools-dphx-unpack-load" target="_blank">DPHX Unpack & Load tool</a></p>
@@ -295,6 +314,10 @@ class TaskBrowser {
             <p>Current downloads (PLN or DPHX): ${task.TotDownloads}</p>`;
         tb.generateCollapsibleSection("📁 Files", filesContent, taskDetailContainer);
 
+    }
+
+    generateTaskDetailsRestriction(task) {
+        let tb = this;
         // Collapsible Restrictions
         let restrictionsContent = '<ul>';
         tb.tbm.b21_task.waypoints.forEach((wp, index) => {
@@ -321,13 +344,31 @@ class TaskBrowser {
         if (restrictionsContent !== '<ul></ul>') {
             tb.generateCollapsibleSection("⚠️ Altitude Restrictions", restrictionsContent, taskDetailContainer);
         }
+    }
 
+    generateTaskDetailsWeather(task) {
+        let tb = this;
         // Collapsible Weather Section
         let weatherContent = `
         <p>
             <img src="https://siglr.com/DiscordPostHelper/TaskBrowser/WeatherCharts/${task.EntrySeqID}.jpg" class="weather-image" onclick="TB.showImageModal(this.src)" />
         </p>`;
         tb.generateCollapsibleSection("🌥 Weather", weatherContent, taskDetailContainer);
+    }
+
+    showTaskDetailsStandalone(task) {
+        let tb = this;
+        console.log("showTaskDetailsStandalone", task);
+        const taskDetailContainer = document.getElementById("taskDetailContainer");
+        tb.currentTask = task; // Save the current task for download use
+
+        taskDetailContainer.innerHTML = tb.generateTaskDetailsMainSection(task);
+        tb.generateTaskDetailsFullDescription(task);
+        tb.generateTaskDetailsLinks(task);
+        tb.generateTaskDetailsFiles(task);
+        tb.generateTaskDetailsRestriction(task);
+        tb.generateTaskDetailsWeather(task);
+
         // Add the "Deselect Task" button
         let deselectButton = document.createElement('button');
         deselectButton.innerText = "Deselect Task";
