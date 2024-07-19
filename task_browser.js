@@ -273,16 +273,6 @@ class TaskBrowser {
         if (task.LongDescription) {
             tb.generateCollapsibleSection("📖 Full Description", tb.convertToMarkdown(task.LongDescription), taskDetailContainer);
         }
-
-        // Collapsible Links
-        let linksContent = `
-            <ul>
-                <li><a href="#" onclick="TB.copyTextToClipboard('https://wesimglide.org/index.html?task=${task.EntrySeqID}')">Share this task (copy link to clipboard)</a></li>
-                <li><a href="discord://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord app</a></li>
-                <li><a href="https://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord (web version)</a></li>
-            </ul>`;
-        tb.generateCollapsibleSection("🔗 Links", linksContent, taskDetailContainer);
-
     }
 
     generateTaskDetailsLinks(task) {
