@@ -234,6 +234,7 @@ function displayEvents(events) {
             <p>While the events are listed in UTC times, these might not always correspond to your local day. Please check the local date and time (for you) usually displayed with the original event for best accuracy. Also, note that during daylight saving time changes, there might be a period with incorrect time indications.</p>
             <p>Dive into our global schedule and choose your next group flight adventure!</p>
             <div id="tutorials"></div>
+            <div id="invites"></div>
             <h2>General Weekly Schedule</h2>
             <h3>Sunday</h3>
             <p>-</p>
@@ -261,6 +262,18 @@ function displayEvents(events) {
         <ul>
             <li><a href="https://discord.com/channels/793376245915189268/1097520643580362753/1097520937701736529" target="_blank">GotGravel - The Beginner's Guide to Soaring Events</a></li>
             <li><a href="https://discord.com/channels/876123356385149009/1038819881396744285" target="_blank">SSC - How to join our Group Flights</a></li>
+        </ul>
+    `, tutorialsContainer);
+
+    // Add the invites section within the general information section
+    const invitesContainer = document.getElementById('invites');
+    TB.generateCollapsibleSection("Discord Club Invites", `
+        <p>To gain access to the several club events listed on the Hub, you will first need to register on their Discord server. Here are invite links to do so.</p>
+        <ul>
+            <li><strong>AusGlide</strong> and <strong>Sim Soaring Club</strong> (on same SSC Discord): <a href="discord://discord.gg/h9H2MZyrg2" target="_blank">https://discord.gg/h9H2MZyrg2</a></li>
+            <li><strong>💎 Diamonds</strong> and <strong>Friday Soaring Club</strong> (on same SSC Discord): <a href="discord://discord.gg/got-gravel-793376245915189268" target="_blank">https://discord.gg/got-gravel-793376245915189268</a></li>
+            <li><strong>UK Virtual Gliding Association</strong> (UKVGA Discord): <a href="discord://discord.gg/9PtUtaH9tz" target="_blank">https://discord.gg/9PtUtaH9tz</a></li>
+            <li><strong>Planeur France FS2020</strong>: <a href="discord://discord.gg/h2GuWXJaGK" target="_blank">https://discord.gg/h2GuWXJaGK</a></li>
         </ul>
     `, tutorialsContainer);
 
