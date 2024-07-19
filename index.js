@@ -258,8 +258,8 @@ function displayEvents(events) {
     TB.generateCollapsibleSection("Tutorials / Knowledge base on MSFS soaring and group flights", `
         <p>Great resources that will get you up to speed on soaring in MSFS and joining group flights!</p>
         <ul>
-            <li><a href="discord://discord.com/channels/793376245915189268/1097520643580362753/1097520937701736529" target="_blank">GotGravel - The Beginner's Guide to Soaring Events</a></li>
-            <li><a href="discord://discord.com/channels/876123356385149009/1038819881396744285" target="_blank">SSC - How to join our Group Flights</a></li>
+            <li><a href="https://discord.com/channels/793376245915189268/1097520643580362753/1097520937701736529" target="_blank">GotGravel - The Beginner's Guide to Soaring Events</a></li>
+            <li><a href="https://discord.com/channels/876123356385149009/1038819881396744285" target="_blank">SSC - How to join our Group Flights</a></li>
         </ul>
     `, tutorialsContainer);
 
@@ -275,12 +275,13 @@ function displayEvents(events) {
         const dayOfWeek = eventDate.toLocaleDateString(navigator.language, { weekday: 'long' });
 
         let moreInfoLink = event.URLToGo;
-        if (moreInfoLink.includes("discord.com")) {
+        if (moreInfoLink && moreInfoLink.includes("discord.com")) {
             moreInfoLink = moreInfoLink.replace("https://", "discord://");
         }
 
         let soaringInfo = "<em>The task has not been published yet.</em>";
         let taskButton = "";
+        let moreInfoContent = "";
 
         if (event.EntrySeqID) {
             soaringInfo = `
@@ -290,12 +291,16 @@ function displayEvents(events) {
             taskButton = `<button class="button-style" onclick="switchToMapAndSelectTask(${event.EntrySeqID})">View task on map</button>`;
         }
 
+        if (moreInfoLink) {
+            moreInfoContent = `<p><a href="${moreInfoLink}" target="_blank">More info on this group event</a></p>`;
+        }
+
         const eventContent = `
             <h3>${event.Subtitle}</h3>
             <p>${TB.convertToMarkdown(event.Comments)}</p>
             ${soaringInfo}
             <p><strong>Event meetup time:</strong> ${localEventDate} local</p>
-            <p><a href="${moreInfoLink}" target="_blank">More Info</a></p>
+            ${moreInfoContent}
             ${taskButton}
         `;
 
