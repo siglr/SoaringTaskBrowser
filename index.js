@@ -283,7 +283,7 @@ function displayEvents(events) {
             <p>${TB.convertToMarkdown(event.Comments)}</p>
             ${soaringInfo}
             <p><strong>Event meetup time:</strong> ${localEventDate} local</p>
-            <p><a href="${moreInfoLink}" target="_blank">More Info</a></p>
+            <p><a href="${moreInfoLink}" target="_blank">More info on the group event</a></p>
             ${taskButton}
         `;
 
