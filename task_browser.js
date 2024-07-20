@@ -26,6 +26,7 @@ class TaskBrowser {
         };
         tb.initCountryCodes();
         tb.userSettings = tb.loadUserSettings();
+        tb.userMapSettings = tb.loadMapUserSettings();
     }
 
     initCountryCodes() {
@@ -761,6 +762,32 @@ class TaskBrowser {
         return 0;
     }
 
+    saveMapUserSettings() {
+        const tb = this;
+        const settings = {
+            mapLayer: tb.tbm.getCurrentMapLayer(),
+            showAirports: tb.tbm.isLayerVisible('Airports'),
+            showRailways: tb.tbm.isLayerVisible('Railways'),
+            windCompass: tb.tbm.isLayerVisible('Wind Compass'),
+            showSelectedOnly: tb.tbm.isLayerVisible('Show selected only'),
+            splitterPosition: tb.getSplitterPosition()
+        };
+        tb.setJsonCookie('mapUserSettings', settings, 300);
+    }
+
+    loadMapUserSettings() {
+        const tb = this;
+        const settings = tb.getJsonCookie('mapUserSettings', 300);
+        if (settings) {
+            tb.tbm.setMapLayer(settings.mapLayer);
+            tb.tbm.setLayerVisibility('Airports', settings.showAirports);
+            tb.tbm.setLayerVisibility('Railways', settings.showRailways);
+            tb.tbm.setLayerVisibility('Wind Compass', settings.windCompass);
+            tb.tbm.setLayerVisibility('Show selected only', settings.showSelectedOnly);
+            tb.setSplitterPosition(settings.splitterPosition);
+        }
+    }
+
     loadUserSettings() {
         const tb = this;
         const settings = tb.getJsonCookie('userSettings', 300);
@@ -776,13 +803,6 @@ class TaskBrowser {
             pressure: 'inHg',
             temperature: 'fahrenheit'
         };
-
-        tb.tbm.setMapLayer(settings.mapLayer);
-        tb.tbm.setLayerVisibility('Airports', settings.showAirports);
-        tb.tbm.setLayerVisibility('Railways', settings.showRailways);
-        tb.tbm.setLayerVisibility('Wind Compass', settings.windCompass);
-        tb.tbm.setLayerVisibility('Show selected only', settings.showSelectedOnly);
-        tb.setSplitterPosition(settings.splitterPosition);
 
         // Merge default settings with saved settings
         const mergedSettings = { ...defaultSettings, ...settings };
@@ -810,12 +830,6 @@ class TaskBrowser {
     saveUserSettings() {
         const tb = this;
         const settings = {
-            mapLayer: tb.tbm.getCurrentMapLayer(),
-            showAirports: tb.tbm.isLayerVisible('Airports'),
-            showRailways: tb.tbm.isLayerVisible('Railways'),
-            windCompass: tb.tbm.isLayerVisible('Wind Compass'),
-            showSelectedOnly: tb.tbm.isLayerVisible('Show selected only'),
-            splitterPosition: tb.getSplitterPosition(),
             uiTheme: document.querySelector('input[name="uiTheme"]:checked').value,
             timeFormat: document.querySelector('input[name="timeFormat"]:checked').value,
             altitude: document.querySelector('input[name="altitude"]:checked').value,
