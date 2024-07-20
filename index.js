@@ -275,17 +275,19 @@ function displayEventsStaticPortion() {
 
 function displayEvents(events) {
     const eventsTabEventsList = document.getElementById('eventsList');
+    const settings = TB.getJsonCookie('userSettings', 300);
+    const timeFormat = settings?.timeFormat || 'usa'; // Default to 12 hours if not set
 
     events.forEach(event => {
         // Ensure the date is parsed correctly as UTC
         const eventDate = new Date(event.EventDate.replace(' ', 'T') + 'Z'); // Ensure the date is ISO format and UTC
 
-        // Convert to local time zone
         const localEventDate = eventDate.toLocaleString(navigator.language, {
             month: 'long',
             day: 'numeric',
             hour: 'numeric',
-            minute: 'numeric'
+            minute: 'numeric',
+            hour12: timeFormat === 'usa'
         });
 
         const dayOfWeek = eventDate.toLocaleDateString(navigator.language, { weekday: 'long' });

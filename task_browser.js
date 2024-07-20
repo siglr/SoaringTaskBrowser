@@ -755,6 +755,8 @@ class TaskBrowser {
 
         // Default settings
         const defaultSettings = {
+            uiTheme: 'dark',
+            timeFormat: 'usa',
             altitude: 'imperial',
             distance: 'imperial',
             gateMeasurement: 'imperial',
@@ -767,6 +769,8 @@ class TaskBrowser {
         const mergedSettings = { ...defaultSettings, ...settings };
 
         // Set the radio buttons based on the settings
+        document.querySelector(`input[name="uiTheme"][value="${mergedSettings.uiTheme}"]`).checked = true;
+        document.querySelector(`input[name="timeFormat"][value="${mergedSettings.timeFormat}"]`).checked = true;
         document.querySelector(`input[name="altitude"][value="${mergedSettings.altitude}"]`).checked = true;
         document.querySelector(`input[name="distance"][value="${mergedSettings.distance}"]`).checked = true;
         document.querySelector(`input[name="gateMeasurement"][value="${mergedSettings.gateMeasurement}"]`).checked = true;
@@ -785,6 +789,8 @@ class TaskBrowser {
     saveUserSettings() {
         const tb = this;
         const settings = {
+            uiTheme: document.querySelector('input[name="uiTheme"]:checked').value,
+            timeFormat: document.querySelector('input[name="timeFormat"]:checked').value,
             altitude: document.querySelector('input[name="altitude"]:checked').value,
             distance: document.querySelector('input[name="distance"]:checked').value,
             gateMeasurement: document.querySelector('input[name="gateMeasurement"]:checked').value,
