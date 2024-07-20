@@ -777,6 +777,13 @@ class TaskBrowser {
             temperature: 'fahrenheit'
         };
 
+        tb.tbm.setMapLayer(settings.mapLayer);
+        tb.tbm.setLayerVisibility('Airports', settings.showAirports);
+        tb.tbm.setLayerVisibility('Railways', settings.showRailways);
+        tb.tbm.setLayerVisibility('Wind Compass', settings.windCompass);
+        tb.tbm.setLayerVisibility('Show selected only', settings.showSelectedOnly);
+        tb.setSplitterPosition(settings.splitterPosition);
+
         // Merge default settings with saved settings
         const mergedSettings = { ...defaultSettings, ...settings };
 
@@ -803,6 +810,12 @@ class TaskBrowser {
     saveUserSettings() {
         const tb = this;
         const settings = {
+            mapLayer: tb.tbm.getCurrentMapLayer(),
+            showAirports: tb.tbm.isLayerVisible('Airports'),
+            showRailways: tb.tbm.isLayerVisible('Railways'),
+            windCompass: tb.tbm.isLayerVisible('Wind Compass'),
+            showSelectedOnly: tb.tbm.isLayerVisible('Show selected only'),
+            splitterPosition: tb.getSplitterPosition(),
             uiTheme: document.querySelector('input[name="uiTheme"]:checked').value,
             timeFormat: document.querySelector('input[name="timeFormat"]:checked').value,
             altitude: document.querySelector('input[name="altitude"]:checked').value,
