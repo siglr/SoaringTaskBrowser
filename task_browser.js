@@ -191,9 +191,10 @@ class TaskBrowser {
     }
 
     formatSimDateTime(simDateTime, includeYear, appendLocalInMSFS = true, convertToLocal = false) {
+        const timeFormat = this.userSettings.timeFormat || 'usa';
         const options = includeYear
-            ? { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }
-            : { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+            ? { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: timeFormat === 'usa' }
+            : { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: timeFormat === 'usa' };
 
         let date = new Date(simDateTime);
         if (convertToLocal) {
