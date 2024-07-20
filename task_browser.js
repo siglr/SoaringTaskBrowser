@@ -25,7 +25,7 @@ class TaskBrowser {
             'Virgin Islands - British': 'British Virgin Islands'
         };
         tb.initCountryCodes();
-        tb.loadUserSettings();
+        tb.userSettings = tb.loadUserSettings();
     }
 
     initCountryCodes() {
@@ -229,6 +229,18 @@ class TaskBrowser {
         const lastUpdateDescription = task.LastUpdateDescription ? ` (${task.LastUpdateDescription})` : "";
         lastUpdateInfo = `Last update: ${lastUpdateFormatted}${lastUpdateDescription}`;
 
+        // Get user settings for distance
+        const distanceUnit = tb.userSettings.distance || 'imperial';
+        let taskDistance = task.TaskDistance;
+        let totalDistance = task.TotalDistance;
+        let distanceUnitLabel = 'km';
+
+        if (distanceUnit === 'imperial') {
+            taskDistance = (task.TaskDistance * 0.621371).toFixed(0); // Convert km to miles
+            totalDistance = (task.TotalDistance * 0.621371).toFixed(0); // Convert km to miles
+            distanceUnitLabel = 'miles';
+        }
+
         // Create the task details HTML
         let taskDetailsHtml = `
             <div class="task-details markdown-content">
@@ -243,7 +255,7 @@ class TaskBrowser {
                 🛬 ${task.ArrivalICAO} ${task.ArrivalName} ${this.addDetailWithinBrackets(task.ArrivalExtra)}<br>
                 ⌚ ${tb.formatSimDateTime(task.SimDateTime, task.IncludeYear)} ${tb.addDetailWithinBrackets(task.SimDateTimeExtraInfo)}<br>
                 ↗️ ${task.SoaringRidge ? 'Ridge' : ''}${task.SoaringThermals ? ' Thermals' : ''}${task.SoaringWaves ? ' Waves' : ''}${task.SoaringDynamic ? ' Dynamic' : ''} ${tb.addDetailWithinBrackets(task.SoaringExtraInfo)}<br>
-                📏 ${task.TaskDistance} km task (${task.TotalDistance} km total)<br>
+                📏 ${taskDistance} ${distanceUnitLabel} task (${totalDistance} ${distanceUnitLabel} total)<br>
                 ⏳ ${tb.formatDuration(task.DurationMin, task.DurationMax)} ${tb.addDetailWithinBrackets(task.DurationExtraInfo)}<br>
                 `;
 
@@ -784,6 +796,8 @@ class TaskBrowser {
                 tb.saveUserSettings();
             });
         });
+
+        return mergedSettings;
     }
 
     saveUserSettings() {
@@ -799,6 +813,7 @@ class TaskBrowser {
             temperature: document.querySelector('input[name="temperature"]:checked').value
         };
         tb.setJsonCookie('userSettings', settings, 300);
+        tb.userSettings = settings;
     }
 
     getSplitterPosition() {

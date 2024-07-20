@@ -275,7 +275,7 @@ function displayEventsStaticPortion() {
 
 function displayEvents(events) {
     const eventsTabEventsList = document.getElementById('eventsList');
-    const settings = TB.getJsonCookie('userSettings', 300);
+    const settings = TB.userSettings;
     const timeFormat = settings?.timeFormat || 'usa'; // Default to 12 hours if not set
 
     events.forEach(event => {
