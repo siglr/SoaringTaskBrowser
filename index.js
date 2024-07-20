@@ -54,6 +54,7 @@ function loadTabContent(tabId) {
                     <li><a href="#" onclick="TB.switchTab('eventsTab')">(📆) Discover group flight events happening soon</a></li>
                     <li><a href="#" onclick="TB.switchTab('mapTab')">(🌐) Explore tasks on the world map</a></li>
                     <li><a href="#" onclick="TB.switchTab('toolsTab')">(🛠️) View a list of useful tools and other resources for soaring in MSFS</a></li>
+                    <li><a href="#" onclick="TB.switchTab('settingsTab')">(⚙️) Adjust your display settings here</a></li>
                     <li><a href="#" onclick="TB.switchTab('aboutTab')">( ℹ️ ) Learn a bit more about WeSimGlide.org</a></li>
                 </ul>
                 <p>Tell us what else you would like to see on the home page!</p>

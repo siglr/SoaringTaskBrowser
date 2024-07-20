@@ -321,20 +321,36 @@ class TaskBrowser {
 
     generateTaskDetailsRestriction(task) {
         let tb = this;
-        // Collapsible Restrictions
+        // Get user settings for altitude
+        const altitudeUnit = tb.userSettings.altitude || 'imperial';
         let restrictionsContent = '<ul>';
         tb.tbm.b21_task.waypoints.forEach((wp, index) => {
             const name = wp.name || `Waypoint ${index + 1}`;
             let restriction = '';
 
-            if (wp.max_alt_m) {
-                restriction += `${name}: MAX ${Math.round(wp.max_alt_m)}m (${Math.round(wp.max_alt_m * 3.28084)}')`;
-            }
-            if (wp.min_alt_m) {
-                restriction += `${name}: MIN ${Math.round(wp.min_alt_m)}m (${Math.round(wp.min_alt_m * 3.28084)}')`;
-            }
-            if (wp.max_alt_m && wp.min_alt_m) {
-                restriction = `${name}: Between ${Math.round(wp.min_alt_m)}m and ${Math.round(wp.max_alt_m)}m (${Math.round(wp.min_alt_m * 3.28084)}' and ${Math.round(wp.max_alt_m * 3.28084)}')`;
+            const minAlt = wp.min_alt_m;
+            const maxAlt = wp.max_alt_m;
+
+            if (altitudeUnit === 'imperial') {
+                if (maxAlt) {
+                    restriction += `${name}: MAX ${Math.round(maxAlt * 3.28084)}'`;
+                }
+                if (minAlt) {
+                    restriction += `${name}: MIN ${Math.round(minAlt * 3.28084)}'`;
+                }
+                if (maxAlt && minAlt) {
+                    restriction = `${name}: Between ${Math.round(minAlt * 3.28084)}' and ${Math.round(maxAlt * 3.28084)}'`;
+                }
+            } else {
+                if (maxAlt) {
+                    restriction += `${name}: MAX ${Math.round(maxAlt)} m`;
+                }
+                if (minAlt) {
+                    restriction += `${name}: MIN ${Math.round(minAlt)} m`;
+                }
+                if (maxAlt && minAlt) {
+                    restriction = `${name}: Between ${Math.round(minAlt)} m and ${Math.round(maxAlt)} m`;
+                }
             }
 
             if (restriction) {
@@ -362,6 +378,10 @@ class TaskBrowser {
     generateTaskDetailsWaypoints(task) {
         let tb = this;
 
+        // Get user settings for distance and altitude
+        const distanceUnit = tb.userSettings.distance || 'imperial';
+        const altitudeUnit = tb.userSettings.altitude || 'imperial';
+
         // Create the waypoints content
         let waypointsContent = '';
 
@@ -386,28 +406,35 @@ class TaskBrowser {
             if (prefix === '(D) ' || prefix === '(A) ') {
                 secondLine = `${wp.icao || 'N/A'}${wp.runway ? ' Rwy ' + wp.runway : ''}`;
                 if (wp.leg_distance_m) {
-                    secondLine += ` Dist: ${(wp.leg_distance_m / 1000).toFixed(1)} km`;
+                    secondLine += ` Dist: ${(distanceUnit === 'metric' ? (wp.leg_distance_m / 1000).toFixed(1) + ' km' : (wp.leg_distance_m * 0.000621371).toFixed(1) + ' mi')}`;
                 }
             } else {
                 if (wp.isAAT()) {
                     secondLine += 'AAT - ';
                 }
                 if (wp.radius_m) {
-                    secondLine += `Radius: ${Math.round(wp.radius_m * 3.28084)}' `;
+                    if (distanceUnit === 'metric') {
+                        secondLine += wp.radius_m >= 5000 ? `Radius: ${(wp.radius_m / 1000).toFixed(1)} km ` : `Radius: ${Math.round(wp.radius_m)} m `;
+                    } else {
+                        const radiusFeet = wp.radius_m * 3.28084;
+                        secondLine += radiusFeet >= 5280 ? `Radius: ${(radiusFeet / 5280).toFixed(1)} mi ` : `Radius: ${Math.round(radiusFeet)}' `;
+                    }
                 }
                 if (wp.min_alt_m) {
-                    secondLine += `MIN: ${Math.round(wp.min_alt_m * 3.28084)}' `;
+                    secondLine += altitudeUnit === 'imperial' ? `MIN: ${Math.round(wp.min_alt_m * 3.28084)}' ` : `MIN: ${Math.round(wp.min_alt_m)} m `;
                 }
                 if (wp.max_alt_m) {
-                    secondLine += `MAX: ${Math.round(wp.max_alt_m * 3.28084)}' `;
+                    secondLine += altitudeUnit === 'imperial' ? `MAX: ${Math.round(wp.max_alt_m * 3.28084)}' ` : `MAX: ${Math.round(wp.max_alt_m)} m `;
                 }
                 if (wp.leg_distance_m) {
-                    secondLine += ` Dist: ${(wp.leg_distance_m / 1000).toFixed(1)} km`;
+                    secondLine += distanceUnit === 'metric' ? ` Dist: ${(wp.leg_distance_m / 1000).toFixed(1)} km` : ` Dist: ${(wp.leg_distance_m * 0.000621371).toFixed(1)} mi`;
                 }
             }
 
             // Third line: coordinates and elevation
-            let thirdLine = `Lat: ${wp.position.lat.toFixed(6)} Long: ${wp.position.lng.toFixed(6)} Elev: ${Math.round(wp.alt_m * 3.28084)}'`;
+            let thirdLine = altitudeUnit === 'imperial'
+                ? `Lat: ${wp.position.lat.toFixed(6)} Long: ${wp.position.lng.toFixed(6)} Elev: ${Math.round(wp.alt_m * 3.28084)}'`
+                : `Lat: ${wp.position.lat.toFixed(6)} Long: ${wp.position.lng.toFixed(6)} Elev: ${Math.round(wp.alt_m)} m`;
 
             // Wrap the lines in a div and conditionally add a horizontal line
             waypointsContent += `
