@@ -749,30 +749,50 @@ class TaskBrowser {
         return 0;
     }
 
-    saveUserSettings() {
-        const tb = this;
-        const settings = {
-            mapLayer: tb.tbm.getCurrentMapLayer(),
-            showAirports: tb.tbm.isLayerVisible('Airports'),
-            showRailways: tb.tbm.isLayerVisible('Railways'),
-            windCompass: tb.tbm.isLayerVisible('Wind Compass'),
-            showSelectedOnly: tb.tbm.isLayerVisible('Show selected only'),
-            splitterPosition: tb.getSplitterPosition()
-        };
-        tb.setJsonCookie('userSettings', settings, 300);
-    }
-
     loadUserSettings() {
         const tb = this;
         const settings = tb.getJsonCookie('userSettings', 300);
-        if (settings) {
-            tb.tbm.setMapLayer(settings.mapLayer);
-            tb.tbm.setLayerVisibility('Airports', settings.showAirports);
-            tb.tbm.setLayerVisibility('Railways', settings.showRailways);
-            tb.tbm.setLayerVisibility('Wind Compass', settings.windCompass);
-            tb.tbm.setLayerVisibility('Show selected only', settings.showSelectedOnly);
-            tb.setSplitterPosition(settings.splitterPosition);
-        }
+
+        // Default settings
+        const defaultSettings = {
+            altitude: 'imperial',
+            distance: 'imperial',
+            gateMeasurement: 'imperial',
+            windSpeed: 'knots',
+            pressure: 'inHg',
+            temperature: 'fahrenheit'
+        };
+
+        // Merge default settings with saved settings
+        const mergedSettings = { ...defaultSettings, ...settings };
+
+        // Set the radio buttons based on the settings
+        document.querySelector(`input[name="altitude"][value="${mergedSettings.altitude}"]`).checked = true;
+        document.querySelector(`input[name="distance"][value="${mergedSettings.distance}"]`).checked = true;
+        document.querySelector(`input[name="gateMeasurement"][value="${mergedSettings.gateMeasurement}"]`).checked = true;
+        document.querySelector(`input[name="windSpeed"][value="${mergedSettings.windSpeed}"]`).checked = true;
+        document.querySelector(`input[name="pressure"][value="${mergedSettings.pressure}"]`).checked = true;
+        document.querySelector(`input[name="temperature"][value="${mergedSettings.temperature}"]`).checked = true;
+
+        // Attach change event listeners to save settings when any radio button is changed
+        document.querySelectorAll('#settingsForm input[type="radio"]').forEach(input => {
+            input.addEventListener('change', () => {
+                tb.saveUserSettings();
+            });
+        });
+    }
+
+    saveUserSettings() {
+        const tb = this;
+        const settings = {
+            altitude: document.querySelector('input[name="altitude"]:checked').value,
+            distance: document.querySelector('input[name="distance"]:checked').value,
+            gateMeasurement: document.querySelector('input[name="gateMeasurement"]:checked').value,
+            windSpeed: document.querySelector('input[name="windSpeed"]:checked').value,
+            pressure: document.querySelector('input[name="pressure"]:checked').value,
+            temperature: document.querySelector('input[name="temperature"]:checked').value
+        };
+        tb.setJsonCookie('userSettings', settings, 300);
     }
 
     getSplitterPosition() {

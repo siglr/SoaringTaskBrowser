@@ -164,15 +164,6 @@ https://flightsim.to/file/77471/160-soaring-weather-presets
             }, 0);
             break;
         case 'settingsTab':
-            content = `
-                <div class="header-container">
-                    <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
-                    <h2>Want to customize your settings? Coming soon!</h2>
-                </div>
-                <p>Tell us what you would like to see.</p>
-                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
-                    <button class="button-style">Go to our Discord</button>
-                </a>`;
             break;
         case 'aboutTab':
             content = `

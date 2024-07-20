@@ -44,6 +44,18 @@
                 </div>
                 <form id="settingsForm">
                     <fieldset>
+                        <legend>Theme</legend>
+                        <label><input type="radio" name="uiTheme" value="light"> 24 hours</label>
+                        <label><input type="radio" name="uiTheme" value="dark"> 12 hours (AM/PM)</label>
+                    </fieldset>
+                    <br>
+                    <fieldset>
+                        <legend>Time Format</legend>
+                        <label><input type="radio" name="timeFormat" value="int"> 24 hours</label>
+                        <label><input type="radio" name="timeFormat" value="usa"> 12 hours (AM/PM)</label>
+                    </fieldset>
+                    <br>
+                    <fieldset>
                         <legend>Altitude</legend>
                         <label><input type="radio" name="altitude" value="metric"> Metric (Meters)</label>
                         <label><input type="radio" name="altitude" value="imperial"> Imperial (Feet)</label>
