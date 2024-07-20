@@ -346,6 +346,70 @@ class TaskBrowser {
         tb.generateCollapsibleSection("🌥 Weather", weatherContent, taskDetailContainer);
     }
 
+    generateTaskDetailsWaypoints(task) {
+        let tb = this;
+
+        // Create the waypoints content
+        let waypointsContent = '';
+
+        tb.tbm.b21_task.waypoints.forEach((wp, index) => {
+            // Determine the type prefix
+            let prefix = '';
+            if (index === 0) {
+                prefix = '(D) ';
+            } else if (index === tb.tbm.b21_task.start_index) {
+                prefix = '(S) ';
+            } else if (index === tb.tbm.b21_task.finish_index) {
+                prefix = '(F) ';
+            } else if (index === tb.tbm.b21_task.waypoints.length - 1) {
+                prefix = '(A) ';
+            }
+
+            // First line: name with prefix
+            let firstLine = `<strong>${prefix}${wp.name || `Waypoint ${index + 1}`}</strong>`;
+
+            // Second line: conditional content based on the waypoint type
+            let secondLine = '';
+            if (prefix === '(D) ' || prefix === '(A) ') {
+                secondLine = `${wp.icao || 'N/A'}${wp.runway ? ' Rwy ' + wp.runway : ''}`;
+                if (wp.leg_distance_m) {
+                    secondLine += ` Dist: ${(wp.leg_distance_m / 1000).toFixed(1)} km`;
+                }
+            } else {
+                if (wp.isAAT()) {
+                    secondLine += 'AAT - ';
+                }
+                if (wp.radius_m) {
+                    secondLine += `Radius: ${Math.round(wp.radius_m * 3.28084)}' `;
+                }
+                if (wp.min_alt_m) {
+                    secondLine += `MIN: ${Math.round(wp.min_alt_m * 3.28084)}' `;
+                }
+                if (wp.max_alt_m) {
+                    secondLine += `MAX: ${Math.round(wp.max_alt_m * 3.28084)}' `;
+                }
+                if (wp.leg_distance_m) {
+                    secondLine += ` Dist: ${(wp.leg_distance_m / 1000).toFixed(1)} km`;
+                }
+            }
+
+            // Third line: coordinates and elevation
+            let thirdLine = `Lat: ${wp.position.lat.toFixed(6)} Long: ${wp.position.lng.toFixed(6)} Elev: ${Math.round(wp.alt_m * 3.28084)}'`;
+
+            // Wrap the lines in a div and conditionally add a horizontal line
+            waypointsContent += `
+                <div style="margin: 0; padding: 5px;">
+                    <div>${firstLine}</div>
+                    <div>${secondLine}</div>
+                    <div>${thirdLine}</div>
+                </div>
+                ${index < tb.tbm.b21_task.waypoints.length - 1 ? '<hr style="margin: 5px 0;">' : ''}
+            `;
+        });
+
+        tb.generateCollapsibleSection("🗺️ Waypoints", waypointsContent, taskDetailContainer);
+    }
+
     showTaskDetailsStandalone(task) {
         let tb = this;
         console.log("showTaskDetailsStandalone", task);
@@ -358,6 +422,7 @@ class TaskBrowser {
         tb.generateTaskDetailsFiles(task);
         tb.generateTaskDetailsRestriction(task);
         tb.generateTaskDetailsWeather(task);
+        tb.generateTaskDetailsWaypoints(task);
 
         // Add the "Deselect Task" button
         let deselectButton = document.createElement('button');
