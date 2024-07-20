@@ -37,7 +37,55 @@
             </div>
             <div id="listTab" class="tabContent"></div>
             <div id="toolsTab" class="tabContent"></div>
-            <div id="settingsTab" class="tabContent"></div>
+            <div id="settingsTab" class="tabContent">
+                <div class="header-container">
+                    <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
+                    <h2>Customize Your Settings</h2>
+                </div>
+                <form id="settingsForm">
+                    <fieldset>
+                        <legend>Altitude</legend>
+                        <label><input type="radio" name="altitude" value="metric"> Metric (Meters)</label>
+                        <label><input type="radio" name="altitude" value="imperial"> Imperial (Feet)</label>
+                    </fieldset>
+                    <br>
+                    <fieldset>
+                        <legend>Distance</legend>
+                        <label><input type="radio" name="distance" value="metric"> Metric (Kilometers)</label>
+                        <label><input type="radio" name="distance" value="imperial"> Imperial (Miles)</label>
+                    </fieldset>
+                    <br>
+                    <fieldset>
+                        <legend>Gate Size Format</legend>
+                        <label><input type="radio" name="gateSizeFormat" value="diameter"> Diameter</label>
+                        <label><input type="radio" name="gateSizeFormat" value="radius"> Radius</label>
+                    </fieldset>
+                    <br>
+                    <fieldset>
+                        <legend>Gate Measurement</legend>
+                        <label><input type="radio" name="gateMeasurement" value="metric"> Metric (Meters/Km)</label>
+                        <label><input type="radio" name="gateMeasurement" value="imperial"> Imperial (Feet/Miles)</label>
+                    </fieldset>
+                    <br>
+                    <fieldset>
+                        <legend>Wind Speed</legend>
+                        <label><input type="radio" name="windSpeed" value="mps"> Meters per second</label>
+                        <label><input type="radio" name="windSpeed" value="knots"> Knots</label>
+                    </fieldset>
+                    <br>
+                    <fieldset>
+                        <legend>Barometric Pressure</legend>
+                        <label><input type="radio" name="pressure" value="hPa"> hPa</label>
+                        <label><input type="radio" name="pressure" value="inHg"> inHg</label>
+                    </fieldset>
+                    <br>
+                    <fieldset>
+                        <legend>Temperature</legend>
+                        <label><input type="radio" name="temperature" value="celsius"> Celsius</label>
+                        <label><input type="radio" name="temperature" value="fahrenheit"> Fahrenheit</label>
+                    </fieldset>
+                </form>
+            </div>
             <div id="aboutTab" class="tabContent"></div>
         </div>
     </div>
