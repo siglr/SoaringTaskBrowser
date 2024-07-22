@@ -295,15 +295,27 @@ class TaskBrowser {
         // Collapsible Files
         let filesContent = `
             <p><strong>Option 1:</strong> Download the single package DPHX file for use with the <a href="https://flightsim.to/file/62573/msfs-soaring-task-tools-dphx-unpack-load" target="_blank">DPHX Unpack & Load tool</a></p>
-            <p><a href="#" onclick="TB.downloadDPHXFile('https://siglr.com/DiscordPostHelper/TaskBrowser/Tasks/${task.TaskID}.dphx', '${task.Title}.dphx')">${task.Title}.dphx</a></p>
+            <p>
+                <a href="#" onclick="TB.downloadDPHXFile('https://siglr.com/DiscordPostHelper/TaskBrowser/Tasks/${task.TaskID}.dphx', '${task.Title}.dphx')">
+                    <img src="images/DPHXFile.png" alt="DPHX File" class="file-icon" style="width: 40px; height: 40px;">
+                    ${task.Title}.dphx
+                </a>
+            </p>
             <p><strong>Option 2:</strong> Download individual files and install them yourself</p>
-            <ul>
-                <li><a href="#" onclick="TB.downloadPLNFile()">Flight plan file (PLN): ${tb.getFileNameFromPath(tb.currentTask.PLNFilename)}</a></li>
-                <li><a href="#" onclick="TB.downloadWPRFile()">Weather file (WPR): ${tb.getFileNameFromPath(tb.currentTask.WPRFilename)}</a></li>
-            </ul>
+            <p>
+                <a href="#" onclick="TB.downloadPLNFile()">
+                    <img src="images/PLNFile.png" alt="PLN File" class="file-icon">
+                    Flight plan file (PLN): ${tb.getFileNameFromPath(tb.currentTask.PLNFilename)}
+                </a>
+            </p>
+            <p>
+                <a href="#" onclick="TB.downloadWPRFile()">
+                    <img src="images/WPRFile.png" alt="WPR File" class="file-icon">
+                    Weather file (WPR): ${tb.getFileNameFromPath(tb.currentTask.WPRFilename)}
+                </a>
+            </p>
             <p>Current downloads (PLN or DPHX): ${task.TotDownloads}</p>`;
         tb.generateCollapsibleSection("📁 Files", filesContent, taskDetailContainer);
-
     }
 
     generateTaskDetailsRestriction(task) {

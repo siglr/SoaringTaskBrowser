@@ -481,9 +481,25 @@ body {
         #taskControlPanel button:hover {
             background: rgb(114 137 218 / 76%); /* Change background color on hover */
             border-color: #888; /* Change border color on hover */
+            transform: scale(1.1); /* Scale up the icon on hover */
         }
 
         #taskControlPanel button img {
             width: 20px;
             height: 20px;
         }
+
+.file-icon {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    background: white;
+    padding: 2px;
+    border-radius: 3px; /* Optional: add rounded corners */
+    transition: transform 0.2s ease-in-out; /* Add transition for hover effect */
+}
+
+    .file-icon:hover {
+        background: rgb(39 161 231); /* Change background color on hover */
+        transform: scale(1.1); /* Scale up the icon on hover */
+    }
