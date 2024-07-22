@@ -674,6 +674,11 @@ class TaskBrowserMap {
         }
 
         tbm.tb.clearTaskDetails();
+
+        // Hide the task control panel
+        const taskControlPanel = document.getElementById('taskControlPanel');
+        taskControlPanel.style.display = 'none';
+
         tbm.showSelectedOnly();
     }
 

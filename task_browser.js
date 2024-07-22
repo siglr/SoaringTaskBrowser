@@ -465,14 +465,14 @@ class TaskBrowser {
         tb.generateTaskDetailsWeather(task);
         tb.generateTaskDetailsWaypoints(task);
 
-        // Add the "Deselect Task" button
-        let deselectButton = document.createElement('button');
-        deselectButton.innerText = "Deselect Task";
-        deselectButton.className = "button-style"; // Use the same class as other tab buttons for consistent styling
+        // Show the task control panel
+        const taskControlPanel = document.getElementById('taskControlPanel');
+        taskControlPanel.style.display = 'block';
+        // Add event listener to the deselect button
+        const deselectButton = document.getElementById('deselectTaskButton');
         deselectButton.onclick = function () {
             tb.tbm.deselectTask();
         };
-        taskDetailContainer.appendChild(deselectButton);
     }
 
     // Function to show image in a modal
