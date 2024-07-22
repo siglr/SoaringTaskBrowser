@@ -29,6 +29,9 @@
                 <div id="mapContainer">
                     <div id="map">
                         <div id="taskControlPanel">
+                            <button id="zoomButton" onclick="TB.tbm.zoomToTask()">
+                                <img src="images/ZoomToTask.png" alt="Zoom to task">
+                            </button>
                             <button id="copyTaskLinkToClipboard" title="Copy link to task">
                                 <img src="images/ShareLink.png" alt="Copy link to task">
                             </button>
@@ -43,7 +46,6 @@
                     <div id="resizer"></div>
                     <div id="taskDetailContainer"></div>
                 </div>
-                <button id="zoomButton" onclick="TB.tbm.zoomToTask()">Zoom to Task</button>
                 <button id="fullWorldButton" onclick="TB.tbm.resetToFullWorld()">Full World</button>
             </div>
             <div id="toolsTab" class="tabContent"></div>

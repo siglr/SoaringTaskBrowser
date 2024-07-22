@@ -94,7 +94,6 @@ body {
     background-color: #99aab5;
 }
 
-#zoomButton,
 #fullWorldButton {
     position: absolute;
     top: 50px;
@@ -108,15 +107,11 @@ body {
     font-size: 16px;
 }
 
-#zoomButton {
+
+#fullWorldButton {
     left: 60px;
 }
 
-#fullWorldButton {
-    left: 200px;
-}
-
-    #zoomButton:hover,
     #fullWorldButton:hover {
         background-color: #0056b3;
     }
