@@ -73,18 +73,6 @@ function loadTabContent(tabId) {
                 <div id="eventsList"></div>
                 `;
             break;
-        case 'listTab':
-            content = `
-                <div class="header-container">
-                    <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
-                    <h2>We hope to bring search and filtering capabilities soon!</h2>
-                </div>
-                <p>Meanwhile, you can search and filter tasks using our <a href="https://flightsim.to/file/62573/msfs-soaring-task-tools-dphx-unpack-load" target="_blank"><button class="button-style">DPHX Unpack & Load tool!</button></a></p>
-                <p>Tell us what else you would like to see.</p>
-                <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
-                    <button class="button-style">Go to our Discord</button>
-                </a>`;
-            break;
         case 'toolsTab':
             content = `
                 <div class="header-container">
@@ -369,7 +357,7 @@ TB.switchTab = function (tabId) {
     url.searchParams.set('tab', tabId.replace('Tab', ''));
 
     // Preserve task or event parameters based on the active tab
-    if (tabId === 'mapTab' || tabId === 'listTab') {
+    if (tabId === 'mapTab') {
         const taskParam = url.searchParams.get('task');
         if (taskParam) {
             url.searchParams.set('task', taskParam);
@@ -401,9 +389,6 @@ TB.switchTab = function (tabId) {
         case 'mapTab':
             document.title = "WeSimGlide - World Map";
             break;
-        case 'listTab':
-            document.title = "WeSimGlide - Task List";
-            break;
         case 'toolsTab':
             document.title = "WeSimGlide - Tools";
             break;
@@ -432,11 +417,7 @@ function getUrlParams() {
 
 function handleParams(params) {
     if (params.task) {
-        if (params.tab === 'list') {
-            TB.switchTab('listTab');
-        } else {
-            TB.switchTab('mapTab');
-        }
+        TB.switchTab('mapTab');
         TB.tbm.selectTaskFromURL(params.task); // Ensure task details are fetched
     } else if (params.event) {
         TB.switchTab('eventsTab');
@@ -444,9 +425,6 @@ function handleParams(params) {
         switch (params.tab) {
             case 'map':
                 TB.switchTab('mapTab');
-                break;
-            case 'list':
-                TB.switchTab('listTab');
                 break;
             case 'events':
                 TB.switchTab('eventsTab');
