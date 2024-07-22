@@ -295,7 +295,6 @@ class TaskBrowser {
         // Collapsible Links
         let linksContent = `
             <ul>
-                <li><a href="#" onclick="TB.copyTextToClipboard('https://wesimglide.org/index.html?task=${task.EntrySeqID}')">Share this task (copy link to clipboard)</a></li>
                 <li><a href="discord://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord app</a></li>
                 <li><a href="https://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord (web version)</a></li>
             </ul>`;
@@ -468,10 +467,16 @@ class TaskBrowser {
         // Show the task control panel
         const taskControlPanel = document.getElementById('taskControlPanel');
         taskControlPanel.style.display = 'block';
+
         // Add event listener to the deselect button
         const deselectButton = document.getElementById('deselectTaskButton');
         deselectButton.onclick = function () {
             tb.tbm.deselectTask();
+        };
+        // Add event listener to the copy to clipboard button
+        const copyButton = document.getElementById('copyTaskLinkToClipboard');
+        copyButton.onclick = function () {
+            tb.copyTextToClipboard(`https://wesimglide.org/index.html?task=${task.EntrySeqID}`);
         };
     }
 

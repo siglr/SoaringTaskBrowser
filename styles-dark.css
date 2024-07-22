@@ -466,7 +466,7 @@ body {
     position: absolute;
     top: 10px;
     right: 65px; /* Adjust this value if needed to fit left of the layer button/menu */
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.4);
     border-radius: 5px;
     padding: 5px;
     display: none; /* Initially hidden */
@@ -474,8 +474,16 @@ body {
 }
 
     #taskControlPanel button {
-        background: none;
-        border: none;
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid #ccc; /* Add a light gray border */
+        border-radius: 3px; /* Slightly round the corners */
         font-size: 16px;
         cursor: pointer;
+        margin: 0 2px; /* Add horizontal margin to space buttons */
+        padding: 5px; /* Add some padding for better clickability */
     }
+
+        #taskControlPanel button img {
+            width: 20px;
+            height: 20px;
+        }
