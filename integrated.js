@@ -10,7 +10,7 @@ class IntegratedTB {
     init() {
         let tb = this;
         console.log("Integrated.init()");
-        tb.loadUserSettings();
+        tb.loadMapUserSettings();
     }
 
     //
@@ -106,4 +106,4 @@ class IntegratedTB {
             showSelectedOnly: true,
             splitterPosition: 50
         };
-} // end class IntegratedTB
+    } // end class IntegratedTB
