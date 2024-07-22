@@ -86,9 +86,7 @@ class IntegratedTB {
             mapLayer: tb.tbm.getCurrentMapLayer(),
             showAirports: tb.tbm.isLayerVisible('Airports'),
             showRailways: tb.tbm.isLayerVisible('Railways'),
-            windCompass: tb.tbm.isLayerVisible('Wind Compass'),
-            showSelectedOnly: tb.tbm.isLayerVisible('Show selected only'),
-            splitterPosition: tb.getSplitterPosition()
+            windCompass: tb.tbm.isLayerVisible('Wind Compass')
         };
         tb.setJsonCookie('mapUserSettings', settings, 300);
     }
@@ -102,8 +100,7 @@ class IntegratedTB {
             mapLayer: "Google Terrain",
             showAirports: true,
             showRailways: false,
-            windCompass: false,
-            showSelectedOnly: true,
-            splitterPosition: 50
+            windCompass: false
         };
-    } // end class IntegratedTB
+    }
+}
