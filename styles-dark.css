@@ -474,7 +474,7 @@ body {
 }
 
     #taskControlPanel button {
-        background: rgba(255, 255, 255, 0.8);
+        background: rgb(114 137 218 / 47%);
         border: 1px solid #ccc; /* Add a light gray border */
         border-radius: 3px; /* Slightly round the corners */
         font-size: 16px;
@@ -484,7 +484,7 @@ body {
     }
 
         #taskControlPanel button:hover {
-            background: rgba(50, 50, 255, 0.2); /* Change background color on hover */
+            background: rgb(114 137 218 / 76%); /* Change background color on hover */
             border-color: #888; /* Change border color on hover */
         }
 
