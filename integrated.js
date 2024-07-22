@@ -80,25 +80,30 @@ class IntegratedTB {
         return 0;
     }
 
-    saveUserSettings() {
+    saveMapUserSettings() {
         const tb = this;
         const settings = {
             mapLayer: tb.tbm.getCurrentMapLayer(),
             showAirports: tb.tbm.isLayerVisible('Airports'),
             showRailways: tb.tbm.isLayerVisible('Railways'),
-            windCompass: tb.tbm.isLayerVisible('Wind Compass')
+            windCompass: tb.tbm.isLayerVisible('Wind Compass'),
+            showSelectedOnly: tb.tbm.isLayerVisible('Show selected only'),
+            splitterPosition: tb.getSplitterPosition()
         };
-        tb.setJsonCookie('userSettingsInApp', settings, 300);
+        tb.setJsonCookie('mapUserSettings', settings, 300);
     }
 
-    loadUserSettings() {
+    loadMapUserSettings() {
         const tb = this;
-        const settings = tb.getJsonCookie('userSettingsInApp', 300);
-        if (settings) {
-            tb.tbm.setMapLayer(settings.mapLayer);
-            tb.tbm.setLayerVisibility('Airports', settings.showAirports);
-            tb.tbm.setLayerVisibility('Railways', settings.showRailways);
-            tb.tbm.setLayerVisibility('Wind Compass', settings.windCompass);
-        }
-    }
+        const settings = tb.getJsonCookie('mapUserSettings', 300);
+
+        // Set default settings if not found
+        const defaultSettings = {
+            mapLayer: "Google Terrain",
+            showAirports: true,
+            showRailways: false,
+            windCompass: false,
+            showSelectedOnly: true,
+            splitterPosition: 50
+        };
 } // end class IntegratedTB
