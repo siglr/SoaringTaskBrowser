@@ -289,19 +289,6 @@ class TaskBrowser {
         }
     }
 
-    generateTaskDetailsLinks(task) {
-        let tb = this;
-
-        // Collapsible Links
-        let linksContent = `
-            <ul>
-                <li><a href="discord://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord app</a></li>
-                <li><a href="https://discord.com/channels/1022705603489042472/${task.TaskID}" target="_blank" onclick="TB.incrementThreadAccess(${task.EntrySeqID})">Link to this task's thread on Discord (web version)</a></li>
-            </ul>`;
-        tb.generateCollapsibleSection("🔗 Links", linksContent, taskDetailContainer);
-
-    }
-
     generateTaskDetailsFiles(task) {
         let tb = this;
 
@@ -477,6 +464,13 @@ class TaskBrowser {
         const copyButton = document.getElementById('copyTaskLinkToClipboard');
         copyButton.onclick = function () {
             tb.copyTextToClipboard(`https://wesimglide.org/index.html?task=${task.EntrySeqID}`);
+        };
+
+        // Add event listener to the Discord task thread button
+        const gotoDiscordThreadButton = document.getElementById('gotoDiscordThread');
+        gotoDiscordThreadButton.onclick = function () {
+            tb.incrementThreadAccess(task.EntrySeqID);
+            window.open(`discord://discord.com/channels/1022705603489042472/${task.TaskID}`, '_blank');
         };
     }
 

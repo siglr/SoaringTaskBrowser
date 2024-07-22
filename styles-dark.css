@@ -483,6 +483,11 @@ body {
         padding: 5px; /* Add some padding for better clickability */
     }
 
+        #taskControlPanel button:hover {
+            background: rgba(50, 50, 255, 0.2); /* Change background color on hover */
+            border-color: #888; /* Change border color on hover */
+        }
+
         #taskControlPanel button img {
             width: 20px;
             height: 20px;
