@@ -483,6 +483,13 @@ class TaskBrowser {
             tb.incrementThreadAccess(task.EntrySeqID);
             window.open(`discord://discord.com/channels/1022705603489042472/${task.TaskID}`, '_blank');
         };
+
+        // Add event listener to the download DPHX file button
+        const directDPHXDownloadButton = document.getElementById('directDPHXDownload');
+        directDPHXDownloadButton.onclick = function () {
+            tb.downloadDPHXFile(`https://siglr.com/DiscordPostHelper/TaskBrowser/Tasks/${task.TaskID}.dphx`, `${task.Title}.dphx`);
+        };
+
     }
 
     // Function to show image in a modal
