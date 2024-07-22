@@ -806,14 +806,27 @@ class TaskBrowser {
     loadMapUserSettings() {
         const tb = this;
         const settings = tb.getJsonCookie('mapUserSettings', 300);
-        if (settings) {
-            tb.tbm.setMapLayer(settings.mapLayer);
-            tb.tbm.setLayerVisibility('Airports', settings.showAirports);
-            tb.tbm.setLayerVisibility('Railways', settings.showRailways);
-            tb.tbm.setLayerVisibility('Wind Compass', settings.windCompass);
-            tb.tbm.setLayerVisibility('Show selected only', settings.showSelectedOnly);
-            tb.setSplitterPosition(settings.splitterPosition);
-        }
+
+        // Set default settings if not found
+        const defaultSettings = {
+            mapLayer: "Google Terrain",
+            showAirports: true,
+            showRailways: false,
+            windCompass: false,
+            showSelectedOnly: true,
+            splitterPosition: 50
+        };
+
+        // Merge default settings with loaded settings
+        const mergedSettings = { ...defaultSettings, ...settings };
+
+        // Apply settings to the map
+        tb.tbm.setMapLayer(mergedSettings.mapLayer);
+        tb.tbm.setLayerVisibility('Airports', mergedSettings.showAirports);
+        tb.tbm.setLayerVisibility('Railways', mergedSettings.showRailways);
+        tb.tbm.setLayerVisibility('Wind Compass', mergedSettings.windCompass);
+        tb.tbm.setLayerVisibility('Show selected only', mergedSettings.showSelectedOnly);
+        tb.setSplitterPosition(mergedSettings.splitterPosition);
     }
 
     loadUserSettings() {
