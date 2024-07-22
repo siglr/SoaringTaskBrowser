@@ -94,28 +94,6 @@ body {
     background-color: #99aab5;
 }
 
-#fullWorldButton {
-    position: absolute;
-    top: 50px;
-    z-index: 1000;
-    background-color: #7289da;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-
-#fullWorldButton {
-    left: 60px;
-}
-
-    #fullWorldButton:hover {
-        background-color: #0056b3;
-    }
-
 .button-style {
     background-color: #7289da;
     color: white;
@@ -456,6 +434,29 @@ body {
     transform: translate(-50%, -50%);
     cursor: move;
 }
+
+#fullWorldButton {
+    position: absolute;
+    top: 66px;
+    left: 60px;
+    width: 35px;
+    height: 35px;
+    z-index: 1000;
+    color: white;
+    border: none;
+    padding: 5px 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    background: rgb(114 137 218 / 47%);
+    border: 1px solid #ccc; /* Add a light gray border */
+}
+
+    #fullWorldButton:hover {
+        background: rgb(114 137 218 / 76%); /* Change background color on hover */
+        border-color: #888; /* Change border color on hover */
+        transform: scale(1.1); /* Scale up the icon on hover */
+    }
 
 #taskControlPanel {
     position: absolute;
