@@ -445,7 +445,6 @@ class TaskBrowser {
 
         taskDetailContainer.innerHTML = tb.generateTaskDetailsMainSection(task);
         tb.generateTaskDetailsFullDescription(task);
-        tb.generateTaskDetailsLinks(task);
         tb.generateTaskDetailsFiles(task);
         tb.generateTaskDetailsRestriction(task);
         tb.generateTaskDetailsWeather(task);
