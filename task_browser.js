@@ -86,8 +86,12 @@ class TaskBrowser {
 
     resizeMap() {
         let tb = this;
-        if (tb.tbm.map && document.getElementById('mapTab').classList.contains('active')) {
-            tb.tbm.map.invalidateSize();
+        try {
+            if (tb.tbm && tb.tbm.map && document.getElementById('mapTab').classList.contains('active')) {
+                tb.tbm.map.invalidateSize();
+            }
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
         }
     }
 

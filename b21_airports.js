@@ -93,7 +93,7 @@ class B21_Airports {
 
         let zoom = map.getZoom();
         if (zoom < ZOOM_MIN_MSFS) {
-            console.log("Too zoomed out to display airports");
+            //console.log("Too zoomed out to display airports");
             return;
         }
         //console.log("airports.draw(map) drawing");
@@ -123,7 +123,7 @@ class B21_Airports {
                     let type = airport[this.KEY_TYPE];
                     if (type.includes("airport")) {
                         // Skip this airport if it's non-msfs and insufficient zoom
-                        if (! type.includes("msfs") && zoom < ZOOM_MIN_OTHER) {
+                        if (!type.includes("msfs") && zoom < ZOOM_MIN_OTHER) {
                             continue;
                         }
                         let position = new L.latLng(airport[this.KEY_LAT], airport[this.KEY_LNG]);
@@ -133,7 +133,7 @@ class B21_Airports {
                         if (type == "msfs_airport") {
                             // For MSFS airports we use a "canvasMarker" i.e. place a rotated 20x20 IMAGE on the canvas
                             // Calculate the first runway direction
-                            let px = Math.max(14,Math.min(60,10 * (zoom - 7)));
+                            let px = Math.max(14, Math.min(60, 10 * (zoom - 7)));
 
                             let airport_rotate = null;
                             if (runways != null && runways.length > 0) {
@@ -142,9 +142,10 @@ class B21_Airports {
 
                             marker = L.canvasMarker(position, {
                                 renderer: this.mapper.canvas_renderer,
-                                img: {  url: this.AIRPORT_IMG_URL,
-                                        rotate: airport_rotate,
-                                        size: [px,px]
+                                img: {
+                                    url: this.AIRPORT_IMG_URL,
+                                    rotate: airport_rotate,
+                                    size: [px, px]
                                 }
                             });
                         } else {
@@ -177,10 +178,10 @@ class B21_Airports {
                             }).setContent(popup_content);
                             marker.bindPopup(popup);
 
-                            marker.on('mouseover', function(event) {
+                            marker.on('mouseover', function (event) {
                                 marker.openPopup();
                             });
-                            marker.on('mouseout', function(event) {
+                            marker.on('mouseout', function (event) {
                                 marker.closePopup();
                             });
                             //marker.on('click', (e) => {
@@ -235,7 +236,7 @@ class B21_Airports {
                 }
             }
         }
-        console.log("airports.js lookup failed for "+ident);
+        console.log("airports.js lookup failed for " + ident);
         return null;
     }
 
