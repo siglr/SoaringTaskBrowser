@@ -437,6 +437,10 @@ class TaskBrowserMap {
         let tbm = this;
         console.log("selectTaskCommon()", entrySeqID);
 
+        if (!tbm.runningInApp) {
+            tbm.tb.showTaskDetailsPanel();
+        }
+
         // 1. The previous (if any) selected task's normal unselected polyline should be drawn (and the detailed task rendering removed)
         tbm.resetPolylines();
 

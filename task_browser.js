@@ -474,6 +474,30 @@ class TaskBrowser {
 
     }
 
+    hideTaskDetailsPanel() {
+        let tb = this;
+        const taskDetailContainer = document.getElementById('taskDetailContainer');
+        const resizer = document.getElementById('resizer');
+        const mapContainer = document.getElementById('mapContainer');
+        taskDetailContainer.style.display = 'none';
+        resizer.style.display = 'none';
+        mapContainer.style.width = '100%';
+        tb.resizeMap(); // Ensure map is resized
+    }
+
+    showTaskDetailsPanel() {
+        let tb = this;
+        const taskDetailContainer = document.getElementById('taskDetailContainer');
+        const resizer = document.getElementById('resizer');
+        const mapContainer = document.getElementById('mapContainer');
+        taskDetailContainer.style.display = 'block';
+        resizer.style.display = 'block';
+        const savedPosition = tb.getSplitterPosition();
+        mapContainer.style.width = savedPosition.mapWidth;
+        taskDetailContainer.style.width = savedPosition.taskDetailWidth;
+        tb.resizeMap(); // Ensure map is resized
+    }
+
     // Function to show image in a modal
     showImageModal(src) {
         const modal = document.getElementById('imageModal');
@@ -632,11 +656,12 @@ class TaskBrowser {
     }
 
     clearTaskDetails() {
-        // Assuming taskDetailContainer is the element that holds the task details
+        let tb = this;
         let taskDetailContainer = document.getElementById('taskDetailContainer');
         if (taskDetailContainer) {
             taskDetailContainer.innerHTML = ''; // Clear the task details
         }
+        tb.hideTaskDetailsPanel();
     }
 
     generateToolEntry(title, description) {

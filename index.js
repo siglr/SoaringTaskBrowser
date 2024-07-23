@@ -16,6 +16,8 @@ resizer.addEventListener('mousedown', (e) => {
     document.addEventListener('mouseup', stopResize);
 });
 
+TB.hideTaskDetailsPanel();
+
 function resize(e) {
     if (isResizing) {
         const containerWidth = mapContainer.offsetWidth + taskDetailContainer.offsetWidth;
