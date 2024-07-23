@@ -477,6 +477,17 @@ class TaskBrowser {
             tb.downloadDPHXFile(`https://siglr.com/DiscordPostHelper/TaskBrowser/Tasks/${task.TaskID}.dphx`, `${task.Title}.dphx`);
         };
 
+        // Add event listener to the toggle task details button
+        const toggleTaskDetailsPanelButton = document.getElementById('toggleTaskDetailsPanel');
+        toggleTaskDetailsPanelButton.onclick = function () {
+            const taskDetailContainer = document.getElementById('taskDetailContainer');
+            if (taskDetailContainer.style.display == 'none') {
+                tb.showTaskDetailsPanel();
+            } else {
+                tb.hideTaskDetailsPanel();
+            }
+        };
+
     }
 
     // Function to show image in a modal
@@ -638,10 +649,12 @@ class TaskBrowser {
 
     clearTaskDetails() {
         // Assuming taskDetailContainer is the element that holds the task details
+        let tb = this;
         let taskDetailContainer = document.getElementById('taskDetailContainer');
         if (taskDetailContainer) {
             taskDetailContainer.innerHTML = ''; // Clear the task details
         }
+        tb.hideTaskDetailsPanel();
     }
 
     generateToolEntry(title, description) {
@@ -904,6 +917,28 @@ class TaskBrowser {
             tb.setJsonCookie('userSettings', settings, 300);
             tb.userSettings = settings;
         }
+    }
+
+    hideTaskDetailsPanel() {
+        let tb = this;
+        const taskDetailContainer = document.getElementById('taskDetailContainer');
+        const resizer = document.getElementById('resizer');
+        const map = document.getElementById('map');
+        taskDetailContainer.style.display = 'none';
+        resizer.style.display = 'none';
+        map.style.width = '100%';
+        tb.resizeMap(); // Ensure map is resized
+    }
+
+    showTaskDetailsPanel() {
+        let tb = this;
+        const taskDetailContainer = document.getElementById('taskDetailContainer');
+        const resizer = document.getElementById('resizer');
+        const map = document.getElementById('map');
+        taskDetailContainer.style.display = 'block';
+        resizer.style.display = 'block';
+        tb.setTaskDetailWidth(tb.taskDetailsContainerWidth);
+        //tb.resizeMap(); // Ensure map is resized
     }
 
 }
