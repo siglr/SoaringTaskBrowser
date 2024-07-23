@@ -615,7 +615,6 @@ class TaskBrowser {
 
     handleTaskDetails(task_details, forceZoomToTask = false) {
         let tb = this;
-        console.log("Calling setB21Task from handleTaskDetails");
         if (!task_details.EntrySeqID == tb.tbm.b21_task.planner.currentEntrySeqID) {
             tb.tbm.setB21Task(task_details);
         }
