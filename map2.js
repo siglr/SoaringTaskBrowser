@@ -439,6 +439,7 @@ class TaskBrowserMap {
         let tbm = this;
 
         if (!tbm.runningInApp) {
+            tbm.tb.TaskDetailsPanelVisible = true;
             tbm.tb.showTaskDetailsPanel();
         }
 

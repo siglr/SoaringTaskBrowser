@@ -28,6 +28,8 @@ class TaskBrowser {
         tb.initCountryCodes();
         tb.userSettings = tb.loadUserSettings();
         tb.userMapSettings = tb.loadMapUserSettings();
+        tb.TaskDetailsPanelVisible = false;
+        tb.hideTaskDetailsPanel();
     }
 
     initCountryCodes() {
@@ -481,9 +483,11 @@ class TaskBrowser {
         const toggleTaskDetailsPanelButton = document.getElementById('toggleTaskDetailsPanel');
         toggleTaskDetailsPanelButton.onclick = function () {
             const taskDetailContainer = document.getElementById('taskDetailContainer');
-            if (taskDetailContainer.style.display == 'none') {
+            if (tb.TaskDetailsPanelVisible == false) {
+                tb.TaskDetailsPanelVisible = true;
                 tb.showTaskDetailsPanel();
             } else {
+                tb.TaskDetailsPanelVisible = false;
                 tb.hideTaskDetailsPanel();
             }
         };
@@ -654,6 +658,7 @@ class TaskBrowser {
         if (taskDetailContainer) {
             taskDetailContainer.innerHTML = ''; // Clear the task details
         }
+        tb.TaskDetailsPanelVisible = false;
         tb.hideTaskDetailsPanel();
     }
 
@@ -921,6 +926,9 @@ class TaskBrowser {
 
     hideTaskDetailsPanel() {
         let tb = this;
+        if (tb.TaskDetailsPanelVisible == true) {
+            return;
+        }
         const taskDetailContainer = document.getElementById('taskDetailContainer');
         const resizer = document.getElementById('resizer');
         const map = document.getElementById('map');
@@ -932,6 +940,9 @@ class TaskBrowser {
 
     showTaskDetailsPanel() {
         let tb = this;
+        if (tb.TaskDetailsPanelVisible == false) {
+            return;
+        }
         const taskDetailContainer = document.getElementById('taskDetailContainer');
         const resizer = document.getElementById('resizer');
         const map = document.getElementById('map');
