@@ -16,6 +16,7 @@ class TaskBrowser {
             typographer: true
         });
         tb.tbm = new TaskBrowserMap(tb);
+        tb.taskDetailsContainerWidth = 0;
         tb.initCountryCodes();
 
         // Mapping of country names in your app to the corresponding names used by the flag service
@@ -795,15 +796,18 @@ class TaskBrowser {
 
     saveMapUserSettings() {
         const tb = this;
-        const settings = {
-            mapLayer: tb.tbm.getCurrentMapLayer(),
-            showAirports: tb.tbm.isLayerVisible('Airports'),
-            showRailways: tb.tbm.isLayerVisible('Railways'),
-            windCompass: tb.tbm.isLayerVisible('Wind Compass'),
-            showSelectedOnly: tb.tbm.isLayerVisible('Show selected only'),
-            taskDetailWidth: tb.getTaskDetailWidth()
-        };
-        tb.setJsonCookie('mapUserSettings', settings, 300);
+        if (!tb.ApplyingSettings) {
+            const settings = {
+                mapLayer: tb.tbm.getCurrentMapLayer(),
+                showAirports: tb.tbm.isLayerVisible('Airports'),
+                showRailways: tb.tbm.isLayerVisible('Railways'),
+                windCompass: tb.tbm.isLayerVisible('Wind Compass'),
+                showSelectedOnly: tb.tbm.isLayerVisible('Show selected only'),
+                taskDetailWidth: tb.taskDetailsContainerWidth
+            };
+            console.log('saveMapUserSettings', settings);
+            tb.setJsonCookie('mapUserSettings', settings, 300);
+        }
     }
 
     loadMapUserSettings() {
@@ -824,25 +828,21 @@ class TaskBrowser {
         const mergedSettings = { ...defaultSettings, ...settings };
 
         // Apply settings to the map
+        tb.ApplyingSettings = true;
         tb.tbm.setMapLayer(mergedSettings.mapLayer);
         tb.tbm.setLayerVisibility('Airports', mergedSettings.showAirports);
         tb.tbm.setLayerVisibility('Railways', mergedSettings.showRailways);
         tb.tbm.setLayerVisibility('Wind Compass', mergedSettings.windCompass);
         tb.tbm.setLayerVisibility('Show selected only', mergedSettings.showSelectedOnly);
         tb.setTaskDetailWidth(mergedSettings.taskDetailWidth);
-    }
-
-    getTaskDetailWidth() {
-        const taskDetailContainer = document.getElementById('taskDetailContainer');
-        const containerWidth = taskDetailContainer.parentElement.offsetWidth;
-        const taskDetailWidth = taskDetailContainer.offsetWidth;
-        const taskDetailWidthPercent = (taskDetailWidth / containerWidth) * 100;
-        return `${taskDetailWidthPercent}%`;
+        tb.ApplyingSettings = false;
     }
 
     setTaskDetailWidth(width) {
+        const tb = this;
         const taskDetailContainer = document.getElementById('taskDetailContainer');
         const mapContainer = document.getElementById('map');
+        tb.taskDetailsContainerWidth = width;
         taskDetailContainer.style.width = width;
         mapContainer.style.width = `${100 - parseFloat(width)}%`;
         this.resizeMap(); // Ensure the map resizes correctly
@@ -868,6 +868,7 @@ class TaskBrowser {
         const mergedSettings = { ...defaultSettings, ...settings };
 
         // Set the radio buttons based on the settings
+        tb.ApplyingSettings = true;
         document.querySelector(`input[name="uiTheme"][value="${mergedSettings.uiTheme}"]`).checked = true;
         document.querySelector(`input[name="timeFormat"][value="${mergedSettings.timeFormat}"]`).checked = true;
         document.querySelector(`input[name="altitude"][value="${mergedSettings.altitude}"]`).checked = true;
@@ -876,6 +877,7 @@ class TaskBrowser {
         document.querySelector(`input[name="windSpeed"][value="${mergedSettings.windSpeed}"]`).checked = true;
         document.querySelector(`input[name="pressure"][value="${mergedSettings.pressure}"]`).checked = true;
         document.querySelector(`input[name="temperature"][value="${mergedSettings.temperature}"]`).checked = true;
+        tb.ApplyingSettings = false;
 
         // Attach change event listeners to save settings when any radio button is changed
         document.querySelectorAll('#settingsForm input[type="radio"]').forEach(input => {
@@ -889,18 +891,20 @@ class TaskBrowser {
 
     saveUserSettings() {
         const tb = this;
-        const settings = {
-            uiTheme: document.querySelector('input[name="uiTheme"]:checked').value,
-            timeFormat: document.querySelector('input[name="timeFormat"]:checked').value,
-            altitude: document.querySelector('input[name="altitude"]:checked').value,
-            distance: document.querySelector('input[name="distance"]:checked').value,
-            gateMeasurement: document.querySelector('input[name="gateMeasurement"]:checked').value,
-            windSpeed: document.querySelector('input[name="windSpeed"]:checked').value,
-            pressure: document.querySelector('input[name="pressure"]:checked').value,
-            temperature: document.querySelector('input[name="temperature"]:checked').value
-        };
-        tb.setJsonCookie('userSettings', settings, 300);
-        tb.userSettings = settings;
+        if (!tb.ApplyingSettings) {
+            const settings = {
+                uiTheme: document.querySelector('input[name="uiTheme"]:checked').value,
+                timeFormat: document.querySelector('input[name="timeFormat"]:checked').value,
+                altitude: document.querySelector('input[name="altitude"]:checked').value,
+                distance: document.querySelector('input[name="distance"]:checked').value,
+                gateMeasurement: document.querySelector('input[name="gateMeasurement"]:checked').value,
+                windSpeed: document.querySelector('input[name="windSpeed"]:checked').value,
+                pressure: document.querySelector('input[name="pressure"]:checked').value,
+                temperature: document.querySelector('input[name="temperature"]:checked').value
+            };
+            tb.setJsonCookie('userSettings', settings, 300);
+            tb.userSettings = settings;
+        }
     }
 
 }

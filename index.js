@@ -25,6 +25,8 @@ function resize(e) {
         mapContainer.style.width = `${newMapWidth}%`;
         taskDetailContainer.style.width = `${newTaskDetailWidth}%`;
 
+        TB.taskDetailsContainerWidth = taskDetailContainer.style.width;
+
         TB.resizeMap(); // Ensure map is resized
         TB.saveMapUserSettings(); // Save the splitter position
     }
