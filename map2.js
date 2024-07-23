@@ -438,7 +438,7 @@ class TaskBrowserMap {
 
         let tbm = this;
 
-        if (!tbm.runningInApp) {
+        if (!tbm.runningInApp && realSelection) {
             tbm.tb.TaskDetailsPanelVisible = true;
             tbm.tb.showTaskDetailsPanel();
         }
