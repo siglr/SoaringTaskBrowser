@@ -531,8 +531,6 @@ class TaskBrowser {
             .then(data => {
                 if (data.status !== 'success') {
                     console.error('Error incrementing thread access:', data.message);
-                } else {
-                    console.log('Thread access incremented successfully');
                 }
             })
             .catch(err => console.error('Error incrementing thread access:', err));
@@ -545,8 +543,6 @@ class TaskBrowser {
             .then(data => {
                 if (data.status !== 'success') {
                     console.error('Error incrementing download count:', data.message);
-                } else {
-                    console.log('Download count incremented successfully');
                 }
             })
             .catch(err => console.error('Error incrementing download count:', err));
@@ -603,7 +599,6 @@ class TaskBrowser {
 
     getTaskDetails(entrySeqID, forceZoomToTask = false) {
         let tb = this;
-        console.log("getTaskDetails()");
         let fetch_promise;
         if (DEBUG_LOCAL) {
             fetch_promise = test_fetch_task_details(entrySeqID);
@@ -620,7 +615,6 @@ class TaskBrowser {
 
     handleTaskDetails(task_details, forceZoomToTask = false) {
         let tb = this;
-        console.log('handleTaskDetails', task_details.entrySeqID)
         tb.tbm.setB21Task(task_details);
 
         // Zoom in on the task if specified or if task bounds outside current map bounds
@@ -629,7 +623,6 @@ class TaskBrowser {
         let containsBounds = mapBounds.contains(taskBounds);
 
         if (forceZoomToTask || !containsBounds) {
-            console.log('zooming to task', forceZoomToTask, containsBounds);
             tb.tbm.zoomToTask();
         }
         //tb.tbm.map.fitBounds(tb.tbm.b21_task.get_bounds());
@@ -805,7 +798,6 @@ class TaskBrowser {
                 showSelectedOnly: tb.tbm.isLayerVisible('Show selected only'),
                 taskDetailWidth: tb.taskDetailsContainerWidth
             };
-            console.log('saveMapUserSettings', settings);
             tb.setJsonCookie('mapUserSettings', settings, 300);
         }
     }
