@@ -186,9 +186,9 @@ class B21_Task {
         if (wp.index == task.start_index && wp_extra.includes(";AAT")) {
             console.log("Task.decode_wp_name() AAT info on Start");
             let pos = wp_extra.indexOf(";AAT");
-            let aat_info = wp_extra.slice(pos,pos+10);
-            if (aat_info.slice(6,7) == ":" && aat_info.slice(9,10) == ";") {
-                task.aat_min_time_s = B21_Utils.hh_mm_to_time_s(aat_info.slice(4,9));
+            let aat_info = wp_extra.slice(pos, pos + 10);
+            if (aat_info.slice(6, 7) == ":" && aat_info.slice(9, 10) == ";") {
+                task.aat_min_time_s = B21_Utils.hh_mm_to_time_s(aat_info.slice(4, 9));
             }
         }
 
@@ -238,16 +238,14 @@ class B21_Task {
         if (wp.index == task.start_index && task.isAAT() && task.aat_min_time_s != null) {
             let min_time_hh_mm = B21_Utils.hh_mm_from_ts_delta(task.aat_min_time_s);
             if (min_time_hh_mm != null) {
-                encoded_name += ";AAT"+min_time_hh_mm+";";
+                encoded_name += ";AAT" + min_time_hh_mm + ";";
             }
         }
         return encoded_name;
     }
 
-    // Update the .leg_distance_m for each waypoint around task
     update_waypoints() {
         let task = this;
-        //console.log("update_waypoints()");
         for (let i = 0; i < task.waypoints.length; i++) {
             const wp = task.waypoints[i];
             wp.index = i;
@@ -260,7 +258,6 @@ class B21_Task {
 
     update_waypoint_icons() {
         let task = this;
-        //console.log("Task.update_waypoint_icons");
         for (let i = 0; i < task.waypoints.length; i++) {
             let wp = task.waypoints[i];
             wp.update_icon(wp);
@@ -306,7 +303,7 @@ class B21_Task {
 
     get_bounds() {
         let task = this;
-        return L.latLngBounds([task.min_lat, task.min_lng],[task.max_lat, task.max_lng]);
+        return L.latLngBounds([task.min_lat, task.min_lng], [task.max_lat, task.max_lng]);
     }
 
     // Add a straight line between wp1 and wp2
@@ -359,10 +356,10 @@ class B21_Task {
                 direction_deg = (task.waypoints[wp.index + 1].leg_bearing_deg + 180) % 360;
             }
             wp_sector = L.semiCircle(wp.position, {
-                    radius: radius_m,
-                    color: task.planner.settings.task_line_color_1,
-                    interactive: false
-                })
+                radius: radius_m,
+                color: task.planner.settings.task_line_color_1,
+                interactive: false
+            })
                 .setDirection(direction_deg, 180);
         } else if (wp.index == task.finish_index) {
             // Sector = FINISH LINE
@@ -373,10 +370,10 @@ class B21_Task {
                 direction_deg = wp.leg_bearing_deg;
             }
             wp_sector = L.semiCircle(wp.position, {
-                    radius: radius_m,
-                    color: task.planner.settings.task_line_color_1,
-                    interactive: false
-                })
+                radius: radius_m,
+                color: task.planner.settings.task_line_color_1,
+                interactive: false
+            })
                 .setDirection(direction_deg, 180);
         } else {
             let sector_color = wp.isAAT() ? "green" : task.planner.settings.task_line_color_1;
@@ -415,12 +412,36 @@ class B21_Task {
 
     set_current_wp(index) {
         let task = this;
-        console.log("Task.set_current_wp index=", index);
+
+        // Close the currently open popup
+        if (task.current_popup) {
+            task.current_popup.remove();
+            task.current_popup = null;
+        }
+
         task.index = index;
         task.update_waypoint_icons();
-        task.draw();
         let wp = task.current_wp();
-        wp.display_menu(wp);
+
+        // Display the popup with relevant information
+        wp.display_popup();
+
+        // Call the selectWaypointInList function to highlight the waypoint in the list
+        if (task.planner && task.planner.tb) {
+            task.planner.tb.selectWaypointInList(index);
+        }
+    }
+
+    select_waypoint(index) {
+        let task = this;
+
+        // Check if the waypoint is valid and has a position
+        let wp = task.waypoints[index];
+        if (wp && wp.position && wp.position.lat !== undefined && wp.position.lng !== undefined) {
+            task.set_current_wp(index);
+        } else {
+            console.warn("Waypoint position is not defined. Cannot select waypoint.");
+        }
     }
 
     reset() {

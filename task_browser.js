@@ -377,81 +377,63 @@ class TaskBrowser {
     generateTaskDetailsWaypoints(task) {
         let tb = this;
 
-        // Get user settings for distance and altitude
-        const distanceUnit = tb.userSettings.distance || 'imperial';
-        const altitudeUnit = tb.userSettings.altitude || 'imperial';
-
         // Create the waypoints content
         let waypointsContent = '';
 
-        tb.tbm.b21_task.waypoints.forEach((wp, index) => {
-            // Determine the type prefix
-            let prefix = '';
-            if (index === 0) {
-                prefix = '(D) ';
-            } else if (index === tb.tbm.b21_task.start_index) {
-                prefix = '(S) ';
-            } else if (index === tb.tbm.b21_task.finish_index) {
-                prefix = '(F) ';
-            } else if (index === tb.tbm.b21_task.waypoints.length - 1) {
-                prefix = '(A) ';
-            }
-
-            // First line: name with prefix
-            let firstLine = `<strong>${prefix}${wp.name || `Waypoint ${index + 1}`}</strong>`;
-
-            // Second line: conditional content based on the waypoint type
-            let secondLine = '';
-            if (prefix === '(D) ' || prefix === '(A) ') {
-                secondLine = `${wp.icao || 'N/A'}${wp.runway ? ' Rwy ' + wp.runway : ''}`;
-                if (wp.leg_distance_m) {
-                    secondLine += ` Dist: ${(distanceUnit === 'metric' ? (wp.leg_distance_m / 1000).toFixed(1) + ' km' : (wp.leg_distance_m * 0.000621371).toFixed(1) + ' mi')}`;
-                }
-            } else {
-                if (wp.isAAT()) {
-                    secondLine += 'AAT - ';
-                }
-                if (wp.radius_m) {
-                    if (distanceUnit === 'metric') {
-                        secondLine += wp.radius_m >= 5000 ? `Radius: ${(wp.radius_m / 1000).toFixed(1)} km ` : `Radius: ${Math.round(wp.radius_m)} m `;
-                    } else {
-                        const radiusFeet = wp.radius_m * 3.28084;
-                        secondLine += radiusFeet >= 5280 ? `Radius: ${(radiusFeet / 5280).toFixed(1)} mi ` : `Radius: ${Math.round(radiusFeet)}' `;
-                    }
-                }
-                if (wp.min_alt_m) {
-                    secondLine += altitudeUnit === 'imperial' ? `MIN: ${Math.round(wp.min_alt_m * 3.28084)}' ` : `MIN: ${Math.round(wp.min_alt_m)} m `;
-                }
-                if (wp.max_alt_m) {
-                    secondLine += altitudeUnit === 'imperial' ? `MAX: ${Math.round(wp.max_alt_m * 3.28084)}' ` : `MAX: ${Math.round(wp.max_alt_m)} m `;
-                }
-                if (wp.leg_distance_m) {
-                    secondLine += distanceUnit === 'metric' ? ` Dist: ${(wp.leg_distance_m / 1000).toFixed(1)} km` : ` Dist: ${(wp.leg_distance_m * 0.000621371).toFixed(1)} mi`;
-                }
-            }
-
-            // Third line: coordinates and elevation
-            let thirdLine = altitudeUnit === 'imperial'
-                ? `Lat: ${wp.position.lat.toFixed(6)} Long: ${wp.position.lng.toFixed(6)} Elev: ${Math.round(wp.alt_m * 3.28084)}'`
-                : `Lat: ${wp.position.lat.toFixed(6)} Long: ${wp.position.lng.toFixed(6)} Elev: ${Math.round(wp.alt_m)} m`;
+        tb.tbm.b21_task.waypoints.forEach((wp) => {
+            let firstLine = wp.getFirstLine();
+            let secondLine = wp.getSecondLine();
+            let thirdLine = wp.getThirdLine();
 
             // Wrap the lines in a div and conditionally add a horizontal line
             waypointsContent += `
-                <div style="margin: 0; padding: 5px;">
+                <div class="waypoint-item" data-index="${wp.index}" style="margin: 0; padding: 5px; cursor: pointer;">
                     <div>${firstLine}</div>
                     <div>${secondLine}</div>
                     <div>${thirdLine}</div>
                 </div>
-                ${index < tb.tbm.b21_task.waypoints.length - 1 ? '<hr style="margin: 5px 0;">' : ''}
+                ${wp.index < tb.tbm.b21_task.waypoints.length - 1 ? '<hr style="margin: 5px 0;">' : ''}
             `;
         });
 
         tb.generateCollapsibleSection("🗺️ Waypoints", waypointsContent, taskDetailContainer);
+
+        document.querySelectorAll('.waypoint-item').forEach(item => {
+            item.addEventListener('click', function () {
+                const index = this.getAttribute('data-index');
+                const waypoint = tb.tbm.b21_task.waypoints[index];
+                if (waypoint && waypoint.position) {
+                    waypoint.wp_click(waypoint);
+                } else {
+                    console.warn(`Waypoint ${index} does not have a valid position.`);
+                }
+            });
+        });
+    }
+
+    selectWaypointInList(index) {
+        let tb = this;
+        // Remove 'selected' class from all waypoint items
+        document.querySelectorAll('.waypoint-item').forEach(item => item.classList.remove('selected'));
+
+        // Add 'selected' class to the clicked waypoint item
+        const selectedItem = document.querySelector(`.waypoint-item[data-index="${index}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('selected');
+            selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    selectWaypointOnMap(index) {
+        let tb = this;
+        let waypoint = tb.tbm.b21_task.waypoints[index];
+        if (waypoint) {
+            tb.tbm.b21_task.set_current_wp(index);
+        }
     }
 
     showTaskDetailsStandalone(task) {
         let tb = this;
-        console.log("showTaskDetailsStandalone", task);
         const taskDetailContainer = document.getElementById("taskDetailContainer");
         tb.currentTask = task; // Save the current task for download use
 

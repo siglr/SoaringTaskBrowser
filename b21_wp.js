@@ -1,23 +1,4 @@
-"use strict"
-// ******************************************************************************
-// ***********   WP class (waypoint)       **************************************
-// ******************************************************************************
-
 class B21_WP {
-
-    // Waypoint may be created by a click on the map:
-    //          new WP(planner, index, position)
-    // or as a result of loading an MSFS flightplan:
-    //          new WP(planner,index,null,WP_dom_object)
-    //
-
-    // get_icon(WP)
-    // get_name()
-    // get_icao()
-    // get_runway()
-    // get_radius()
-    // get_leg_bearing()
-
     constructor(planner) {
         let wp = this;
         wp.planner = planner; // reference to B21TaskPlanner instance
@@ -30,7 +11,6 @@ class B21_WP {
 
     new_point(index, position) {
         let wp = this;
-        //console.log("new WP", index, position, name);
 
         wp.name = null;
         wp.position = position;
@@ -57,10 +37,8 @@ class B21_WP {
 
     reset() {
         let wp = this;
-
     }
 
-    // isAAT() returns true if this is an AAT waypoint, or can be SET by passing true/false
     isAAT(set_value) {
         let wp = this;
         if (set_value != null) {
@@ -79,21 +57,15 @@ class B21_WP {
             bubblingMouseEvents: false
         });
 
-        // POPUP
-        //console.log("creating WP popup",wp.get_name());
-        var popup = L.popup({
+        marker.bindPopup('', {
             offset: [20, 10],
             className: "wp_popup",
             autoClose: false,
             bubblingMouseEvents: false
-        })
-            .setContent("no WP content yet");
+        });
 
-        //marker.bindPopup(popup); // WeSimGlide.org : no popup for now
-
-        marker.on('popupopen', () => {
-            console.log(`wp.marker event on popupopen ${wp.get_name()}`);
-            wp.task.set_current_wp(wp.index);
+        marker.on('click', function () {
+            wp.wp_click(wp);
         });
 
         wp.task.map_elements.addLayer(marker);
@@ -101,17 +73,12 @@ class B21_WP {
         return marker;
     }
 
-    wp_click(wp, e) {
-        //console.log("wp_click");
-        wp.task.set_current_wp(wp.index);
+    wp_click(wp) {
+        wp.task.select_waypoint(wp.index);
     }
 
-    // The ap "icon" is the permanently displayed div containing the name
     get_icon(wp) {
-        //let icon_str = '<div onclick="b21_task_planner.b21_task.set_current_wp(0);">';
-        //let icon_str = ((1 + wp.index) + "." + wp.get_name()).replaceAll(" ", "&nbsp;");
         let icon_str = (wp.get_name()).replaceAll(" ", "&nbsp;");
-        //icon_str += "</div>";
         let class_name = (wp.task.index == wp.index) ? "wp_icon_html_current" : "wp_icon_html";
         let icon_html = '<div class="' + class_name + '">' + icon_str + "</div>";
         let wp_icon = L.divIcon({
@@ -159,16 +126,12 @@ class B21_WP {
 
     set_icao(icao) {
         let wp = this;
-        console.log("wp.set_icao", icao);
         if (icao == "") {
-            console.log("setting icao to null");
             wp.icao = null;
         } else {
-            console.log("setting icao to '" + icao + "'");
             wp.icao = icao;
             if (wp.name == null) {
                 wp.name = wp.icao;
-                document.getElementById("wp_name").value = wp.icao;
             }
         }
         wp.update_icon(wp);
@@ -189,7 +152,6 @@ class B21_WP {
         wp.radius_m = radius_m;
     }
 
-    // return Wp radius in meters
     get_radius() {
         let wp = this;
         if (wp.radius_m != null) return wp.radius_m;
@@ -208,250 +170,183 @@ class B21_WP {
 
     update(prev_wp = null) {
         let wp = this;
-        //console.log("update",wp.index);
         if (prev_wp != null) {
             wp.update_leg_distance(prev_wp);
             wp.update_leg_bearing(prev_wp);
         }
     }
 
-    // Add .leg_distance_m property for distance (meters) from wp to this waypoint
-    // Called when task is loaded
     update_leg_distance(prev_wp) {
         let wp = this;
         wp.leg_distance_m = Geo.get_distance_m(wp.position, prev_wp.position);
-        //console.log("update_leg_distance", wp.index, wp.leg_distance_m);
     }
 
-    // Add .bearing property for INBOUND bearing FROM wp TO this waypoint
-    // Called when task is loaded
     update_leg_bearing(prev_wp) {
         let wp = this;
         wp.leg_bearing_deg = Geo.get_bearing_deg(prev_wp.position, wp.position);
     }
 
     update_icon(wp) {
-        //console.log("update_icon for wp",wp.index);
         let icon = wp.get_icon(wp);
         wp.marker.setIcon(icon);
     }
 
-    display_menu(wp) {
-        console.log(`wp.display_menu() ${wp.get_name()}`);
-        // NAME
-        let form_str = 'Name: ' + wp.get_name();
+    display_popup() {
+        let wp = this;
 
-        // ICAO
-        form_str += '<br/>ICAO: ' + wp.get_icao();
-
-        // RUNWAY
-        form_str +=
-            ' Runway: ' + wp.get_runway();
-
-        // ELEVATION
-        let alt_str = wp.alt_m.toFixed(0);
-        let alt_units_str = "m.";
-        if (wp.planner.settings.altitude_units == "feet") {
-            alt_str = (wp.alt_m * wp.planner.M_TO_FEET).toFixed(0);
-            alt_units_str = "feet.";
+        // Ensure the marker and position are valid before displaying the popup
+        if (wp.marker && wp.position && wp.position.lat !== undefined && wp.position.lng !== undefined) {
+            let content = wp.generate_popup_content();
+            wp.marker.bindPopup(content, {
+                offset: [20, 10],
+                className: "wp_popup",
+                autoClose: false,
+                bubblingMouseEvents: false
+            }).openPopup();
+            wp.task.current_popup = wp.marker.getPopup(); // Store reference to the current popup
+        } else {
+            console.warn("Waypoint marker or position is not defined. Popup cannot be displayed.");
         }
-
-        form_str += '<br/>Elevation: ' + alt_str + ' ' + alt_units_str;
-
-        // settings.soaring_task == true . It's a placeholder in case we want planner for non-soaring.
-        if (wp.index != 0) {
-            // AAT checkbox
-            form_str += '<div class="wp_aat">AAT: <input type="checkbox"' + (wp.isAAT() ? " checked" :
-                "") + '/></div> ';
-
-            // START checkbox
-            let start = wp.index == wp.task.start_index;
-            form_str += '<br/><div class="wp_start">Start: <input type="checkbox"' + (start ? " checked" :
-                "") + '/></div> ';
-
-            // FINISH checkbox
-            let finish = wp.index == wp.task.finish_index;
-            form_str += '<div class="wp_finish">Finish: <input type="checkbox"' + (finish ? " checked" :
-                "") + '/></div>';
-
-            // RADIUS
-            let radius_units_str = "m";
-            if (wp.planner.settings.wp_radius_units == "feet") {
-                radius_units_str = "feet";
-            }
-            let radius_str = "";
-            if (wp.radius_m != null) {
-                if (wp.planner.settings.wp_radius_units == "m") {
-                    radius_str = wp.radius_m.toFixed(0);
-                } else {
-                    radius_str = (wp.radius_m * wp.planner.M_TO_FEET).toFixed(0);
-                }
-            }
-            form_str += ' Radius: <input class="wp_radius" value="' +
-                radius_str + '"</input> ' + radius_units_str;
-
-            // MAX ALT LIMIT
-            let max_alt_str = "";
-            if (wp.max_alt_m != null) {
-                if (wp.planner.settings.altitude_units == "m") {
-                    max_alt_str = wp.max_alt_m.toFixed(0);
-                } else {
-                    max_alt_str = (wp.max_alt_m * wp.planner.M_TO_FEET).toFixed(0);
-                }
-            }
-            form_str += '<br/>Max Alt: <input class="wp_alt" value="' +
-                max_alt_str + '"</input> ';
-
-            // MIN ALT LIMIT
-            let min_alt_str = "";
-            if (wp.min_alt_m != null) {
-                if (wp.planner.settings.altitude_units == "m") {
-                    min_alt_str = wp.min_alt_m.toFixed(0);
-                } else {
-                    min_alt_str = (wp.min_alt_m * wp.planner.M_TO_FEET).toFixed(0);
-                }
-            }
-            form_str += ' Min Alt: <input class="wp_alt" value="' +
-                min_alt_str + '"</input> ' + alt_units_str;
-        }
-
-        // MENU items
-        form_str += '<div class="wp_menu">';
-        //form_str += wp.planner.menuitem("Append to task", "duplicate_wp_to_task");
-        //form_str += wp.planner.menuitem("Update elevation", "update_wp_elevation");
-        //form_str += wp.planner.menuitem('<img src="https://xp-soaring.github.io/tasks/b21_task_planner/images/delete.png"/>', "remove_wp_from_task");
-        form_str += '</div>';
-
-        // POPUP
-        wp.marker.getPopup().setContent(form_str);
-        console.log("opening popup");
-        wp.marker.openPopup();
     }
 
-    // ********************************************
-    // Tracklog calculations
-    // Points are { lat, lng, alt_m }
-    // ********************************************
+    generate_popup_content() {
+        let wp = this;
 
+        let firstLine = wp.getFirstLine();
+        let secondLine = wp.getSecondLine();
+        let thirdLine = wp.getThirdLine();
 
-    // is_start(p1, p2, leg_bearing) returns true if p1->p2 crosses the start line
+        return `<div>${firstLine}</div><div>${secondLine}</div><div>${thirdLine}</div>`;
+    }
+
+    getFirstLine() {
+        let wp = this;
+        let prefix = '';
+        if (wp.index === 0) {
+            prefix = '(D) ';
+        } else if (wp.index === wp.task.start_index) {
+            prefix = '(S) ';
+        } else if (wp.index === wp.task.finish_index) {
+            prefix = '(F) ';
+        } else if (wp.index === wp.task.waypoints.length - 1) {
+            prefix = '(A) ';
+        }
+        return `<strong>${prefix}${wp.name || `Waypoint ${wp.index + 1}`}</strong>`;
+    }
+
+    getSecondLine() {
+        let wp = this;
+        let secondLine = '';
+        if (wp.index === 0 || wp.index === wp.task.waypoints.length - 1) {
+            secondLine = `${wp.icao || 'N/A'}${wp.runway ? ' Rwy ' + wp.runway : ''}`;
+            if (wp.leg_distance_m) {
+                secondLine += ` Dist: ${wp.planner.tb.userSettings.distance === 'metric' ? (wp.leg_distance_m / 1000).toFixed(1) + ' km' : (wp.leg_distance_m * 0.000621371).toFixed(1) + ' mi'}`;
+            }
+        } else {
+            if (wp.isAAT()) {
+                secondLine += 'AAT - ';
+            }
+            if (wp.radius_m) {
+                if (wp.planner.tb.userSettings.distance === 'metric') {
+                    secondLine += wp.radius_m >= 5000 ? `Radius: ${(wp.radius_m / 1000).toFixed(1)} km ` : `Radius: ${Math.round(wp.radius_m)} m `;
+                } else {
+                    const radiusFeet = wp.radius_m * 3.28084;
+                    secondLine += radiusFeet >= 5280 ? `Radius: ${(radiusFeet / 5280).toFixed(1)} mi ` : `Radius: ${Math.round(radiusFeet)}' `;
+                }
+            }
+            if (wp.min_alt_m) {
+                secondLine += wp.planner.tb.userSettings.altitude === 'imperial' ? `MIN: ${Math.round(wp.min_alt_m * 3.28084)}' ` : `MIN: ${Math.round(wp.min_alt_m)} m `;
+            }
+            if (wp.max_alt_m) {
+                secondLine += wp.planner.tb.userSettings.altitude === 'imperial' ? `MAX: ${Math.round(wp.max_alt_m * 3.28084)}' ` : `MAX: ${Math.round(wp.max_alt_m)} m `;
+            }
+            if (wp.leg_distance_m) {
+                secondLine += wp.planner.tb.userSettings.distance === 'metric' ? ` Dist: ${(wp.leg_distance_m / 1000).toFixed(1)} km` : ` Dist: ${(wp.leg_distance_m * 0.000621371).toFixed(1)} mi`;
+            }
+        }
+        return secondLine;
+    }
+
+    getThirdLine() {
+        let wp = this;
+        return wp.planner.tb.userSettings.altitude === 'imperial'
+            ? `Lat: ${wp.position.lat.toFixed(6)} Long: ${wp.position.lng.toFixed(6)} Elev: ${Math.round(wp.alt_m * 3.28084)}'`
+            : `Lat: ${wp.position.lat.toFixed(6)} Long: ${wp.position.lng.toFixed(6)} Elev: ${Math.round(wp.alt_m)} m`;
+    }
+
     is_start(p1, p2, leg_bearing_deg) {
         let wp = this;
-        //console.log("WP.is_start()");
 
-        // Check p1 is in start sector
         if (wp.max_alt_m != null && p1.alt_m > wp.max_alt_m) {
-            //console.log("WP.is_start() false p1 max_alt_m="+wp.max_alt_m+" vs "+p1.alt_m);
             return false;
         }
         if (wp.min_alt_m != null && p1.alt_m < wp.min_alt_m) {
-            //console.log("WP.is_start() false p1 min_alt_m="+wp.min_alt_m+" vs "+p1.alt_m);
             return false;
         }
 
         let radius_m = wp.radius_m == null ? wp.DEFAULT_START_RADIUS_M : wp.radius_m;
         let p1_distance_m = Geo.get_distance_m(p1, wp.position);
         if (p1_distance_m > radius_m) {
-            //console.log("WP.is_start() false radius_m="+radius_m.toFixed(0)+" vs "+distance_m.toFixed(0));
             return false;
         }
         let wp_bearing_deg = Geo.get_bearing_deg(p1, wp.position);
-        let in_sector = Geo.in_sector(leg_bearing_deg, wp_bearing_deg, 180); // Check p1 within start sector angles
+        let in_sector = Geo.in_sector(leg_bearing_deg, wp_bearing_deg, 180);
         if (!in_sector) {
-            //console.log("WP.is_start() false p1 at "+wp_bearing_deg.toFixed(0)+" deg not in start sector");
             return false;
         }
-        // OK so p1 is in the start sector, now we need to see if p2 is outside i.e. distance>radius or crosses the start line
-        // We do this by seeing if p2 is in the 180-degree sector OPPOSITE the start sector
-        // First check radius:
-        //if (Geo.get_distance_m(p2, wp.position) > radius_m) {
-        //    return true;
-        //}
-        // Inside radius, but have we crossed start line?
+
         let reverse_bearing_deg = (leg_bearing_deg + 180) % 360;
         wp_bearing_deg = Geo.get_bearing_deg(p2, wp.position);
         let over_start_line = Geo.in_sector(reverse_bearing_deg, wp_bearing_deg, 180);
-        if (over_start_line) {
-            //console.log("WP.is_start true at " + wp_bearing_deg.toFixed(0));
-        } else {
-            //console.log("WP.is_start false at "+wp_bearing_deg.toFixed(0));
-        }
         return over_start_line;
     }
 
     is_finish(p1, p2) {
         let wp = this;
-        //console.log("wp is_finish");
 
-        // check p1 is before finish sector
         let wp_bearing_deg = Geo.get_bearing_deg(p1, wp.position);
         let before_finish_line = Geo.in_sector(wp.leg_bearing_deg, wp_bearing_deg, 180);
-        if (before_finish_line) {
-            //console.log("WP.is_finish p1 before_finish_line=true at "+wp_bearing_deg.toFixed(0));
-        } else {
-            //console.log("WP.is_finish p1 before_finish_line=false at "+wp_bearing_deg.toFixed(0));
+        if (!before_finish_line) {
             return false;
         }
-        // p1 is before finish
 
-        // Check p2 is in finish sector
         if (wp.max_alt_m != null && p2.alt_m > wp.max_alt_m) {
-            //console.log("WP.is_finish() false p2 max_alt_m="+wp.max_alt_m+" vs "+p2.alt_m);
             return false;
         }
         if (wp.min_alt_m != null && p2.alt_m < wp.min_alt_m) {
-            //console.log("WP.is_finish() false p2 min_alt_m="+wp.min_alt_m+" vs "+p2.alt_m);
             return false;
         }
 
         let radius_m = wp.radius_m == null ? wp.DEFAULT_FINISH_RADIUS_M : wp.radius_m;
         let distance_m = Geo.get_distance_m(p2, wp.position);
         if (distance_m > radius_m) {
-            //console.log("WP.is_finish() false p2 radius_m="+radius_m.toFixed(0)+" vs "+distance_m.toFixed(0));
             return false;
         }
 
         let reverse_bearing_deg = (wp.leg_bearing_deg + 180) % 360;
         wp_bearing_deg = Geo.get_bearing_deg(p2, wp.position);
-        let p2_in_sector = Geo.in_sector(reverse_bearing_deg, wp_bearing_deg, 180); // Check p2 within finish sector angles
-        if (!p2_in_sector) {
-            //console.log("WP.is_finish() false p2 at "+wp_bearing_deg.toFixed(0)+" deg not in finish sector");
-            return false;
-        }
-
-        //console.log("WP.is_finish() true");
-
-        return true;
+        let p2_in_sector = Geo.in_sector(reverse_bearing_deg, wp_bearing_deg, 180);
+        return p2_in_sector;
     }
 
-    // Return true if p1 -> p2 ENTERS this wp radius
     is_wp(p1, p2) {
         let wp = this;
         if (!wp.in_sector(p1) && wp.in_sector(p2)) {
-            //console.log("wp is_wp() true");
             return true;
         }
-        //console.log("wp is_wp() false");
         return false;
     }
 
-    // Return true if p1 -> p2 EXITS this wp radius
     is_wp_exit(p1, p2) {
         let wp = this;
         if (wp.in_sector(p1) && !wp.in_sector(p2)) {
-            //console.log("wp is_wp() true");
             return true;
         }
-        //console.log("wp is_wp() false");
         return false;
     }
-
-    // ********************************************
-    // class toString
-    // ********************************************
 
     toString() {
         let wp = this;
         return wp.name;
     }
-} // end WP class
+}
