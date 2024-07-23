@@ -319,7 +319,7 @@ class TaskBrowserMap {
         let tbm = this;
         // Remove the previous task map_elements
         if (tbm.b21_task != null) {
-            if (tbm.b21_task.planner.currentEntrySeqID == api_task.EntrySeqID) {
+            if (tbm.b21_task.entrySeqID == api_task.EntrySeqID) {
                 return;
             }
             tbm.b21_task.reset();

@@ -13,6 +13,7 @@ class B21_Task {
 
     init() {
         let task = this;
+        task.entrySeqID = task.planner.currentEntrySeqID;
         task.name = null;           // From filename
         task.title = null;          // From MSFS PLN
         task.description = null;    // From MSFS PLN
