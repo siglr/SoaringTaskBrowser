@@ -413,11 +413,8 @@ class B21_Task {
     set_current_wp(index) {
         let task = this;
 
-        // Close the currently open popup
-        if (task.current_popup) {
-            task.current_popup.remove();
-            task.current_popup = null;
-        }
+        // Clear all existing popups
+        task.clear_all_popups();
 
         task.index = index;
         task.update_waypoint_icons();
@@ -449,6 +446,16 @@ class B21_Task {
         console.log("task.reset()");
         task.planner.map.removeLayer(task.map_elements);
         task.planner.map.closePopup();
+    }
+
+    clear_all_popups() {
+        let task = this;
+        for (let wp of task.waypoints) {
+            if (wp.marker && wp.marker.getPopup() && wp.marker.getPopup().isOpen()) {
+                wp.marker.closePopup();
+            }
+        }
+        task.current_popup = null;
     }
 
     // *******************************************
