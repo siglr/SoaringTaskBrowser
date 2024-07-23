@@ -797,7 +797,7 @@ class TaskBrowser {
             showRailways: tb.tbm.isLayerVisible('Railways'),
             windCompass: tb.tbm.isLayerVisible('Wind Compass'),
             showSelectedOnly: tb.tbm.isLayerVisible('Show selected only'),
-            splitterPosition: tb.getSplitterPosition()
+            taskDetailWidth: tb.getTaskDetailWidth()
         };
         tb.setJsonCookie('mapUserSettings', settings, 300);
     }
@@ -813,7 +813,7 @@ class TaskBrowser {
             showRailways: false,
             windCompass: false,
             showSelectedOnly: true,
-            splitterPosition: 50
+            taskDetailWidth: '30%'
         };
 
         // Merge default settings with loaded settings
@@ -825,7 +825,23 @@ class TaskBrowser {
         tb.tbm.setLayerVisibility('Railways', mergedSettings.showRailways);
         tb.tbm.setLayerVisibility('Wind Compass', mergedSettings.windCompass);
         tb.tbm.setLayerVisibility('Show selected only', mergedSettings.showSelectedOnly);
-        tb.setSplitterPosition(mergedSettings.splitterPosition);
+        tb.setTaskDetailWidth(mergedSettings.taskDetailWidth);
+    }
+
+    getTaskDetailWidth() {
+        const taskDetailContainer = document.getElementById('taskDetailContainer');
+        const containerWidth = taskDetailContainer.parentElement.offsetWidth;
+        const taskDetailWidth = taskDetailContainer.offsetWidth;
+        const taskDetailWidthPercent = (taskDetailWidth / containerWidth) * 100;
+        return `${taskDetailWidthPercent}%`;
+    }
+
+    setTaskDetailWidth(width) {
+        const taskDetailContainer = document.getElementById('taskDetailContainer');
+        const mapContainer = document.getElementById('map');
+        taskDetailContainer.style.width = width;
+        mapContainer.style.width = `${100 - parseFloat(width)}%`;
+        this.resizeMap(); // Ensure the map resizes correctly
     }
 
     loadUserSettings() {
@@ -881,25 +897,6 @@ class TaskBrowser {
         };
         tb.setJsonCookie('userSettings', settings, 300);
         tb.userSettings = settings;
-    }
-
-    getSplitterPosition() {
-        const mapContainer = document.getElementById('map');
-        const taskDetailContainer = document.getElementById('taskDetailContainer');
-        return {
-            mapWidth: mapContainer.style.width,
-            taskDetailWidth: taskDetailContainer.style.width
-        };
-    }
-
-    setSplitterPosition(position) {
-        if (position) {
-            const mapContainer = document.getElementById('map');
-            const taskDetailContainer = document.getElementById('taskDetailContainer');
-            mapContainer.style.width = position.mapWidth;
-            taskDetailContainer.style.width = position.taskDetailWidth;
-            this.resizeMap();  // Ensure the map resizes correctly
-        }
     }
 
 }
