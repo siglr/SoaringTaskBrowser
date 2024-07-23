@@ -20,11 +20,11 @@ TB.hideTaskDetailsPanel();
 
 function resize(e) {
     if (isResizing) {
-        const containerWidth = mapContainer.offsetWidth + taskDetailContainer.offsetWidth;
+        const containerWidth = mapTab.offsetWidth + taskDetailContainer.offsetWidth;
         const newMapWidth = e.clientX / containerWidth * 100;
         const newTaskDetailWidth = 100 - newMapWidth;
 
-        mapContainer.style.width = `${newMapWidth}%`;
+        mapTab.style.width = `${newMapWidth}%`;
         taskDetailContainer.style.width = `${newTaskDetailWidth}%`;
 
         TB.resizeMap(); // Ensure map is resized
