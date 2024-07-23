@@ -443,7 +443,6 @@ class B21_Task {
 
     reset() {
         let task = this;
-        console.log("task.reset()");
         task.planner.map.removeLayer(task.map_elements);
         task.planner.map.closePopup();
     }

@@ -615,7 +615,10 @@ class TaskBrowser {
 
     handleTaskDetails(task_details, forceZoomToTask = false) {
         let tb = this;
-        tb.tbm.setB21Task(task_details);
+        console.log("Calling setB21Task from handleTaskDetails");
+        if (!task_details.EntrySeqID == tb.tbm.b21_task.planner.currentEntrySeqID) {
+            tb.tbm.setB21Task(task_details);
+        }
 
         // Zoom in on the task if specified or if task bounds outside current map bounds
         let taskBounds = tb.tbm.b21_task.get_bounds();

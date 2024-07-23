@@ -317,9 +317,11 @@ class TaskBrowserMap {
 
     setB21Task(api_task) {
         let tbm = this;
-        console.log('setB21Task', api_task.entrySeqID)
         // Remove the previous task map_elements
         if (tbm.b21_task != null) {
+            if (tbm.b21_task.planner.currentEntrySeqID == api_task.EntrySeqID) {
+                return;
+            }
             tbm.b21_task.reset();
         }
 
@@ -435,13 +437,15 @@ class TaskBrowserMap {
     selectTaskCommon(entrySeqID, forceZoomToTask = false, realSelection = true) {
 
         let tbm = this;
-        console.log("selectTaskCommon()", entrySeqID);
 
         // 1. The previous (if any) selected task's normal unselected polyline should be drawn (and the detailed task rendering removed)
         tbm.resetPolylines();
 
         // 2. Render the detailed task and remove the regular polyline
         tbm.currentEntrySeqID = entrySeqID; // Track the EntrySeqID
+        if (tbm.api_tasks[entrySeqID] == undefined) {
+            return;
+        }
         let api_task = tbm.api_tasks[entrySeqID]; // Retrieve api_task from the cache
         tbm.currentPolyline = api_task.polyline; // Set the current polyline
         tbm.currentPolyline.setStyle({ color: '#0000ff', weight: tbm.selWeight }); // Set selWeight (0 actually)
