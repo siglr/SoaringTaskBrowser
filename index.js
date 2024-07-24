@@ -258,7 +258,7 @@ function displayEvents(events) {
             moreInfoLink = moreInfoLink.replace("https://", "discord://");
         }
 
-        let soaringInfo = "<em>The task has not been published yet.</em>";
+        let soaringInfo = "<em>The task has not yet been published.</em>";
         let taskButton = "";
         let moreInfoContent = "";
 
