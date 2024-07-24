@@ -637,10 +637,12 @@ class TaskBrowser {
 
         if (!tb.tbm.b21_task) {
             tb.tbm.setB21Task(task_details);
+            tb.tbm.setWeatherInfo(task_details.WPRXML);
         }
 
         if (!task_details.EntrySeqID == tb.tbm.b21_task.planner.currentEntrySeqID) {
             tb.tbm.setB21Task(task_details);
+            tb.tbm.setWeatherInfo(task_details.WPRXML);
         }
 
         // Zoom in on the task if specified or if task bounds outside current map bounds
@@ -653,6 +655,12 @@ class TaskBrowser {
         }
         //tb.tbm.map.fitBounds(tb.tbm.b21_task.get_bounds());
         tb.showTaskDetailsStandalone(task_details);
+    }
+
+    setWeatherInfo(wpr_str) {
+        this.wsg_weather = new WSG_Weather();
+        this.wsg_weather.load_wpr_str(wpr_str);
+        console.log("Weather information loaded:", this.wsg_weather);
     }
 
     clearTaskDetails() {
