@@ -19,7 +19,7 @@ class WSG_Weather {
     load_wpr_str(wpr_str) {
         const parser = new DOMParser();
         const dom = parser.parseFromString(wpr_str, "application/xml");
-        const preset = dom.querySelector("WeatherPreset.Preset");
+        const preset = dom.getElementsByTagName("WeatherPreset.Preset")[0];
 
         // Basic Information
         this.name = this.getTextContent(preset, "Name");
