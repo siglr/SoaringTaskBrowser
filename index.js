@@ -267,8 +267,14 @@ function displayEvents(events) {
                 ↗️ ${event.SoaringRidge ? 'Ridge' : ''}${event.SoaringThermals ? ' Thermals' : ''}${event.SoaringWaves ? ' Waves' : ''}${event.SoaringDynamic ? ' Dynamic' : ''} ${TB.addDetailWithinBrackets(event.SoaringExtraInfo)}<br>
                 ⏳ ${TB.formatDuration(event.DurationMin, event.DurationMax)} ${TB.addDetailWithinBrackets(event.DurationExtraInfo)}<br>
             `;
-            taskButton = `<button class="button-style" onclick="switchToMapAndSelectTask(${event.EntrySeqID})">View task on map</button>`;
+            taskButton = `<button class="button-style" onclick="switchToMapAndSelectTask(${event.EntrySeqID})" title="View task on map">
+                <img src="images/World.png" alt="View task on map" style="height: 20px; vertical-align: middle;">
+            </button>`;
         }
+
+        shareButton = `<button class="button-style" onclick="TB.copyTextToClipboard('https://wesimglide.org/index.html?event=${event.Key}')" title="Share event (copy link to clipboard)">
+            <img src="images/ShareLink.png" alt="Share event (copy link to clipboard)" style="height: 20px; vertical-align: middle;">
+        </button>`;
 
         if (moreInfoLink) {
             moreInfoContent = `<p><a href="${moreInfoLink}" target="_blank">More info on this group event</a></p>`;
@@ -281,9 +287,10 @@ function displayEvents(events) {
             <p><strong>Event meetup time:</strong> ${localEventDate} local</p>
             ${moreInfoContent}
             ${taskButton}
+            ${shareButton}
         `;
 
-        TB.generateCollapsibleSection(`📆 ${dayOfWeek}, ${localEventDate} : ${event.Title}`, eventContent, eventsList);
+        TB.generateCollapsibleSection(`📆 ${dayOfWeek}, ${localEventDate} : ${event.Title}`, eventContent, eventsList, event.Key);
     });
 
     // Add this function to handle the tab switch and task selection
@@ -292,9 +299,18 @@ function displayEvents(events) {
         TB.tbm.selectTaskFromURL(entrySeqID); // Select the task on the map
     };
 
+    // Check URL params for an event ID and expand it if found
+    const params = new URLSearchParams(window.location.search);
+    const eventIdToExpand = params.get('event');
+    if (eventIdToExpand) {
+        const eventElement = document.getElementById(eventIdToExpand);
+        if (eventElement) {
+            eventElement.classList.remove('collapsed');
+            eventElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
 }
 
-// Call fetchAndDisplayEvents when the events tab is switched to
 TB.switchTab = function (tabId) {
     // Load content if it hasn't been loaded yet
     const tabContent = document.getElementById(tabId);
@@ -347,7 +363,6 @@ TB.switchTab = function (tabId) {
         url.searchParams.delete('task');
     } else {
         url.searchParams.delete('task');
-        url.searchParams.delete('event');
     }
 
     // Update page title based on the active tab
@@ -393,6 +408,12 @@ function handleParams(params) {
         TB.tbm.selectTaskFromURL(params.task); // Ensure task details are fetched
     } else if (params.event) {
         TB.switchTab('eventsTab');
+        const eventId = `${params.event}`;
+        const eventElement = document.getElementById(eventId);
+        if (eventElement) {
+            eventElement.classList.remove('collapsed');
+            eventElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     } else if (params.tab) {
         switch (params.tab) {
             case 'map':

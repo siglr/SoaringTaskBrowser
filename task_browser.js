@@ -517,9 +517,13 @@ class TaskBrowser {
         }
     }
 
-    generateCollapsibleSection(title, content, container) {
+    generateCollapsibleSection(title, content, container, id = null) {
         const section = document.createElement('div');
         section.className = 'tool-entry collapsible collapsed';
+
+        if (id) {
+            section.id = id;
+        }
 
         const titleElement = document.createElement('div');
         titleElement.className = 'title';
