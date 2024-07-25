@@ -525,3 +525,14 @@ body {
         background-color: #888888;
         border-left: 3px solid #007bff;
     }
+
+.cloud-layer-item {
+    margin: 0;
+    padding: 5px;
+    cursor: pointer;
+}
+
+    .cloud-layer-item.selected {
+        background-color: #888888;
+        border-left: 3px solid #007bff;
+    }

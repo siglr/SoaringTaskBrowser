@@ -311,7 +311,6 @@ class B21_Task {
     // This line is multiple polylines that all should be drawn (allowing an alternate color dash if needed).
     add_line(wp1, wp2) {
         let task = this;
-        console.log("add_line", wp1, wp2);
         let latlngs = [wp1.position, wp2.position];
         let color1 = task.planner.settings.task_line_color_1;
         if (color1 == null || color1 == "") {
