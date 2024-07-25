@@ -452,12 +452,75 @@ class TaskBrowser {
 
     generateTaskDetailsWinds(task) {
         let tb = this;
-        // Collapsible Winds Section
-        let windsContent = `
-        <p>
-        Coming soon...
-        </p>`;
+        const userSettings = tb.loadUserSettings(); // Load user settings for unit preferences
+
+        // Create the winds content
+        let windsContent = '';
+
+        tb.wsg_weather.windLayers.forEach((layer, index) => {
+            // Ensure altitude, speed, and direction are numbers
+            let altitude = parseFloat(layer.altitude);
+            let windSpeed = parseFloat(layer.speed);
+            let windDirection = parseFloat(layer.angle);
+
+            // Convert altitude based on user settings
+            if (userSettings.altitude === 'imperial') {
+                altitude = (altitude * 3.28084).toFixed(0) + "'"; // Convert meters to feet
+            } else {
+                altitude = altitude.toFixed(0) + " m"; // Keep meters
+            }
+
+            // Convert wind speed based on user settings
+            if (userSettings.windSpeed === 'knots') {
+                windSpeed = windSpeed.toFixed(0) + ' kts'; // Keep knots
+            } else {
+                windSpeed = (windSpeed * 0.514444).toFixed(1) + ' m/s'; // Convert knots to meters per second
+            }
+
+            windDirection = windDirection.toFixed(0) + '°';
+
+            // Format wind layer details
+            let windDetails = `${altitude} ${windDirection} @ ${windSpeed}`;
+
+            // Wrap the details in a div and conditionally add a horizontal line
+            windsContent += `
+                <div class="wind-layer-item" data-index="${index}" style="margin: 0; padding: 5px; cursor: pointer;">
+                    <div>${windDetails}</div>
+                </div>
+                ${index < tb.wsg_weather.windLayers.length - 1 ? '<hr style="margin: 5px 0;">' : ''}
+            `;
+        });
+
         tb.generateCollapsibleSection("🌬️ Winds", windsContent, taskDetailContainer);
+
+        tb.selectWindLayerInList(0);
+
+        // Add click event listeners to each wind layer item
+        document.querySelectorAll('.wind-layer-item').forEach(item => {
+            item.addEventListener('click', function () {
+                const index = this.getAttribute('data-index');
+                tb.selectWindLayerInList(index);
+
+                const windLayer = tb.wsg_weather.windLayers[index];
+                tb.tbm.setWindDirection(parseFloat(windLayer.angle), parseFloat(windLayer.speed), parseFloat(windLayer.altitude));
+            });
+        });
+    }
+
+    selectWindLayerInList(index) {
+        let tb = this;
+        // Remove 'selected' class from all wind layer items
+        document.querySelectorAll('.wind-layer-item').forEach(item => item.classList.remove('selected'));
+
+        // Add 'selected' class to the clicked wind layer item
+        const selectedItem = document.querySelector(`.wind-layer-item[data-index="${index}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('selected');
+            selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            const windLayer = tb.wsg_weather.windLayers[index];
+            tb.tbm.setWindDirection(parseFloat(windLayer.angle), parseFloat(windLayer.speed), parseFloat(windLayer.altitude));
+        }
     }
 
     generateTaskDetailsClouds(task) {
@@ -493,6 +556,7 @@ class TaskBrowser {
         });
 
         tb.generateCollapsibleSection("🗺️ Waypoints", waypointsContent, taskDetailContainer);
+        tb.selectWaypointInList(0);
 
         document.querySelectorAll('.waypoint-item').forEach(item => {
             item.addEventListener('click', function () {
@@ -762,6 +826,7 @@ class TaskBrowser {
         if (taskDetailContainer) {
             taskDetailContainer.innerHTML = ''; // Clear the task details
         }
+        tb.tbm.setWindDirection(-1, 0, 0);
         tb.TaskDetailsPanelVisible = false;
         tb.hideTaskDetailsPanel();
     }
