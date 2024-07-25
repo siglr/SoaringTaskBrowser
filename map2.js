@@ -624,7 +624,7 @@ class TaskBrowserMap {
         let windArrowElem = document.getElementById('windArrow');
         if (windDirectionElem && windArrowElem) {
             windDirectionElem.innerText = `${speed} kts`;
-            windArrowElem.style.transform = `rotate(${degree}deg)`;
+            windArrowElem.style.transform = `rotate(${180 + degree}deg)`;
         }
     }
 

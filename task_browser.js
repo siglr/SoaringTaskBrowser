@@ -373,12 +373,101 @@ class TaskBrowser {
 
     generateTaskDetailsWeather(task) {
         let tb = this;
+        const userSettings = tb.loadUserSettings(); // Load user settings for unit preferences
+
         // Collapsible Weather Section
+        let elevMeasurement = tb.wsg_weather.isAltitudeAMGL ? "AMGL - Ground" : "AMSL - Sea";
+
+        // MSL Pressure conversion
+        let mslPressure = tb.wsg_weather.mslPressure;
+        if (userSettings.pressure === 'inHg') {
+            mslPressure = (mslPressure / 3386.39).toFixed(2) + ' inHg'; // Convert Pa to inHg
+        } else {
+            mslPressure = (mslPressure / 100).toFixed(2) + ' hPa'; // Convert Pa to hPa
+        }
+        if (parseFloat(mslPressure) !== 29.92) { // Check for non-standard value
+            mslPressure += ' ⚠️';
+        }
+
+        // MSL Temperature conversion
+        let mslTemperature = tb.wsg_weather.mslTemperature;
+        if (userSettings.temperature === 'fahrenheit') {
+            mslTemperature = ((mslTemperature - 273.15) * 9 / 5 + 32).toFixed(1) + ' °F'; // Convert Kelvin to Fahrenheit
+        } else {
+            mslTemperature = (mslTemperature - 273.15).toFixed(1) + ' °C'; // Convert Kelvin to Celsius
+        }
+
+        let aerosolIndex = tb.wsg_weather.aerosolDensity;
+
+        // Precipitations
+        let precipitations = tb.wsg_weather.precipitations;
+        if (precipitations > 0) {
+            if (userSettings.temperature === 'fahrenheit') {
+                precipitations = (precipitations / 25.4).toFixed(2) + ' inch/h'; // Convert mm/h to inch/h
+            } else {
+                precipitations = precipitations + ' mm/h'; // Keep mm/h
+            }
+        } else {
+            precipitations = null; // Don't display if 0
+        }
+
+        // Snow Cover
+        let snowCover = tb.wsg_weather.snowCover;
+        if (snowCover > 0) {
+            if (userSettings.temperature === 'fahrenheit') {
+                snowCover = (snowCover * 39.3701).toFixed(2) + ' inches'; // Convert meters to inches
+            } else {
+                snowCover = (snowCover * 100).toFixed(2) + ' cm'; // Convert meters to cm
+            }
+        } else {
+            snowCover = null; // Don't display if 0
+        }
+
+        // Thunderstorm Intensity
+        let thunderstormIntensity = tb.wsg_weather.thunderstormIntensity;
+        if (thunderstormIntensity > 0) {
+            thunderstormIntensity = (thunderstormIntensity * 100).toFixed(1) + ' %'; // Convert to percentage
+        } else {
+            thunderstormIntensity = null; // Don't display if 0
+        }
+
+        // Generate weather content HTML
         let weatherContent = `
-        <p>
+            <ul>
+                <li>Name: ${tb.wsg_weather.name}</li>
+                ${task.WeatherSummary ? `<li>Summary: ${task.WeatherSummary}</li>` : ''}
+                <li>Altitudes: ${elevMeasurement}</li>
+                <li>MSL Pressure: ${mslPressure}</li>
+                <li>MSL Temp.: ${mslTemperature}</li>
+                <li>Aerosol: ${aerosolIndex}</li>
+                ${precipitations ? `<li>Precipitations: ${precipitations}</li>` : ''}
+                ${snowCover ? `<li>Snow Cover: ${snowCover}</li>` : ''}
+                ${thunderstormIntensity ? `<li>Lightning: ${thunderstormIntensity}</li>` : ''}
+            </ul>
             <img src="https://siglr.com/DiscordPostHelper/TaskBrowser/WeatherCharts/${task.EntrySeqID}.jpg" class="weather-image" onclick="TB.showImageModal(this.src)" />
+        `;
+
+        tb.generateCollapsibleSection("🌥 Weather & Chart", weatherContent, taskDetailContainer);
+    }
+
+    generateTaskDetailsWinds(task) {
+        let tb = this;
+        // Collapsible Winds Section
+        let windsContent = `
+        <p>
+        Coming soon...
         </p>`;
-        tb.generateCollapsibleSection("🌥 Weather", weatherContent, taskDetailContainer);
+        tb.generateCollapsibleSection("🌬️ Winds", windsContent, taskDetailContainer);
+    }
+
+    generateTaskDetailsClouds(task) {
+        let tb = this;
+        // Collapsible Clouds Section
+        let cloudsContent = `
+        <p>
+        Coming soon...
+        </p>`;
+        tb.generateCollapsibleSection("☁️ Clouds", cloudsContent, taskDetailContainer);
     }
 
     generateTaskDetailsWaypoints(task) {
@@ -449,6 +538,8 @@ class TaskBrowser {
         tb.generateTaskDetailsFiles(task);
         tb.generateTaskDetailsRestriction(task);
         tb.generateTaskDetailsWeather(task);
+        tb.generateTaskDetailsWinds(task);
+        tb.generateTaskDetailsClouds(task);
         tb.generateTaskDetailsWaypoints(task);
 
         // Show the task control panel
