@@ -454,10 +454,13 @@ class TaskBrowser {
         let tb = this;
         const userSettings = tb.loadUserSettings(); // Load user settings for unit preferences
 
+        // Sort wind layers by altitude in descending order
+        let sortedWindLayers = tb.wsg_weather.windLayers.slice().sort((a, b) => parseFloat(b.altitude) - parseFloat(a.altitude));
+
         // Create the winds content
         let windsContent = '';
 
-        tb.wsg_weather.windLayers.forEach((layer, index) => {
+        sortedWindLayers.forEach((layer, index) => {
             // Ensure altitude, speed, and direction are numbers
             let altitude = parseFloat(layer.altitude);
             let windSpeed = parseFloat(layer.speed);
@@ -487,24 +490,24 @@ class TaskBrowser {
                 <div class="wind-layer-item" data-index="${index}" style="margin: 0; padding: 5px; cursor: pointer;">
                     <div>${windDetails}</div>
                 </div>
-                ${index < tb.wsg_weather.windLayers.length - 1 ? '<hr style="margin: 5px 0;">' : ''}
+                ${index < sortedWindLayers.length - 1 ? '<hr style="margin: 5px 0;">' : ''}
             `;
         });
 
         tb.generateCollapsibleSection("🌬️ Winds", windsContent, taskDetailContainer);
 
-        tb.selectWindLayerInList(0);
+        tb.selectWindLayerInList(sortedWindLayers.length - 1, sortedWindLayers);
 
         // Add click event listeners to each wind layer item
         document.querySelectorAll('.wind-layer-item').forEach(item => {
             item.addEventListener('click', function () {
                 const index = this.getAttribute('data-index');
-                tb.selectWindLayerInList(index);
+                tb.selectWindLayerInList(index, sortedWindLayers);
             });
         });
     }
 
-    selectWindLayerInList(index) {
+    selectWindLayerInList(index, sortedWindLayers) {
         let tb = this;
         // Remove 'selected' class from all wind layer items
         document.querySelectorAll('.wind-layer-item').forEach(item => item.classList.remove('selected'));
@@ -515,7 +518,7 @@ class TaskBrowser {
             selectedItem.classList.add('selected');
             selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            const windLayer = tb.wsg_weather.windLayers[index];
+            const windLayer = sortedWindLayers[index];
             let altitude = parseFloat(windLayer.altitude);
             let elevMeasurement = tb.wsg_weather.isAltitudeAMGL ? "AG" : "AS";
             // Convert altitude based on user settings
@@ -537,12 +540,67 @@ class TaskBrowser {
 
     generateTaskDetailsClouds(task) {
         let tb = this;
+        const userSettings = tb.loadUserSettings(); // Load user settings for unit preferences
+
+        // Sort cloud layers by bottom altitude in descending order
+        let sortedCloudLayers = tb.wsg_weather.cloudLayers.slice().sort((a, b) => parseFloat(b.altitudeBot) - parseFloat(a.altitudeBot));
+
         // Collapsible Clouds Section
-        let cloudsContent = `
-        <p>
-        Coming soon...
-        </p>`;
+        let cloudsContent = ``;
+
+        sortedCloudLayers.forEach((layer, index) => {
+            // Ensure all fields are numbers
+            let botAltitude = parseFloat(layer.altitudeBot);
+            let topAltitude = parseFloat(layer.altitudeTop);
+            let density = parseFloat(layer.density).toFixed(1);
+            let coverage = (parseFloat(layer.coverage) * 100).toFixed(0);
+            let scattering = (parseFloat(layer.scattering) * 100).toFixed(0);;
+
+            // Convert altitude based on user settings
+            if (userSettings.altitude === 'imperial') {
+                botAltitude = (botAltitude * 3.28084).toFixed(0) + "'"; // Convert meters to feet
+                topAltitude = (topAltitude * 3.28084).toFixed(0) + "'"; // Convert meters to feet
+            } else {
+                botAltitude = botAltitude.toFixed(0) + " m"; // Keep meters
+                topAltitude = topAltitude.toFixed(0) + " m"; // Keep meters
+            }
+
+            // Format cloud layer details
+            // From 5940' to 18883', 30% coverage, 0.997 density, 60% scattering
+            let cloudDetails = `From ${botAltitude} to ${topAltitude}<br>Cov. ${coverage}% Dens. ${density} Scat. ${scattering}%`;
+
+            // Wrap the details in a div and conditionally add a horizontal line
+            cloudsContent += `
+                <div class="cloud-layer-item" data-index="${index}" style="margin: 0; padding: 5px; cursor: pointer;">
+                    <div>${cloudDetails}</div>
+                </div>
+                ${index < tb.wsg_weather.cloudLayers.length - 1 ? '<hr style="margin: 5px 0;">' : ''}
+            `;
+        });
+
         tb.generateCollapsibleSection("☁️ Clouds", cloudsContent, taskDetailContainer);
+
+        // Add click event listeners to each cloud layer item
+        document.querySelectorAll('.cloud-layer-item').forEach(item => {
+            item.addEventListener('click', function () {
+                const index = this.getAttribute('data-index');
+                tb.selectCloudLayerInList(index);
+            });
+        });
+
+    }
+
+    selectCloudLayerInList(index) {
+        let tb = this;
+        // Remove 'selected' class from all wind layer items
+        document.querySelectorAll('.cloud-layer-item').forEach(item => item.classList.remove('selected'));
+
+        // Add 'selected' class to the clicked wind layer item
+        const selectedItem = document.querySelector(`.cloud-layer-item[data-index="${index}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('selected');
+            selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
 
     generateTaskDetailsWaypoints(task) {
