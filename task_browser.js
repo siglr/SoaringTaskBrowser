@@ -500,9 +500,6 @@ class TaskBrowser {
             item.addEventListener('click', function () {
                 const index = this.getAttribute('data-index');
                 tb.selectWindLayerInList(index);
-
-                const windLayer = tb.wsg_weather.windLayers[index];
-                tb.tbm.setWindDirection(parseFloat(windLayer.angle), parseFloat(windLayer.speed), parseFloat(windLayer.altitude));
             });
         });
     }
@@ -519,7 +516,22 @@ class TaskBrowser {
             selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
             const windLayer = tb.wsg_weather.windLayers[index];
-            tb.tbm.setWindDirection(parseFloat(windLayer.angle), parseFloat(windLayer.speed), parseFloat(windLayer.altitude));
+            let altitude = parseFloat(windLayer.altitude);
+            let elevMeasurement = tb.wsg_weather.isAltitudeAMGL ? "AG" : "AS";
+            // Convert altitude based on user settings
+            if (tb.userSettings.altitude === 'imperial') {
+                altitude = (altitude * 3.28084).toFixed(0) + "' " + elevMeasurement; // Convert meters to feet
+            } else {
+                altitude = altitude.toFixed(0) + " m " + elevMeasurement; // Keep meters
+            }
+            let windSpeed = parseFloat(windLayer.speed);
+            // Convert wind speed based on user settings
+            if (tb.userSettings.windSpeed === 'knots') {
+                windSpeed = windSpeed.toFixed(0) + ' kts'; // Keep knots
+            } else {
+                windSpeed = (windSpeed * 0.514444).toFixed(1) + ' m/s'; // Convert knots to meters per second
+            }
+            tb.tbm.setWindDirection(parseFloat(windLayer.angle), windSpeed, altitude);
         }
     }
 
