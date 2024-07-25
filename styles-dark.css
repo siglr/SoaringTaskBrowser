@@ -212,8 +212,20 @@ body {
         background-color: #3a3d42; /* Ensure content matches the entry background */
     }
 
-    .tool-entry .title:hover {
+    .tool-entry .title:hover,
+    .tool-entry .title.highlightGreen:hover,
+    .tool-entry .title.highlightYellow:hover {
         background-color: #7289da;
+    }
+
+    .tool-entry .title.highlightGreen {
+        background-color: #257a25; /* Green highlight background color */
+        color: #fff; /* Green highlight text color */
+    }
+
+    .tool-entry .title.highlightYellow {
+        background-color: #ffeb3b; /* Yellow highlight background color */
+        color: #000; /* Yellow highlight text color */
     }
 
     .tool-entry ul, .tool-entry ol {

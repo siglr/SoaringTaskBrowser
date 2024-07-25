@@ -280,6 +280,19 @@ function displayEvents(events) {
             moreInfoContent = `<p><a href="${moreInfoLink}" target="_blank">More info on this group event</a></p>`;
         }
 
+        // Determine highlight class
+        const now = new Date(); // Define the current time
+        const minutesToEvent = (eventDate - now) / 6000;
+        let highlightClass = null;
+        let titleSuffix = '';
+        if (minutesToEvent <= 60 && minutesToEvent > 0) {
+            highlightClass = 'highlightYellow';
+            titleSuffix = ' (Starting soon)';
+        } else if (eventDate <= now) {
+            highlightClass = 'highlightGreen';
+            titleSuffix = ' (In progress)';
+        }
+
         const eventContent = `
             <h3>${event.Subtitle}</h3>
             <p>${TB.convertToMarkdown(event.Comments)}</p>
@@ -290,7 +303,7 @@ function displayEvents(events) {
             ${shareButton}
         `;
 
-        TB.generateCollapsibleSection(`📆 ${dayOfWeek}, ${localEventDate} : ${event.Title}`, eventContent, eventsList, event.Key);
+        TB.generateCollapsibleSection(`📆 ${dayOfWeek}, ${localEventDate} : ${event.Title}${titleSuffix}`, eventContent, eventsList, event.Key, highlightClass);
     });
 
     // Add this function to handle the tab switch and task selection
