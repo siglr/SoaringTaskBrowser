@@ -494,7 +494,9 @@ class TaskBrowser {
             `;
         });
 
-        tb.generateCollapsibleSection("🌬️ Winds", windsContent, taskDetailContainer);
+        let elevMeasurement = tb.wsg_weather.isAltitudeAMGL ? "AMGL" : "AMSL";
+
+        tb.generateCollapsibleSection("🌬️ Winds " + elevMeasurement, windsContent, taskDetailContainer);
 
         tb.selectWindLayerInList(sortedWindLayers.length - 1, sortedWindLayers);
 
@@ -578,7 +580,9 @@ class TaskBrowser {
             `;
         });
 
-        tb.generateCollapsibleSection("☁️ Clouds", cloudsContent, taskDetailContainer);
+        let elevMeasurement = tb.wsg_weather.isAltitudeAMGL ? "AMGL" : "AMSL";
+
+        tb.generateCollapsibleSection("☁️ Clouds " + elevMeasurement, cloudsContent, taskDetailContainer);
 
         // Add click event listeners to each cloud layer item
         document.querySelectorAll('.cloud-layer-item').forEach(item => {
