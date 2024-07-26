@@ -552,6 +552,11 @@ body {
 .community-section {
     text-align: center;
     margin-top: 20px;
+    background-color: #3a3d424d; /* Background color for each community item */
+    border-radius: 10px;
+    padding-top: 2px;
+    padding-bottom: 10px;
+    position: relative;
 }
 
     .community-section h2 {
@@ -560,18 +565,31 @@ body {
         color: #ffffff;
     }
 
+.community-logos-container {
+    overflow-x: auto;
+    display: flex;
+    align-items: center;
+    scrollbar-width: thin;
+    scrollbar-color: #7289da #2c2f33;
+    padding: 0 30px; /* Add padding to make sure the items do not get cut off */
+    white-space: nowrap; /* Prevent wrapping of items */
+    margin-left: -30px; /* Negative margin to offset the padding */
+    margin-right: -30px; /* Negative margin to offset the padding */
+}
+
 .community-logos {
     display: flex;
-    justify-content: center;
     align-items: flex-start;
     gap: 20px;
+    margin: 0 auto; /* Center the items */
 }
 
 .community-item {
-    display: flex;
+    display: inline-block; /* Display as inline-block for nowrap */
     flex-direction: column;
     align-items: center;
-    max-width: 200px; /* Adjust the max-width as needed */
+    height: 220px;
+    width: 220px;
     text-align: center;
     padding: 10px;
     background-color: #3a3d42; /* Background color for each community item */
@@ -596,10 +614,55 @@ body {
 .community-name {
     font-size: 16px;
     color: #ffffff;
-    margin-bottom: 5px; /* Add margin to separate the name from the clubs list */
+    margin-bottom: 5px;
+    word-wrap: break-word; /* Ensure long words break */
+    text-overflow: ellipsis; /* Add ellipsis if text is too long */
+    white-space: nowrap; /* Ensure text wraps correctly */
+    overflow: hidden; /* Hide overflowing text */
+    max-width: 100%; /* Ensure the text doesn't exceed the container's width */
 }
 
 .community-clubs {
     font-size: 14px;
     color: #aaaaaa;
 }
+
+.community-navigation {
+    position: absolute;
+    top: 10%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .community-navigation.left {
+        left: 0;
+    }
+
+    .community-navigation.right {
+        right: 0;
+    }
+
+.scroll-button {
+    background-color: #7289da;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    color: #ffffff;
+    border-radius: 5px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+    .scroll-button:hover {
+        opacity: 1;
+    }
+
+    .scroll-button.left {
+        transform: rotate(0deg);
+    }
+
+    .scroll-button.right {
+        transform: rotate(0deg);
+    }

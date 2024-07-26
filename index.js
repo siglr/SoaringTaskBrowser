@@ -89,44 +89,53 @@ function loadTabContent(tabId) {
                 <hr>
                 <div class="community-section">
                     <h2>Featured Soaring Communities and Clubs</h2>
-                    <div class="community-logos">
-                        <div class="community-item">
-                            <a href="discord://discord.gg/got-gravel-793376245915189268" target="_blank">
-                                <img src="images/SoaringDiamondsClub.jpg" alt="Soaring Diamonds Club" class="community-logo">
-                            </a>
-                            <p class="community-name"><strong>Soaring Diamonds Club</strong></p>
-                            <p class="community-clubs">Hosted on<br>GotGravel's Discord</p>
-                        </div>
-                        <div class="community-item">
-                            <a href="discord://discord.gg/got-gravel-793376245915189268" target="_blank">
-                                <img src="images/GotGravel.jpg" alt="GotGravel" class="community-logo">
-                            </a>
-                            <p class="community-name"><strong>Friday Soaring Club</strong></p>
-                            <p class="community-clubs">Hosted on<br>GotGravel's Discord</p>
-                        </div>
-                        <div class="community-item">
-                            <a href="discord://discord.gg/h9H2MZyrg2" target="_blank">
-                                <img src="images/SSCLogo.jpg" alt="Sim Soaring Club" class="community-logo">
-                            </a>
-                            <p class="community-name"><strong>Sim Soaring Club</strong></p>
-                            <p class="community-clubs">Also home of<br>AusGlide Club</p>
-                        </div>
-                        <div class="community-item">
-                            <a href="discord://discord.gg/9PtUtaH9tz" target="_blank">
-                                <img src="images/UKVGALogo.jpg" alt="UKVGA" class="community-logo">
-                            </a>
-                            <p class="community-name"><strong>UK Virtual Gliding Association</strong></p>
-                            <p class="community-clubs"></p>
-                        </div>
-                        <div class="community-item">
-                            <a href="discord://discord.gg/h2GuWXJaGK" target="_blank">
-                                <img src="images/FranceMSFS.png" alt="UKVGA" class="community-logo">
-                            </a>
-                            <p class="community-name"><strong>MSFS ✈️20✈️24 FR</strong></p>
-                            <p class="community-clubs">Home of Planeur France</p>
+                    <div class="community-navigation left">
+                        <button class="scroll-button left">&larr;</button>
+                    </div>
+                    <div class="community-logos-container">
+                        <div class="community-logos">
+                            <div class="community-item">
+                                <a href="discord://discord.gg/got-gravel-793376245915189268" target="_blank">
+                                    <img src="images/SoaringDiamondsClub.jpg" alt="Soaring Diamonds Club" class="community-logo">
+                                </a>
+                                <p class="community-name"><strong>Soaring Diamonds Club</strong></p>
+                                <p class="community-clubs">Hosted on<br>GotGravel's Discord</p>
+                            </div>
+                            <div class="community-item">
+                                <a href="discord://discord.gg/got-gravel-793376245915189268" target="_blank">
+                                    <img src="images/GotGravel.jpg" alt="GotGravel" class="community-logo">
+                                </a>
+                                <p class="community-name"><strong>Friday Soaring Club</strong></p>
+                                <p class="community-clubs">Hosted on<br>GotGravel's Discord</p>
+                            </div>
+                            <div class="community-item">
+                                <a href="discord://discord.gg/h9H2MZyrg2" target="_blank">
+                                    <img src="images/SSCLogo.jpg" alt="Sim Soaring Club" class="community-logo">
+                                </a>
+                                <p class="community-name"><strong>Sim Soaring Club</strong></p>
+                                <p class="community-clubs">Also home of<br>AusGlide Club</p>
+                            </div>
+                            <div class="community-item">
+                                <a href="discord://discord.gg/9PtUtaH9tz" target="_blank">
+                                    <img src="images/UKVGALogo.jpg" alt="UKVGA" class="community-logo">
+                                </a>
+                                <p class="community-name"><strong>UK Virtual Gliding Association</strong></p>
+                                <p class="community-clubs"></p>
+                            </div>
+                            <div class="community-item">
+                                <a href="discord://discord.gg/h2GuWXJaGK" target="_blank">
+                                    <img src="images/FranceMSFS.png" alt="UKVGA" class="community-logo">
+                                </a>
+                                <p class="community-name"><strong>MSFS ✈️20✈️24 FR</strong></p>
+                                <p class="community-clubs">Home of<br>Planeur France</p>
+                            </div>
                         </div>
                     </div>
-                </div>`;
+                    <div class="community-navigation right">
+                        <button class="scroll-button right">&rarr;</button>
+                    </div>
+                </div>
+                `;
             break;
         case 'eventsTab':
             content = `
@@ -199,6 +208,19 @@ function loadTabContent(tabId) {
             break;
     }
     document.getElementById(tabId).innerHTML = content;
+    document.querySelector('.scroll-button.left').addEventListener('click', () => {
+        document.querySelector('.community-logos-container').scrollBy({
+            left: -200,
+            behavior: 'smooth'
+        });
+    });
+
+    document.querySelector('.scroll-button.right').addEventListener('click', () => {
+        document.querySelector('.community-logos-container').scrollBy({
+            left: 200,
+            behavior: 'smooth'
+        });
+    });
 }
 
 function fetchAndDisplayEvents() {
