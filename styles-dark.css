@@ -629,7 +629,7 @@ body {
 
 .community-navigation {
     position: absolute;
-    top: 85%;
+    top: 60%;
     transform: translateY(-50%);
     display: flex;
     justify-content: center;
