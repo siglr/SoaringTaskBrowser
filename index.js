@@ -357,7 +357,7 @@ function displayEvents(events) {
 
         // Determine highlight class
         const now = new Date(); // Define the current time
-        const minutesToEvent = (eventDate - now) / 6000;
+        const minutesToEvent = (eventDate - now) / 60000;
         let highlightClass = null;
         let titleSuffix = '';
         if (minutesToEvent <= 60 && minutesToEvent > 0) {
