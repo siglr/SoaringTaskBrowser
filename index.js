@@ -85,7 +85,41 @@ function loadTabContent(tabId) {
                 <p>Tell us what else you would like to see on the home page!</p>
                 <a href="discord://discord.com/channels/1022705603489042472/1258192556202922107" target="_blank">
                     <button class="button-style">Go to our Discord</button>
-                </a>`;
+                </a>
+                <hr>
+                <div class="community-section">
+                    <h2>Featured Soaring Communities and Clubs</h2>
+                    <div class="community-logos">
+                        <div class="community-item">
+                            <a href="discord://discord.gg/got-gravel-793376245915189268" target="_blank">
+                                <img src="images/SoaringDiamondsClub.jpg" alt="Soaring Diamonds Club" class="community-logo">
+                            </a>
+                            <p class="community-name"><strong>Soaring Diamonds Club</strong></p>
+                            <p class="community-clubs">Hosted on<br>GotGravel's Discord</p>
+                        </div>
+                        <div class="community-item">
+                            <a href="discord://discord.gg/got-gravel-793376245915189268" target="_blank">
+                                <img src="images/GotGravel.jpg" alt="GotGravel" class="community-logo">
+                            </a>
+                            <p class="community-name"><strong>Friday Soaring Club</strong></p>
+                            <p class="community-clubs">Hosted on<br>GotGravel's Discord</p>
+                        </div>
+                        <div class="community-item">
+                            <a href="discord://discord.gg/h9H2MZyrg2" target="_blank">
+                                <img src="images/SSCLogo.jpg" alt="Sim Soaring Club" class="community-logo">
+                            </a>
+                            <p class="community-name"><strong>Sim Soaring Club</strong></p>
+                            <p class="community-clubs">Also home of<br>AusGlide Club</p>
+                        </div>
+                        <div class="community-item">
+                            <a href="discord://discord.gg/9PtUtaH9tz" target="_blank">
+                                <img src="images/UKVGALogo.jpg" alt="UKVGA" class="community-logo">
+                            </a>
+                            <p class="community-name"><strong>UK Virtual Gliding Association</strong></p>
+                            <p class="community-clubs"></p>
+                        </div>
+                    </div>
+                </div>`;
             break;
         case 'eventsTab':
             content = `

@@ -548,3 +548,58 @@ body {
         background-color: #888888;
         border-left: 3px solid #007bff;
     }
+
+.community-section {
+    text-align: center;
+    margin-top: 20px;
+}
+
+    .community-section h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #ffffff;
+    }
+
+.community-logos {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.community-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 200px; /* Adjust the max-width as needed */
+    text-align: center;
+    padding: 10px;
+    background-color: #3a3d42; /* Background color for each community item */
+    border-radius: 10px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.community-logo {
+    height: 100px; /* Fixed height */
+    width: auto;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 10px; /* Add margin to separate the logo from the text */
+    object-fit: contain; /* Ensure the image fits within the specified height */
+}
+
+    .community-logo:hover {
+        transform: scale(1.1);
+        border-color: #7289da;
+    }
+
+.community-name {
+    font-size: 16px;
+    color: #ffffff;
+    margin-bottom: 5px; /* Add margin to separate the name from the clubs list */
+}
+
+.community-clubs {
+    font-size: 14px;
+    color: #aaaaaa;
+}
