@@ -634,7 +634,7 @@ body {
 
 .community-navigation {
     position: absolute;
-    top: 50%;
+    top: 65%;
     transform: translateY(-50%);
     display: flex;
     justify-content: center;
@@ -657,7 +657,7 @@ body {
     cursor: pointer;
     color: #ffffff;
     border-radius: 5px;
-    opacity: 0.8;
+    opacity: 0.2;
     transition: opacity 0.3s ease;
 }
 
