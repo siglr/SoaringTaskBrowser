@@ -208,19 +208,31 @@ function loadTabContent(tabId) {
             break;
     }
     document.getElementById(tabId).innerHTML = content;
-    document.querySelector('.scroll-button.left').addEventListener('click', () => {
-        document.querySelector('.community-logos-container').scrollBy({
-            left: -200,
-            behavior: 'smooth'
-        });
-    });
+    if (tabId == 'homeTab') {
+        addScrollEventListeners();
+    }
+}
 
-    document.querySelector('.scroll-button.right').addEventListener('click', () => {
-        document.querySelector('.community-logos-container').scrollBy({
-            left: 200,
-            behavior: 'smooth'
+function addScrollEventListeners() {
+    const leftButton = document.querySelector('.scroll-button.left');
+    const rightButton = document.querySelector('.scroll-button.right');
+    const container = document.querySelector('.community-logos-container');
+
+    if (leftButton && rightButton && container) {
+        leftButton.addEventListener('click', () => {
+            container.scrollBy({
+                left: -200,
+                behavior: 'smooth'
+            });
         });
-    });
+
+        rightButton.addEventListener('click', () => {
+            container.scrollBy({
+                left: 200,
+                behavior: 'smooth'
+            });
+        });
+    }
 }
 
 function fetchAndDisplayEvents() {
