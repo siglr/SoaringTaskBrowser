@@ -557,6 +557,7 @@ body {
     padding-top: 2px;
     padding-bottom: 10px;
     position: relative;
+    width: 100%;
 }
 
     .community-section h2 {
@@ -575,6 +576,7 @@ body {
     white-space: nowrap; /* Prevent wrapping of items */
     margin-left: -30px; /* Negative margin to offset the padding */
     margin-right: -30px; /* Negative margin to offset the padding */
+    width: 96%;
 }
 
 .community-logos {
