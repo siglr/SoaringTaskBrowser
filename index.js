@@ -221,14 +221,14 @@ function addScrollEventListeners() {
     if (leftButton && rightButton && container) {
         leftButton.addEventListener('click', () => {
             container.scrollBy({
-                left: -200,
+                left: -256,
                 behavior: 'smooth'
             });
         });
 
         rightButton.addEventListener('click', () => {
             container.scrollBy({
-                left: 200,
+                left: 256,
                 behavior: 'smooth'
             });
         });
