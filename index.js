@@ -118,6 +118,13 @@ function loadTabContent(tabId) {
                             <p class="community-name"><strong>UK Virtual Gliding Association</strong></p>
                             <p class="community-clubs"></p>
                         </div>
+                        <div class="community-item">
+                            <a href="discord://discord.gg/h2GuWXJaGK" target="_blank">
+                                <img src="images/FranceMSFS.png" alt="UKVGA" class="community-logo">
+                            </a>
+                            <p class="community-name"><strong>MSFS ✈️20✈️24 FR</strong></p>
+                            <p class="community-clubs">Home of Planeur France</p>
+                        </div>
                     </div>
                 </div>`;
             break;
