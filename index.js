@@ -314,6 +314,17 @@ function displayEvents(events) {
     const settings = TB.userSettings;
     const timeFormat = settings?.timeFormat || 'usa'; // Default to 12 hours if not set
 
+    // Mapping of club IDs to their respective logos
+    const clubLogos = {
+        'DIAMTU': 'images/SoaringDiamondsClub.jpg',
+        'FSCFR': 'images/GotGravel.jpg',
+        'SSCSA': 'images/SSCLogo.jpg',
+        'SSCWE': 'images/SSCLogo.jpg',
+        'AUSTU': 'images/SSCLogo.png',
+        'UKVGATU': 'images/UKVGALogo.jpg',
+        'UKVGATH': 'images/UKVGALogo.jpg'
+    };
+
     events.forEach(event => {
         // Ensure the date is parsed correctly as UTC
         const eventDate = new Date(event.EventDate.replace(' ', 'T') + 'Z'); // Ensure the date is ISO format and UTC
@@ -327,6 +338,10 @@ function displayEvents(events) {
         });
 
         const dayOfWeek = eventDate.toLocaleDateString(navigator.language, { weekday: 'long' });
+
+        // Extract club ID from the event key by removing "E-" prefix and any numbers
+        const clubId = event.Key.replace('E-', '').replace(/[0-9]/g, '');
+        let eventClubImage = clubLogos[clubId] || '';
 
         let moreInfoLink = event.URLToGo;
         if (moreInfoLink && moreInfoLink.includes("discord.com")) {
@@ -352,7 +367,7 @@ function displayEvents(events) {
         </button>`;
 
         if (moreInfoLink) {
-            moreInfoContent = `<p><a href="${moreInfoLink}" target="_blank">More info on this group event</a></p>`;
+            moreInfoContent = `<p><a href="${moreInfoLink}" target="_blank">Go to this group event's home</a></p>`;
         }
 
         // Determine highlight class
@@ -369,6 +384,7 @@ function displayEvents(events) {
         }
 
         const eventContent = `
+            ${eventClubImage ? `<img src="${eventClubImage}" alt="${event.Title}" title="${event.Title}" style="height: 80px; vertical-align: middle; margin-bottom: 1px;">` : ''}
             <h3>${event.Subtitle}</h3>
             <p>${TB.convertToMarkdown(event.Comments)}</p>
             ${soaringInfo}
