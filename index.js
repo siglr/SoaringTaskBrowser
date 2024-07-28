@@ -74,6 +74,7 @@ function loadTabContent(tabId) {
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
                     <h2>Our home is under construction!</h2>
                 </div>
+                <h3>📢 Vacation period! There will be no updates during the first 3 weeks of August</h3>
                 <p>Currently, you can use the tabs above to access the available features that are ready:</p>
                 <ul class="all-links">
                     <li><a href="#" onclick="TB.switchTab('eventsTab')">(📆) Discover group flight events happening soon</a></li>
@@ -143,6 +144,7 @@ function loadTabContent(tabId) {
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
                     <h2>Group Soaring Events</h2>
                 </div>
+                <h3>📢 Vacation period! There will be no updates during the first 3 weeks of August</h3>
                 <div id="eventsGeneralInfoSection"></div>
                 <button id="refreshButton" class="button-style">↻ Refresh Events</button>
                 <div id="eventsList"></div>
@@ -153,7 +155,9 @@ function loadTabContent(tabId) {
                 <div class="header-container">
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
                     <h2>Most useful soaring tools and other references!</h2>
-                </div>`;
+                </div>
+                <h3>📢 Vacation period! There will be no updates during the first 3 weeks of August</h3>
+                `;
             document.getElementById(tabId).innerHTML = content;
             setTimeout(() => {
                 loadToolsFromXML().then(toolEntries => {
@@ -182,6 +186,7 @@ function loadTabContent(tabId) {
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
                     <h2>About WeSimGlide</h2>
                 </div>
+                <h3>📢 Vacation period! There will be no updates during the first 3 weeks of August</h3>
                 <p>Welcome to WeSimGlide.org, your go-to destination for virtual soaring in Flight Simulator. Inspired by the official WeGlide.org site for real-life soaring, WeSimGlide is dedicated to bringing the same level of community to the virtual skies.</p>
                 <h3>Our Vision</h3>
                 <p>WeSimGlide is part of a comprehensive solution designed to enhance your soaring experience. This project includes:</p>
