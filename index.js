@@ -325,7 +325,7 @@ function displayEvents(events) {
         'FSCFR': 'images/GotGravel.jpg',
         'SSCSA': 'images/SSCLogo.jpg',
         'SSCWE': 'images/SSCLogo.jpg',
-        'AUSTU': 'images/SSCLogo.png',
+        'AUSTU': 'images/SSCLogo.jpg',
         'UKVGATU': 'images/UKVGALogo.jpg',
         'UKVGATH': 'images/UKVGALogo.jpg'
     };
