@@ -42,7 +42,7 @@ try {
             throw new Exception('DPHX file not found');
         }
 
-        // Sanitize the task title to create a safe filename: allow spaces, parentheses, hyphens, and underscores
+        // Sanitize the task title to create a safe filename
         $safeTitle = preg_replace('/[^a-zA-Z0-9\s\(\)_-]/', '', $taskTitle);
         $downloadFilename = trim($safeTitle) . '.dphx';
 
@@ -55,6 +55,11 @@ try {
         // Output the file to the browser
         fpassthru($fileStream);
         fclose($fileStream);
+
+        // Call IncrementDownloadForTask.php to update the download count
+        $incrementUrl = 'IncrementDownloadForTask.php?EntrySeqID=' . $entrySeqID;
+        @file_get_contents($incrementUrl); // Using @ to suppress errors if the request fails
+
         exit;
     } else {
         throw new Exception('Task not found');
