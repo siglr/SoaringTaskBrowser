@@ -56,9 +56,24 @@ try {
         fpassthru($fileStream);
         fclose($fileStream);
 
-        // Call IncrementDownloadForTask.php to update the download count
-        $incrementUrl = 'IncrementDownloadForTask.php?EntrySeqID=' . $entrySeqID;
-        @file_get_contents($incrementUrl); // Using @ to suppress errors if the request fails
+        // Increment download count
+        $now = new DateTime("now", new DateTimeZone("UTC"));
+        $nowFormatted = $now->format('Y-m-d H:i:s');
+
+        // Update the task record to increment download count and set the last download time
+        $updateQuery = "
+            UPDATE Tasks 
+            SET 
+                TotDownloads = TotDownloads + 1, 
+                LastDownloadUpdate = :lastDownloadUpdate 
+            WHERE 
+                EntrySeqID = :entrySeqID
+        ";
+
+        $stmt = $pdo->prepare($updateQuery);
+        $stmt->bindParam(':lastDownloadUpdate', $nowFormatted, PDO::PARAM_STR);
+        $stmt->bindParam(':entrySeqID', $entrySeqID, PDO::PARAM_INT);
+        $stmt->execute();
 
         exit;
     } else {
