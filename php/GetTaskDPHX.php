@@ -15,7 +15,7 @@ try {
 
     // Define the query to retrieve the task details
     $query = "
-        SELECT TaskID, PLNFilename
+        SELECT TaskID, Title
         FROM Tasks
         WHERE EntrySeqID = :entrySeqID
     ";
@@ -30,24 +30,31 @@ try {
 
     if ($task) {
         $taskID = $task['TaskID'];
-        $dphxFilename = $task['PLNFilename'] ?? $taskID . '.dphx';
+        $taskTitle = $task['Title'];
+        $dphxFilename = $taskID . '.dphx';
 
-        // Define the path to the DPHX file
-        $filePath = "https://siglr.com/DiscordPostHelper/TaskBrowser/Tasks/$dphxFilename";
+        // Define the URL to the DPHX file
+        $fileUrl = "https://siglr.com/DiscordPostHelper/TaskBrowser/Tasks/$dphxFilename";
 
-        // Check if the file exists
-        if (!file_exists($filePath)) {
+        // Open the file URL
+        $fileStream = @fopen($fileUrl, 'rb');
+        if (!$fileStream) {
             throw new Exception('DPHX file not found');
         }
 
-        // Set headers to force download
+        // Sanitize the task title to create a safe filename: allow spaces, parentheses, hyphens, and underscores
+        $safeTitle = preg_replace('/[^a-zA-Z0-9\s\(\)_-]/', '', $taskTitle);
+        $downloadFilename = trim($safeTitle) . '.dphx';
+
+        // Set headers to force download with the correct filename
         header('Content-Description: File Transfer');
         header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="' . basename($filePath) . '"');
-        header('Content-Length: ' . filesize($filePath));
+        header('Content-Disposition: attachment; filename="' . $downloadFilename . '"');
+        header('Content-Length: ' . get_headers($fileUrl, true)['Content-Length']);
 
-        // Read the file
-        readfile($filePath);
+        // Output the file to the browser
+        fpassthru($fileStream);
+        fclose($fileStream);
         exit;
     } else {
         throw new Exception('Task not found');
