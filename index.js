@@ -74,7 +74,7 @@ function loadTabContent(tabId) {
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
                     <h2>Our home is under construction!</h2>
                 </div>
-                <h3>📢 Vacation period! There will be no updates during the first 3 weeks of August</h3>
+                <h3>📢 There are currently limited updates only as I am too busy with other aspects of life! I'll get back soon, don't worry too much.</h3>
                 <p>Currently, you can use the tabs above to access the available features that are ready:</p>
                 <ul class="all-links">
                     <li><a href="#" onclick="TB.switchTab('eventsTab')">(📆) Discover group flight events happening soon</a></li>
@@ -144,7 +144,7 @@ function loadTabContent(tabId) {
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
                     <h2>Group Soaring Events</h2>
                 </div>
-                <h3>📢 Vacation period! There will be no updates during the first 3 weeks of August</h3>
+                <h3>📢 There are currently limited updates only as I am too busy with other aspects of life! I'll get back soon, don't worry too much.</h3>
                 <div id="eventsGeneralInfoSection"></div>
                 <button id="refreshButton" class="button-style">↻ Refresh Events</button>
                 <div id="eventsList"></div>
@@ -156,7 +156,7 @@ function loadTabContent(tabId) {
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
                     <h2>Most useful soaring tools and other references!</h2>
                 </div>
-                <h3>📢 Vacation period! There will be no updates during the first 3 weeks of August</h3>
+                <h3>📢 There are currently limited updates only as I am too busy with other aspects of life! I'll get back soon, don't worry too much.</h3>
                 `;
             document.getElementById(tabId).innerHTML = content;
             setTimeout(() => {
@@ -186,7 +186,7 @@ function loadTabContent(tabId) {
                     <img src="images/WeSimGlide.png" alt="WeSimGlideLogo" class="header-image">
                     <h2>About WeSimGlide</h2>
                 </div>
-                <h3>📢 Vacation period! There will be no updates during the first 3 weeks of August</h3>
+                <h3>📢 There are currently limited updates only as I am too busy with other aspects of life! I'll get back soon, don't worry too much.</h3>
                 <p>Welcome to WeSimGlide.org, your go-to destination for virtual soaring in Flight Simulator. Inspired by the official WeGlide.org site for real-life soaring, WeSimGlide is dedicated to bringing the same level of community to the virtual skies.</p>
                 <h3>Our Vision</h3>
                 <p>WeSimGlide is part of a comprehensive solution designed to enhance your soaring experience. This project includes:</p>
@@ -208,6 +208,8 @@ function loadTabContent(tabId) {
                     <li><strong>Spread the Word:</strong> Share WeSimGlide.org with your friends and fellow pilots to help grow our community.</li>
                 </ul>
                 <p>Thank you for being a part of the WeSimGlide community. Together, we can make virtual soaring an even more incredible experience.</p>
+                <h3>Affiliation</h3>
+                <p>WeSimGlide.org has no affiliation whatsoever with <strong><a href="https://WeGlide.org" target="_blank">WeGlide.org</a></strong>.</p>
                 <h3>Be Advised</h3>
                 <p><strong>Note:</strong> WeSimGlide.org is still a work in progress. I appreciate your patience and feedback as I continue to improve and expand the feature set.</p>`;
             break;
