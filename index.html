@@ -8,7 +8,7 @@
     <meta property="og:title" content="WeSimGlide.org">
     <meta property="og:description" content="Your go-to destination for virtual soaring in Flight Simulator.">
     <meta property="og:url" content="https://wesimglide.org">
-    <meta property="og:image" content="https://wesimglide.org/images/WeSimGlide.png"> 
+    <meta property="og:image" content="https://wesimglide.org/images/WeSimGlide.png">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="WeSimGlide.org">
 
@@ -35,7 +35,15 @@
             <div id="eventsTab" class="tabContent"></div>
             <div id="mapTab" class="tabContent active">
                 <div id="mapContainer">
+                    <div id="searchAndFilters" style="display:none"></div>
+                    <div id="leftresizer"></div>
                     <div id="map">
+                        <button id="fullWorldButton" onclick="TB.tbm.resetToFullWorld()" title="View full world">
+                            <img src="images/FullWorld.png" alt="View full world" style="width: 25px; height: 25px;">
+                        </button>
+                        <button id="searchFiltersButton" onclick="TB.tbm.toggleSearchAndFiltersPanel()" title="Search/Filters">
+                            <img src="images/SearchFilters.png" alt="Search/Filters" style="width: 25px; height: 25px;">
+                        </button>
                         <div id="taskControlPanel">
                             <button id="zoomButton" onclick="TB.tbm.zoomToTask()" title="Zoom to task">
                                 <img src="images/ZoomToTask.png" alt="Zoom to task">
@@ -60,9 +68,6 @@
                     <div id="resizer"></div>
                     <div id="taskDetailContainer" style="display:none"></div>
                 </div>
-                <button id="fullWorldButton" onclick="TB.tbm.resetToFullWorld()" title="View full world">
-                    <img src="images/FullWorld.png" alt="View full world" style="width: 25px; height: 25px;">
-                </button>
             </div>
             <div id="toolsTab" class="tabContent"></div>
             <div id="settingsTab" class="tabContent">

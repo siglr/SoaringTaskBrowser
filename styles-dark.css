@@ -454,8 +454,8 @@ body {
 
 #fullWorldButton {
     position: absolute;
-    top: 66px;
-    left: 60px;
+    top: 15px;
+    left: 50px;
     width: 35px;
     height: 35px;
     z-index: 1000;
@@ -470,6 +470,29 @@ body {
 }
 
     #fullWorldButton:hover {
+        background: rgb(114 137 218 / 76%); /* Change background color on hover */
+        border-color: #888; /* Change border color on hover */
+        transform: scale(1.1); /* Scale up the icon on hover */
+    }
+
+#searchFiltersButton {
+    position: absolute;
+    top: 15px;
+    left: 90px;
+    width: 35px;
+    height: 35px;
+    z-index: 1000;
+    color: white;
+    border: none;
+    padding: 5px 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    background: rgb(114 137 218 / 47%);
+    border: 1px solid #ccc; /* Add a light gray border */
+}
+
+    #searchFiltersButton:hover {
         background: rgb(114 137 218 / 76%); /* Change background color on hover */
         border-color: #888; /* Change border color on hover */
         transform: scale(1.1); /* Scale up the icon on hover */
