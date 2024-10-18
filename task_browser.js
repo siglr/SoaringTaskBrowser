@@ -17,7 +17,6 @@ class TaskBrowser {
         });
         tb.tbm = new TaskBrowserMap(tb);
         tb.taskDetailsContainerWidth = 0;
-        tb.searchFiltersContainerWidth = 0;
         tb.initCountryCodes();
 
         // Mapping of country names in your app to the corresponding names used by the flag service
@@ -1071,8 +1070,7 @@ class TaskBrowser {
                 showRailways: tb.tbm.isLayerVisible('Railways'),
                 windCompass: tb.tbm.isLayerVisible('Wind Compass'),
                 showSelectedOnly: tb.tbm.isLayerVisible('Show selected only'),
-                taskDetailWidth: tb.taskDetailsContainerWidth,
-                searchFiltersWidth: tb.searchFiltersContainerWidth
+                taskDetailWidth: tb.taskDetailsContainerWidth
             };
             tb.setJsonCookie('mapUserSettings', settings, 300);
         }
@@ -1089,8 +1087,7 @@ class TaskBrowser {
             showRailways: false,
             windCompass: false,
             showSelectedOnly: true,
-            taskDetailWidth: '30%',
-            searchFiltersWidth: '30%'
+            taskDetailWidth: '30%'
         };
 
         // Merge default settings with loaded settings
@@ -1104,7 +1101,6 @@ class TaskBrowser {
         tb.tbm.setLayerVisibility('Wind Compass', mergedSettings.windCompass);
         tb.tbm.setLayerVisibility('Show selected only', mergedSettings.showSelectedOnly);
         tb.setTaskDetailWidth(mergedSettings.taskDetailWidth);
-        tb.setSearchFiltersWidth(mergedSettings.searchFiltersWidth);
         tb.ApplyingSettings = false;
     }
 
@@ -1114,16 +1110,6 @@ class TaskBrowser {
         const mapContainer = document.getElementById('map');
         tb.taskDetailsContainerWidth = width;
         taskDetailContainer.style.width = width;
-        mapContainer.style.width = `${100 - parseFloat(width)}%`;
-        this.resizeMap(); // Ensure the map resizes correctly
-    }
-
-    setSearchFiltersWidth(width) {
-        const tb = this;
-        const searchAndFiltersPanel = document.getElementById('searchAndFilters');
-        const mapContainer = document.getElementById('map');
-        tb.searchFiltersContainerWidth = width;
-        searchAndFiltersPanel.style.width = width;
         mapContainer.style.width = `${100 - parseFloat(width)}%`;
         this.resizeMap(); // Ensure the map resizes correctly
     }
@@ -1217,40 +1203,55 @@ class TaskBrowser {
 
     hideSearchFiltersPanel() {
         let tb = this;
-        if (tb.SearchFiltersPanelVisible == true) {
-            return;
-        }
         const searchFiltersPanel = document.getElementById('searchAndFilters');
-        const leftresizer = document.getElementById('leftresizer');
         const map = document.getElementById('map');
+        const taskDetailContainer = document.getElementById('taskDetailContainer');
+
         searchFiltersPanel.style.display = 'none';
-        leftresizer.style.display = 'none';
-        map.style.width = '100%';
-        tb.resizeMap(); // Ensure map is resized
+
+        // Calculate the remaining width for the map
+        let remainingWidth = '100%';
+
+        if (tb.TaskDetailsPanelVisible) {
+            const taskDetailsWidth = taskDetailContainer.offsetWidth;
+            remainingWidth = `calc(100% - ${taskDetailsWidth}px)`;
+        }
+
+        map.style.width = remainingWidth;
+        tb.SearchFiltersPanelVisible = false;
+
+        tb.resizeMap(); // Ensure the map resizes correctly
     }
 
     showSearchFiltersPanel() {
         let tb = this;
-        if (tb.SearchFiltersPanelVisible == false) {
-            return;
-        }
         const searchFiltersPanel = document.getElementById('searchAndFilters');
-        const resizer = document.getElementById('leftresizer');
         const map = document.getElementById('map');
+        const taskDetailContainer = document.getElementById('taskDetailContainer');
+
         searchFiltersPanel.style.display = 'block';
-        leftresizer.style.display = 'block';
-        tb.setSearchFiltersWidth(tb.searchFiltersContainerWidth);
-        //tb.resizeMap(); // Ensure map is resized
+        searchFiltersPanel.style.width = '300px'; // Fixed width
+
+        // Calculate the remaining width for the map
+        let remainingWidth = 'calc(100% - 300px)';
+
+        if (tb.TaskDetailsPanelVisible) {
+            const taskDetailsWidth = taskDetailContainer.offsetWidth;
+            remainingWidth = `calc(100% - 300px - ${taskDetailsWidth}px)`;
+        }
+
+        map.style.width = remainingWidth;
+        tb.SearchFiltersPanelVisible = true;
+
+        tb.resizeMap(); // Ensure the map resizes correctly
     }
 
     toggleSearchAndFiltersPanel() {
         let tb = this;
         const searchFiltersPanel = document.getElementById('searchAndFilters');
         if (tb.SearchFiltersPanelVisible == false) {
-            tb.SearchFiltersPanelVisible = true;
             tb.showSearchFiltersPanel();
         } else {
-            tb.SearchFiltersPanelVisible = false;
             tb.hideSearchFiltersPanel();
         }
     }

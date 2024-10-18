@@ -6,45 +6,16 @@ window.addEventListener('resize', TB.resizeMap);
 
 // Add resizer functionality
 let isResizing = false;
-const leftresizer = document.getElementById('leftresizer');
 const resizer = document.getElementById('resizer');
 const mapContainer = document.getElementById('map');
 const taskDetailContainer = document.getElementById('taskDetailContainer');
 const searchFiltersContainer = document.getElementById('searchAndFilters');
-
-leftresizer.addEventListener('mousedown', (e) => {
-    isLeftResizing = true;
-    document.addEventListener('mousemove', leftresize);
-    document.addEventListener('mouseup', stopLeftResize);
-});
 
 resizer.addEventListener('mousedown', (e) => {
     isResizing = true;
     document.addEventListener('mousemove', resize);
     document.addEventListener('mouseup', stopResize);
 });
-
-function leftresize(e) {
-    if (isLeftResizing) {
-        const containerWidth = mapContainer.offsetWidth + searchFiltersContainer.offsetWidth;
-        const newMapWidth = e.clientX / containerWidth * 100;
-        const newSearchFiltersWidth = 100 - newMapWidth;
-
-        mapContainer.style.width = `${newMapWidth}%`;
-        searchFiltersContainer.style.width = `${newSearchFiltersWidth}%`;
-
-        TB.searchFiltersContainerWidth = searchFiltersContainer.style.width;
-
-        TB.resizeMap(); // Ensure map is resized
-        TB.saveMapUserSettings(); // Save the splitter position
-    }
-}
-
-function stopLeftResize() {
-    isLeftResizing = false;
-    document.removeEventListener('mousemove', leftresize);
-    document.removeEventListener('mouseup', stopLeftResize);
-}
 
 function resize(e) {
     if (isResizing) {
