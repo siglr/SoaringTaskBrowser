@@ -1204,45 +1204,27 @@ class TaskBrowser {
     hideSearchFiltersPanel() {
         let tb = this;
         const searchFiltersPanel = document.getElementById('searchAndFilters');
-        const map = document.getElementById('map');
-        const taskDetailContainer = document.getElementById('taskDetailContainer');
+        const mapContainer = document.getElementById('mapContainer');
 
         searchFiltersPanel.style.display = 'none';
+        mapContainer.style.flex = '1'; // Ensures the map takes the full width when the panel is hidden
 
-        // Calculate the remaining width for the map
-        let remainingWidth = '100%';
-
-        if (tb.TaskDetailsPanelVisible) {
-            const taskDetailsWidth = taskDetailContainer.offsetWidth;
-            remainingWidth = `calc(100% - ${taskDetailsWidth}px)`;
-        }
-
-        map.style.width = remainingWidth;
         tb.SearchFiltersPanelVisible = false;
-
         tb.resizeMap(); // Ensure the map resizes correctly
     }
 
     showSearchFiltersPanel() {
         let tb = this;
         const searchFiltersPanel = document.getElementById('searchAndFilters');
-        const map = document.getElementById('map');
-        const taskDetailContainer = document.getElementById('taskDetailContainer');
+        const mapContainer = document.getElementById('mapContainer');
 
         searchFiltersPanel.style.display = 'block';
         searchFiltersPanel.style.width = '300px'; // Fixed width
 
-        // Calculate the remaining width for the map
-        let remainingWidth = 'calc(100% - 300px)';
+        // Adjust mapContainer to occupy the remaining space
+        mapContainer.style.flex = '1';
 
-        if (tb.TaskDetailsPanelVisible) {
-            const taskDetailsWidth = taskDetailContainer.offsetWidth;
-            remainingWidth = `calc(100% - 300px - ${taskDetailsWidth}px)`;
-        }
-
-        map.style.width = remainingWidth;
         tb.SearchFiltersPanelVisible = true;
-
         tb.resizeMap(); // Ensure the map resizes correctly
     }
 
