@@ -88,6 +88,12 @@ body {
     background-color: #23272a;
 }
 
+#leftresizer {
+    width: 5px;
+    cursor: col-resize;
+    background-color: #99aab5;
+}
+
 #resizer {
     width: 5px;
     cursor: col-resize;
